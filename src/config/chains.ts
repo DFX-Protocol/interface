@@ -38,7 +38,7 @@ export const CHAIN_NAMES_MAP = {
   [ARBITRUM]: "Arbitrum",
   [AVALANCHE]: "Avalanche",
   [AVALANCHE_FUJI]: "Avalanche Fuji",
-  [HEDERA_TESTNET]: "Hadera Testnet"
+  [HEDERA_TESTNET]: "Hedera Testnet"
 };
 
 export const GAS_PRICE_ADJUSTMENT_MAP = {
