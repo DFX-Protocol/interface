@@ -1,7 +1,8 @@
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI } from "config/chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET } from "config/chains";
 import arbitrum from "img/ic_arbitrum_24.svg";
 import avalanche from "img/ic_avalanche_24.svg";
 import avalancheTestnet from "img/ic_avalanche_testnet_24.svg";
+import hedera from "img/ic_hedera_24.svg";
 
 import gmxIcon from "img/ic_gmx_40.svg";
 import glpIcon from "img/ic_glp_40.svg";
@@ -24,9 +25,13 @@ const ICONS = {
   [ARBITRUM_TESTNET]: {
     network: arbitrum,
   },
+  [HEDERA_TESTNET]: {
+    network: hedera,
+  },
   [AVALANCHE_FUJI]: {
     network: avalancheTestnet,
   },
+  // TODO: update icons
   common: {
     gmx: gmxIcon,
     glp: glpIcon,

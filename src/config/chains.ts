@@ -13,20 +13,22 @@ export const AVALANCHE_FUJI = 43113;
 export const ARBITRUM = 42161;
 export const ARBITRUM_TESTNET = 421611;
 export const FEES_HIGH_BPS = 50;
+export const HEDERA_TESTNET = 296;
 
 // TODO take it from web3
 export const DEFAULT_CHAIN_ID = ARBITRUM;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
-export const SUPPORTED_CHAIN_IDS = [ARBITRUM, AVALANCHE];
+export const SUPPORTED_CHAIN_IDS = [ARBITRUM, AVALANCHE, HEDERA_TESTNET];
 
 if (isDevelopment()) {
-  SUPPORTED_CHAIN_IDS.push(ARBITRUM_TESTNET, AVALANCHE_FUJI);
+  SUPPORTED_CHAIN_IDS.push(ARBITRUM_TESTNET, AVALANCHE_FUJI, HEDERA_TESTNET);
 }
 
 export const IS_NETWORK_DISABLED = {
   [ARBITRUM]: false,
   [AVALANCHE]: false,
+  [HEDERA_TESTNET]: false
 };
 
 export const CHAIN_NAMES_MAP = {
@@ -36,11 +38,13 @@ export const CHAIN_NAMES_MAP = {
   [ARBITRUM]: "Arbitrum",
   [AVALANCHE]: "Avalanche",
   [AVALANCHE_FUJI]: "Avalanche Fuji",
+  [HEDERA_TESTNET]: "Hadera Testnet"
 };
 
 export const GAS_PRICE_ADJUSTMENT_MAP = {
   [ARBITRUM]: "0",
   [AVALANCHE]: "3000000000", // 3 gwei
+  [HEDERA_TESTNET]: "0",
 };
 
 export const MAX_GAS_PRICE_MAP = {
@@ -50,6 +54,7 @@ export const MAX_GAS_PRICE_MAP = {
 export const HIGH_EXECUTION_FEES_MAP = {
   [ARBITRUM]: 3, // 3 USD
   [AVALANCHE]: 3, // 3 USD
+  [HEDERA_TESTNET]: 3,
 };
 
 const constants = {
@@ -123,6 +128,20 @@ const constants = {
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
   },
+
+  [HEDERA_TESTNET]: {
+    nativeTokenSymbol: "HBAR",
+    wrappedTokenSymbol: "WHBAR",
+    defaultCollateralSymbol: "USDC",
+    defaultFlagOrdersEnabled: false,
+    positionReaderPropsLength: 9,
+    v2: true,
+
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    // contract requires that execution fee be strictly greater than instead of gte
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
+  },
 };
 
 const ALCHEMY_WHITELISTED_DOMAINS = ["gmx.io", "app.gmx.io"];
@@ -149,6 +168,7 @@ export const RPC_PROVIDERS = {
   [ARBITRUM_TESTNET]: ["https://rinkeby.arbitrum.io/rpc"],
   [AVALANCHE]: ["https://api.avax.network/ext/bc/C/rpc"],
   [AVALANCHE_FUJI]: ["https://api.avax-test.network/ext/bc/C/rpc"],
+  [HEDERA_TESTNET]: ["https://testnet.hashio.io/api"]
 };
 
 export const FALLBACK_PROVIDERS = {
@@ -223,6 +243,17 @@ export const NETWORK_METADATA: { [chainId: number]: NetworkMetadata } = {
     rpcUrls: RPC_PROVIDERS[AVALANCHE_FUJI],
     blockExplorerUrls: [getExplorerUrl(AVALANCHE_FUJI)],
   },
+  [HEDERA_TESTNET]: {
+    chainId: "0x" + HEDERA_TESTNET.toString(16),
+    chainName: "Hedera Testnet",
+    nativeCurrency: {
+      name: "HBAR",
+      symbol: "HBAR",
+      decimals: 18,
+    },
+    rpcUrls: RPC_PROVIDERS[HEDERA_TESTNET],
+    blockExplorerUrls: ["https://hashscan.io/testnet/dashboard/"],
+  },
 };
 
 export const getConstant = (chainId: number, key: string) => {
@@ -233,14 +264,13 @@ export const getConstant = (chainId: number, key: string) => {
   if (!(key in constants[chainId])) {
     throw new Error(`Key ${key} does not exist for chainId ${chainId}`);
   }
-
   return constants[chainId][key];
 };
 
 export function getChainName(chainId: number) {
   return CHAIN_NAMES_MAP[chainId];
 }
-
+// TODO: Update default to hedera
 export function getDefaultArbitrumRpcUrl() {
   return "https://arb1.arbitrum.io/rpc";
 }
@@ -252,7 +282,7 @@ export function getRpcUrl(chainId: number): string | undefined {
 export function getFallbackRpcUrl(chainId: number): string | undefined {
   return sample(FALLBACK_PROVIDERS[chainId]);
 }
-
+// TODO: Add hedera alchemy url
 export function getAlchemyHttpUrl() {
   if (ALCHEMY_WHITELISTED_DOMAINS.includes(window.location.host)) {
     return "https://arb-mainnet.g.alchemy.com/v2/ha7CFsr1bx5ZItuR6VZBbhKozcKDY4LZ";
@@ -284,6 +314,8 @@ export function getExplorerUrl(chainId) {
     return "https://snowtrace.io/";
   } else if (chainId === AVALANCHE_FUJI) {
     return "https://testnet.snowtrace.io/";
+  } else if (chainId === HEDERA_TESTNET) {
+    return "https://hashscan.io/testnet/dashboard";
   }
   return "https://etherscan.io/";
 }
