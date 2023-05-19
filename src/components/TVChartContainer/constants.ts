@@ -22,13 +22,13 @@ const chartOverrides = {
   "paneProperties.backgroundGradientStartColor": "#16182e",
   "paneProperties.backgroundGradientEndColor": "#16182e",
   "paneProperties.backgroundType": "solid",
-  "paneProperties.vertGridProperties.color": "rgba(35, 38, 59, 1)",
+  "paneProperties.vertGridProperties.color": "#43465170",
   "paneProperties.vertGridProperties.style": 2,
-  "paneProperties.horzGridProperties.color": "rgba(35, 38, 59, 1)",
+  "paneProperties.horzGridProperties.color": "#43465170",
   "paneProperties.horzGridProperties.style": 2,
-  "mainSeriesProperties.priceLineColor": "#3a3e5e",
+  "mainSeriesProperties.priceLineColor": "#d9d9d9",
   "scalesProperties.textColor": "#fff",
-  "scalesProperties.lineColor": "#16182e",
+  "scalesProperties.lineColor": "#43465170",
   ...chartStyleOverrides,
 };
 

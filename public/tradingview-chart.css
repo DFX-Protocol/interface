@@ -1,15 +1,15 @@
 .theme-dark:root {
-  --dark-blue-bg: #16182e;
+  --dark-blue-bg: linear-gradient(90deg,rgba(0,0,0,.4),rgba(3,3,3,.6));
 
-  --tv-color-pane-background: var(--dark-blue-bg);
-  --tv-color-platform-background: var(--dark-blue-bg);
-  --tv-color-pane-background-secondary: var(--dark-blue-bg);
+  --tv-color-pane-background: linear-gradient(90deg,rgba(0,0,0,.4),rgba(3,3,3,.6));
+  --tv-color-platform-background: linear-gradient(90deg,rgba(0,0,0,.4),rgba(3,3,3,.6));
+  --tv-color-pane-background-secondary: linear-gradient(90deg,rgba(0,0,0,.4),rgba(3,3,3,.6));
   --tv-color-toolbar-button-text-hover: #b2b5be;
   --tv-color-toolbar-button-background-hover: #1e223de6;
-  --tv-color-toolbar-button-text-active: #2962ff;
-  --tv-color-toolbar-toggle-button-background-active: #3a3e5e;
-  --tv-color-toolbar-toggle-button-background-active-hover: #3a3e5e;
-  --tv-color-toolbar-button-background-expanded: var(--dark-blue-bg);
+  --tv-color-toolbar-button-text-active: #44dbba;
+  --tv-color-toolbar-toggle-button-background-active: #4d6b63;
+  --tv-color-toolbar-toggle-button-background-active-hover: #3b534d;
+  --tv-color-toolbar-button-background-expanded: linear-gradient(90deg,rgba(0,0,0,.4),rgba(3,3,3,.6));
   /* --tv-list-item-button-background-color: #20243f; */
 }
 
@@ -33,39 +33,46 @@ html.theme-dark .toggleButton-3zv4iS2j .background-3zv4iS2j:hover {
   stroke: #464a6e;
 }
 
+/* Side tool menu wrap */
 html.theme-dark .menuWrap-g78rwseC {
-  background-color: #20243f !important;
+  background-color: #364642 !important;
 }
 
+/* Side tool popup */
 html.theme-dark .item-2IihgTnv:not(.isActive-2IihgTnv) {
   cursor: pointer;
-  background-color: #20243f !important;
+  background-color: #263632 !important;
   color: #b2b5be !important;
 }
 
+/* Side tool menu hover */
 html.theme-dark .item-2IihgTnv:not(.isActive-2IihgTnv):hover,
 html.theme-dark .container-3Ywm3-oo.selected-3Ywm3-oo {
-  background-color: var(--dark-blue-bg) !important;
+  background-color: #38524c !important;
 }
 
 html.theme-dark .container-3Ywm3-oo.selected-3Ywm3-oo {
   background-color: #2962ff !important;
 }
 
+/* Settings modal background */
 html.theme-dark .dialog-2AogBbC7 {
-  background-color: #20243f !important;
+  background-color: #23322e !important;
 }
 
+/* Setting modeal close (X) button */
 html.theme-dark .close-2sL5JydP {
   color: #6f6e84 !important;
 }
 
+/* Setting modeal close (X) button hover */
 html.theme-dark .close-2sL5JydP:hover {
   background-color: transparent !important;
   color: #f7f7f7 !important;
   cursor: pointer;
 }
 
+/* Shortcut lables text colour */
 html.theme-dark .shortcut-2IihgTnv,
 html.theme-dark .shortcut-f5BaKrKq {
   color: #737682 !important;
@@ -75,9 +82,10 @@ html.theme-dark .item-f5BaKrKq.interactive-f5BaKrKq {
   cursor: pointer;
 }
 
+/* Chart settings modal menu options hover colour */
 html.theme-dark .tab-DggvOZTm:not(.active-DggvOZTm):hover,
 html.theme-dark .item-f5BaKrKq.interactive-f5BaKrKq:hover {
-  background-color: var(--dark-blue-bg) !important;
+  background-color: #38524c !important;
 }
 
 html.theme-dark .item-f5BaKrKq.interactive-f5BaKrKq.hovered-f5BaKrKq,
@@ -97,6 +105,7 @@ html.theme-dark .wrap-3jbioG5e,
   cursor: pointer;
 }
 
+/* tools tooltip background color */
 html.theme-dark .common-tooltip__body-36YLR71G {
   background-color: #20243f !important;
 }
