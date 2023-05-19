@@ -69,6 +69,7 @@ export function approveTokens({
           e.data?.message
         )
       ) {
+        // TODO: Update fail message for hedera
         failMsg = (
           <div>
             <Trans>

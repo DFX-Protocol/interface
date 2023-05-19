@@ -381,7 +381,7 @@ export function useExecutionFee(library, active, chainId, infoTokens) {
   });
 
   let multiplier;
-
+  // TODO: Update multiplier for hedera
   if (chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) {
     multiplier = 2150000;
   }

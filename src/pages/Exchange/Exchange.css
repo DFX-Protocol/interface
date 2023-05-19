@@ -14,7 +14,11 @@
   display: grid;
   grid-template-columns: auto auto;
   padding-left: 0.8rem;
+  background-color: rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(22px);
   padding-right: 0.8rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   margin-top: 1.5rem;
   margin-bottom: 1.05rem;
 }
@@ -632,7 +636,7 @@ table.Exchange-list th {
   padding: 1.5rem;
   margin-bottom: 1.05rem;
   border-radius: 0.3rem;
-  background: linear-gradient(90deg, rgba(30, 34, 61, 0.9) 0%, rgba(38, 43, 71, 0.9) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.4) 0%, rgba(3, 3, 3, 0.6) 100%);
   box-shadow: inset 0px 0px 3rem 0.5rem rgba(255, 255, 255, 0.01);
 }
 
@@ -746,14 +750,14 @@ input.Exchange-swap-input.small {
   border-radius: 3.1rem;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%);
+  background: linear-gradient(90deg, #54d8c6, #b791ba);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .Exchange-swap-ball:hover {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
+  background: linear-gradient(90deg, #46d3c0, #b57cb9);
 }
 
 .Exchange-swap-ball:hover .Exchange-swap-ball-icon {

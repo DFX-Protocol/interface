@@ -10,7 +10,9 @@
   border: none;
 
   &.primary {
-    background: var(--primary-btn-bg);
+    background: linear-gradient(90deg, #25fade, #ec00ff);
+
+    // background: var(--primary-btn-bg);
     color: #fff;
     border-radius: 0.3rem;
     padding: 1.65rem 1.6rem;
@@ -26,7 +28,7 @@
   }
 
   &.primary-action {
-    background: linear-gradient(90deg, #2d42fc, #2e3dcd);
+    background: linear-gradient(90deg, #25fade, #ec00ff);
     color: #fff;
     border-radius: 0.3rem;
     padding: 1.65rem 1.6rem;
@@ -44,8 +46,10 @@
   }
 
   &.semi-clear {
-    background: rgb(43, 55, 94);
-    color: #fff;
+    background: linear-gradient(90deg, #54d8c6, #b791ba);
+
+    // background: rgb(43, 55, 94);
+    color: #000;
     border-radius: var(--border-radius-sm);
     line-height: 1;
     letter-spacing: 0;

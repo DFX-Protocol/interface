@@ -21,13 +21,13 @@
 
 .App-header.large {
   height: 6.2rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(22px);
   display: flex;
   justify-content: space-between;
   position: relative;
   padding-left: 3.2rem;
   padding-right: 3.2rem;
-  background: transparent 0% 0% no-repeat padding-box;
+  background: rgba(0, 0, 0, 0.48) 0% 0% no-repeat padding-box;
   border-bottom: 1px solid #ffffff10;
 }
 
@@ -155,9 +155,8 @@
 .App-box-highlight,
 .App-box-solid {
   position: relative;
-  border: 1px solid #1e2136;
-  border-radius: 0.4rem;
-  background: #16182e;
+  backdrop-filter: blur(22px);
+  background: rgba(0, 0, 0, 0.48);
   font-size: var(--font-base);
 }
 
@@ -446,9 +445,11 @@ button.App-connect-wallet:hover {
 }
 
 .section-title-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  padding: 20px;
+  width: 100%;
+  backdrop-filter: blur(22px);
+  background-color: rgba(216, 217, 122, 0.48);
+  border-radius: 6px;
 }
 
 .section-title-content .section-title-content__title {
@@ -491,7 +492,7 @@ button.App-connect-wallet:hover {
 }
 
 .Page-description {
-  color: #b7b7bd;
+  color: #fff;
   line-height: 2.15rem;
   font-size: var(--font-base);
 }
@@ -536,7 +537,7 @@ button.App-connect-wallet:hover {
 
 .App-card {
   padding: 1.5rem 1.5rem 1.86rem;
-  border: 1px solid #1e2136;
+  // border: 1px solid #1e2136;
   border-radius: 0.4rem;
   font-size: var(--font-base);
 }
@@ -1112,7 +1113,7 @@ button.App-button {
 }
 
 .App-slider .rc-slider-track {
-  background: linear-gradient(90deg, rgba(46, 61, 205, 1) 0%, rgba(45, 66, 252, 1) 100%);
+  background: linear-gradient(90deg, #25fade 0%, #ec00ff 100%);
 }
 
 .App-slider .rc-slider-dot {
@@ -1120,7 +1121,7 @@ button.App-button {
   border-radius: 1px;
   width: 2px;
   margin-left: -1px;
-  background: rgba(40, 45, 74, 1);
+  background: rgb(40, 74, 56);
 }
 
 .App-slider .rc-slider-dot-active {
@@ -1129,7 +1130,7 @@ button.App-button {
 
 .App-slider .rc-slider-handle {
   background: #303652;
-  border: solid 2px rgba(45, 66, 252, 1);
+  border: solid 2px rgb(62, 235, 226);
 }
 
 .App-slider .rc-slider-handle:active {
@@ -1197,7 +1198,12 @@ button.App-button {
 
 .Tab-title-section {
   padding: 3.1rem 0 0;
+  margin-top: 2.5rem;
   margin-bottom: 2.4rem;
+  background-color: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(22px);
+  padding: 20px;
+  border-radius: 6px;
 }
 
 .Home-language-menu {

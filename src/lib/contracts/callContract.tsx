@@ -75,6 +75,7 @@ export async function callContract(
     const [message, type, errorData] = extractError(e);
     switch (type) {
       case NOT_ENOUGH_FUNDS:
+        // TODO: Update fail message
         failMsg = (
           <Trans>
             There is not enough ETH in your account on Arbitrum to send this transaction.
@@ -113,6 +114,7 @@ export async function callContract(
               <br />
               <br />
               Please try changing the RPC url in your wallet settings.{" "}
+              {/* TODO: Update gitbook URL */}
               <ExternalLink href="https://gmxio.gitbook.io/gmx/trading#backup-rpc-urls">More info</ExternalLink>
             </Trans>
             <br />

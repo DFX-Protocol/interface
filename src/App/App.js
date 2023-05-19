@@ -212,12 +212,12 @@ function FullApp() {
           <br />
           {userOnMobileDevice ? (
             <Trans>
-              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink>, and use GMX with its built-in
+              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink>, and use Exuma with its built-in
               browser.
             </Trans>
           ) : (
             <Trans>
-              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink> to start using GMX.
+              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink> to start using Exuma.
             </Trans>
           )}
         </div>

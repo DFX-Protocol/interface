@@ -1,7 +1,8 @@
 import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, MAINNET } from "./chains";
 
+// TODO: update stats API URL
 export const GMX_STATS_API_URL = "https://stats.gmx.io/api";
-
+// TODO: Remove backend probably
 const BACKEND_URLS = {
   default: "https://gmx-server-mainnet.uw.r.appspot.com",
 

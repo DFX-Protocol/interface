@@ -6,7 +6,7 @@ export const IS_TOUCH = "ontouchstart" in window;
 
 export function isDevelopment() {
   const isProductionPreview = Boolean(localStorage.getItem(PRODUCTION_PREVIEW_KEY));
-
+  // TODO: Update base URL
   return (
     !window.location.host?.includes("gmx.io") && !window.location.host?.includes("ipfs.io") && !isProductionPreview
   );
