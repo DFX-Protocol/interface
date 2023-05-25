@@ -19,7 +19,7 @@
 }
 
 .card-divider {
-  height: 1px;
+  height: 0px;
   background: #455a3b;
 }
 .card-body {

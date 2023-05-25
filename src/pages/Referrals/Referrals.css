@@ -132,6 +132,7 @@
 
 .referral-table-header {
   display: flex;
+  padding-top: 1.5rem;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -274,9 +275,11 @@
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
-  border: 1px solid #1e2136;
+  backdrop-filter: blur(22px);
+  background: rgba(0, 0, 0, 0.48);
+  /* border: 1px solid #1e2136; */
   border-radius: 0.4rem;
-  background: #16182e;
+  /* background: #16182e; */
   font-size: var(--font-base);
 }
 .confirm-checkbox .Checkbox {

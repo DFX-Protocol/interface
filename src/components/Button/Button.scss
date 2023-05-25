@@ -23,7 +23,7 @@
     }
 
     &:not([disabled]):active {
-      background-color: var(--primary-btn-active);
+      background-color: linear-gradient(90deg, #48e6d1, #db96df);
     }
   }
 
@@ -40,7 +40,7 @@
     }
 
     &:not([disabled]):active {
-      background-color: var(--primary-btn-active);
+      background-color: linear-gradient(90deg, #48e6d1, #db96df);
       box-shadow: 0 0 0.4rem 0.6rem rgb(45 66 252 / 20%);
     }
   }
@@ -59,7 +59,7 @@
     }
 
     &:not([disabled]):active {
-      background: rgb(64, 82, 141);
+      background: linear-gradient(90deg, #48e6d1, #db96df);
     }
   }
 

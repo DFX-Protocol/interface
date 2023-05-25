@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { ethers } from "ethers";
 import Tab from "../Tab/Tab";
 import cx from "classnames";
+import { IoMdSwap } from "react-icons/io";
 import { getContract } from "config/contracts";
 import {
   getBuyGlpToAmount,
@@ -859,15 +860,11 @@ export default function GlpSwap(props) {
             )}
 
             <div className="AppOrder-ball-container">
-              <div className="AppOrder-ball">
-                <img
-                  src={arrowIcon}
-                  alt="arrowIcon"
-                  onClick={() => {
+            <div className="Exchange-swap-ball" onClick={() => {
                     setIsBuying(!isBuying);
                     switchSwapOption(isBuying ? "redeem" : "");
-                  }}
-                />
+                  }}>
+                  <IoMdSwap className="Exchange-swap-ball-icon" />
               </div>
             </div>
 
