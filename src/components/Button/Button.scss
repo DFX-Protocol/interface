@@ -35,7 +35,7 @@
     line-height: 1;
 
     &:not([disabled]):hover {
-      background: var(--primary-btn-hover);
+      background: linear-gradient(90deg, #06d2b6, #a518af);
       box-shadow: 0 0 0.4rem 0.5rem rgb(45 66 252 / 20%);
     }
 
@@ -55,7 +55,7 @@
     letter-spacing: 0;
 
     &:not([disabled]):hover {
-      background: rgb(54, 69, 117);
+      background: #54d8c6;
     }
 
     &:not([disabled]):active {

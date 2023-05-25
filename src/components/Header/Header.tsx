@@ -5,8 +5,8 @@ import { AppHeaderUser } from "./AppHeaderUser";
 import { AppHeaderLinks } from "./AppHeaderLinks";
 
 // import logoImg from "img/logo_GMX.svg";
-import logoImg from "img/logo_exuma.svg";
-import logoSmallImg from "img/logo_exuma.svg";
+import logoImg from "img/logo_dfx.svg";
+import logoSmallImg from "img/logo_dfx.svg";
 // import logoSmallImg from "img/logo_GMX_small.svg";
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -98,8 +98,8 @@ export function Header({
         <div className="App-header large">
           <div className="App-header-container-left">
             <Link className="App-header-link-main" to="/">
-              <img src={logoImg} className="big" alt="GMX Logo" />
-              <img src={logoSmallImg} className="small" alt="GMX Logo" />
+              <img src={logoImg} className="big" alt="DFX Logo" />
+              <img src={logoSmallImg} className="small" alt="DFX Logo" />
             </Link>
             {isHomeSite() ? (
               <HomeHeaderLinks redirectPopupTimestamp={redirectPopupTimestamp} showRedirectModal={showRedirectModal} />
@@ -129,8 +129,8 @@ export function Header({
                 {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
               </div>
               <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                <img src={logoImg} className="big" alt="GMX Logo" />
-                <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                <img src={logoImg} className="big" alt="DFX Logo" />
+                <img src={logoSmallImg} className="small" alt="DFX Logo" />
               </div>
             </div>
             <div className="App-header-container-right">

@@ -1,7 +1,9 @@
 .card {
-  border: 1px solid #1e2136;
+  /* border: 1px solid #1e2136; */
   border-radius: 0.4rem;
-  background: #16182e;
+  backdrop-filter: blur(22px);
+  background: rgba(0, 0, 0, 0.48);
+
 }
 
 .card-header {
@@ -18,7 +20,7 @@
 
 .card-divider {
   height: 1px;
-  background: #23263b;
+  background: #455a3b;
 }
 .card-body {
   padding: 1.5rem;

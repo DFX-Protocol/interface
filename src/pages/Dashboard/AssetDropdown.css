@@ -1,8 +1,9 @@
 .asset-menu-items {
   position: absolute;
-  border: 1px solid #32344c;
+  /* border: 1px solid #32344c; */
   border-radius: 0.4rem;
-  background: var(--dark-blue);
+  backdrop-filter: blur(32px);
+  background: rgba(0, 0, 0, 0.38);
   outline: none;
   z-index: 100;
 }

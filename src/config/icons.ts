@@ -4,9 +4,11 @@ import avalanche from "img/ic_avalanche_24.svg";
 import avalancheTestnet from "img/ic_avalanche_testnet_24.svg";
 import hedera from "img/ic_hedera_24.svg";
 
-import gmxIcon from "img/ic_gmx_40.svg";
-import glpIcon from "img/ic_glp_40.svg";
+import dfxIcon from "img/ic_dfx.svg";
+import dlpIcon from "img/ic_dlp.svg";
 import gmxArbitrum from "img/ic_gmx_arbitrum.svg";
+import dfxHedera from "img/ic_dfx_hedera.svg";
+import dlpHedera from "img/ic_dlp_hedera.svg";
 import gmxAvax from "img/ic_gmx_avax.svg";
 import glpArbitrum from "img/ic_glp_arbitrum.svg";
 import glpAvax from "img/ic_glp_avax.svg";
@@ -27,14 +29,16 @@ const ICONS = {
   },
   [HEDERA_TESTNET]: {
     network: hedera,
+    gmx: dfxHedera,
+    glp: dlpHedera,
   },
   [AVALANCHE_FUJI]: {
     network: avalancheTestnet,
   },
   // TODO: update icons
   common: {
-    gmx: gmxIcon,
-    glp: glpIcon,
+    dfx: dfxIcon,
+    dlp: dlpIcon,
   },
 };
 

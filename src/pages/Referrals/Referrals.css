@@ -80,7 +80,7 @@
 }
 .active-referral-code .tier span {
   font-size: var(--font-sm);
-  color: #a9a9b0;
+  color: #d4d4d4;
   margin-right: 0.775rem;
 }
 .active-referral-code .tier a {
@@ -140,7 +140,7 @@
   margin: 0;
 }
 .referral-table-header .sub-title {
-  color: #a9a9b0;
+  color: #d4d4d4;
   font-size: var(--font-sm);
   margin-left: 0.775rem;
 }
@@ -177,8 +177,9 @@
 }
 
 .info-card {
-  background: var(--dark-blue-bg);
-  border: 1px solid #1e2136;
+  backdrop-filter: blur(22px);
+  background: rgba(0, 0, 0, 0.48);
+  /* border: 1px solid #1e2136; */
   border-radius: 0.4rem;
   display: flex;
   justify-content: center;
@@ -240,7 +241,7 @@
 .referral-table th {
   font-weight: normal;
   letter-spacing: 0.25px;
-  color: #a9a9b0;
+  color: #d4d4d4;
   text-transform: uppercase;
 }
 .referral-table th,

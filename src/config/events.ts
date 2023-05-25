@@ -18,11 +18,11 @@ export const homeEventsData: EventData[] = [];
 export const appEventsData: EventData[] = [
   // {
   //   id: "glp-manager-updates",
-  //   title: "GLP Manager Updates",
+  //   title: "DLP Manager Updates",
   //   isActive: true,
   //   validTill: "18 Dec 2022, 12:00",
   //   bodyText:
-  //     "The GLP Manager address has been updated based on the linked post, existing users will need to approve the new GLP Manager to buy GLP tokens.",
+  //     "The DLP Manager address has been updated based on the linked post, existing users will need to approve the new DLP Manager to buy DLP tokens.",
   //   buttons: [
   //     {
   //       text: "Read More",

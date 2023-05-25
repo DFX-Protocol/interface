@@ -33,12 +33,12 @@ const NETWORK_OPTIONS = [
     icon: getIcon(ARBITRUM, "network"),
     color: "#264f79",
   },
-  {
-    label: getChainName(AVALANCHE),
-    value: AVALANCHE,
-    icon: getIcon(AVALANCHE, "network"),
-    color: "#E841424D",
-  },
+  // {
+  //   label: getChainName(AVALANCHE),
+  //   value: AVALANCHE,
+  //   icon: getIcon(AVALANCHE, "network"),
+  //   color: "#E841424D",
+  // },
 ];
 
 if (isDevelopment()) {
@@ -48,12 +48,12 @@ if (isDevelopment()) {
     icon: getIcon(ARBITRUM_TESTNET, "network"),
     color: "#264f79",
   });
-  NETWORK_OPTIONS.push({
-    label: getChainName(AVALANCHE_FUJI),
-    value: AVALANCHE_FUJI,
-    icon: getIcon(AVALANCHE_FUJI, "network"),
-    color: "#E841424D",
-  });
+  // NETWORK_OPTIONS.push({
+  //   label: getChainName(AVALANCHE_FUJI),
+  //   value: AVALANCHE_FUJI,
+  //   icon: getIcon(AVALANCHE_FUJI, "network"),
+  //   color: "#E841424D",
+  // });
   NETWORK_OPTIONS.push({
     label: getChainName(HEDERA_TESTNET),
     value: HEDERA_TESTNET,

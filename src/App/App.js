@@ -235,13 +235,13 @@ function FullApp() {
           <br />
           {userOnMobileDevice ? (
             <Trans>
-              <ExternalLink href="https://www.coinbase.com/wallet">Install Coinbase Wallet</ExternalLink>, and use GMX
+              <ExternalLink href="https://www.coinbase.com/wallet">Install Coinbase Wallet</ExternalLink>, and use DFX
               with its built-in browser.
             </Trans>
           ) : (
             <Trans>
               <ExternalLink href="https://www.coinbase.com/wallet">Install Coinbase Wallet</ExternalLink> to start using
-              GMX.
+              DFX.
             </Trans>
           )}
         </div>
@@ -509,9 +509,9 @@ function FullApp() {
               <Route exact path="/buy_gmx">
                 <BuyGMX />
               </Route>
-              <Route exact path="/ecosystem">
+              {/* <Route exact path="/ecosystem">
                 <Ecosystem />
-              </Route>
+              </Route> */}
               <Route exact path="/referrals">
                 <Referrals pendingTxns={pendingTxns} connectWallet={connectWallet} setPendingTxns={setPendingTxns} />
               </Route>

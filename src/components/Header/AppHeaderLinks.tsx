@@ -7,7 +7,7 @@ import { HeaderLink } from "./HeaderLink";
 import "./Header.css";
 import { isHomeSite } from "lib/legacy";
 import ExternalLink from "components/ExternalLink/ExternalLink";
-import logoImg from "img/logo_GMX.svg";
+import logoImg from "img/logo_dfx.svg";
 
 type Props = {
   small?: boolean;
@@ -29,7 +29,7 @@ export function AppHeaderLinks({
       {small && (
         <div className="App-header-links-header">
           <Link className="App-header-link-main" to="/">
-            <img src={logoImg} alt="GMX Logo" />
+            <img src={logoImg} alt="DFX Logo" />
           </Link>
           <div
             className="App-header-menu-icon-block mobile-cross-menu"
@@ -67,7 +67,7 @@ export function AppHeaderLinks({
           <Trans>Referrals</Trans>
         </HeaderLink>
       </div>
-      <div className="App-header-link-container">
+      {/* <div className="App-header-link-container">
         <HeaderLink
           to="/ecosystem"
           redirectPopupTimestamp={redirectPopupTimestamp}
@@ -80,7 +80,7 @@ export function AppHeaderLinks({
         <ExternalLink href="https://gmxio.gitbook.io/gmx/">
           <Trans>Docs</Trans>
         </ExternalLink>
-      </div>
+      </div> */}
       {small && !isHomeSite() && (
         <div className="App-header-link-container">
           {/* eslint-disable-next-line */}
