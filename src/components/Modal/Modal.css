@@ -35,7 +35,7 @@
   max-height: 90vh;
   overflow: auto;
   backdrop-filter: blur(22px);
-  background: rgba(0, 0, 0, 0.48);
+  background: rgba(0, 0, 0, 0.30);
   border-radius: 4px;
 }
 

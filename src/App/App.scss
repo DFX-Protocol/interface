@@ -92,7 +92,7 @@
 .App-header-drawer .App-header-link-container a:hover,
 .App-header-drawer .App-header-link-container a:focus,
 .App-header-drawer .App-header-link-container a.active {
-  background: #303fd024;
+  background: #25fade80;
   color: white;
 }
 
@@ -1281,14 +1281,13 @@ button.App-button {
 
   .App-header.small {
     height: 6.2rem;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(22px);
     display: flex;
     justify-content: space-between;
     position: relative;
     padding-left: 1.6rem;
     padding-right: 1.6rem;
-    background: transparent 0% 0% no-repeat padding-box;
-    border-bottom: 1px solid #ffffff10;
+    background: rgba(0, 0, 0, 0.48) 0% 0% no-repeat padding-box;
   }
 
   .App-header.small::after {
