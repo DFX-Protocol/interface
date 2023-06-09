@@ -14,21 +14,24 @@ body,
 @media (max-width: 1080px) {
   body{
     background-image: url("../img/background-mobile.png");
-    background-repeat: no-repeat;
+    min-height: 100%;
     background-attachment: fixed;
-    background-color: var(--primary);
-  
+    background-repeat: no-repeat;
+    /* background-position: center; */
+    background-size: cover;
+    background-color: var(--primary);  
   }
 }
 
 @media (min-width: 1081px) {
   body{
     background-image: url("../img/background.png");
-    background-repeat: no-repeat;
+    min-height: 100%;
     background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
     background-size: 100% 100%;
     background-color: var(--primary);
-  
   }
 }
 
