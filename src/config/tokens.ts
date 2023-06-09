@@ -366,6 +366,16 @@ export const TOKENS: { [chainId: number]: Token[] } = {
   // TODO: Update tokens
   [HEDERA_TESTNET]: [
     {
+      name: "Binance Coin",
+      symbol: "BNB",
+      decimals: 18,
+      address: "0x0000000000000000000000000000000000000000",
+      isShortable: true,
+      coingeckoUrl: "https://www.coingecko.com/en/coins/binance-coin",
+      imageUrl: "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png",
+      isNative: true,
+    },
+    {
       name: "Bitcoin (BTCB)",
       symbol: "BTC",
       decimals: 18,
@@ -377,18 +387,10 @@ export const TOKENS: { [chainId: number]: Token[] } = {
       name: "Ethereum",
       symbol: "ETH",
       decimals: 18,
+      isShortable: true,
       address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
       coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
       imageUrl: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
-    },
-    {
-      name: "Binance Coin",
-      symbol: "BNB",
-      decimals: 18,
-      address: ethers.constants.AddressZero,
-      coingeckoUrl: "https://www.coingecko.com/en/coins/binance-coin",
-      imageUrl: "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png",
-      isNative: true,
     },
     {
       name: "Wrapped Binance Coin",
@@ -422,7 +424,7 @@ export const TOKENS: { [chainId: number]: Token[] } = {
       name: "USD Coin",
       symbol: "USDC",
       decimals: 18,
-      address: "0.0.3120049",
+      address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D57",
       isStable: true,
       coingeckoUrl: "https://www.coingecko.com/en/coins/usd-coin",
       imageUrl: "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png",
