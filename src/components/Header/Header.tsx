@@ -7,6 +7,7 @@ import { AppHeaderLinks } from "./AppHeaderLinks";
 // import logoImg from "img/logo_GMX.svg";
 import logoImg from "img/logo_dfx.svg";
 import logoSmallImg from "img/logo_dfx.svg";
+import logoIcon from "img/logo.svg";
 // import logoSmallImg from "img/logo_GMX_small.svg";
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -130,7 +131,7 @@ export function Header({
               </div>
               <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                 <img src={logoImg} className="big" alt="DFX Logo" />
-                <img src={logoSmallImg} className="small" alt="DFX Logo" />
+                <img src={logoIcon} className="small" alt="DFX Logo" />
               </div>
             </div>
             <div className="App-header-container-right">
