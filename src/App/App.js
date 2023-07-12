@@ -20,7 +20,6 @@ import Home from "pages/Home/Home";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Stats from "pages/Stats/Stats";
 import ReferralsTier from "pages/ReferralsTier/ReferralsTier";
-import Ecosystem from "pages/Ecosystem/Ecosystem";
 import Stake from "pages/Stake/Stake";
 import { Exchange } from "pages/Exchange/Exchange";
 import Actions from "pages/Actions/Actions";

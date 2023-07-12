@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { getContract } from "./contracts";
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET, MAINNET, TESTNET } from "./chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET, MAINNET, SEPOLIA, TESTNET } from "./chains";
 import { Token } from "domain/tokens";
 
 export const TOKENS: { [chainId: number]: Token[] } = {
@@ -439,6 +439,121 @@ export const TOKENS: { [chainId: number]: Token[] } = {
       imageUrl: "https://assets.coingecko.com/coins/images/325/small/Tether-logo.png",
     },
   ],
+  [SEPOLIA]: [
+    {
+      name: "Ethereum",
+      symbol: "ETH",
+      decimals: 18,
+      address: ethers.constants.AddressZero,
+      isNative: true,
+      isShortable: true,
+      imageUrl: "https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
+    },
+    {
+      name: "Wrapped Ether",
+      symbol: "WETH",
+      decimals: 18,
+      address: getContract(SEPOLIA, "NATIVE_TOKEN"), // This should match NATIVE_TOKEN in contracts.ts
+      isShortable: true,
+      isWrapped: true,
+      imageUrl: "https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
+    },
+    {
+      name: "USD Gambit",
+      symbol: "USDG",
+      decimals: 18,
+      address: getContract(SEPOLIA, "USDG"),
+      isUsdg: true,
+      coingeckoUrl: "https://www.coingecko.com/en/coins/usd-gambit",
+      imageUrl: "https://assets.coingecko.com/coins/images/15886/small/usdg-02.png",
+    },
+    {
+      name: "Bitcoin (WBTC)",
+      symbol: "BTC",
+      decimals: 18, // Changed this to match mock token decimals
+      address: getContract(SEPOLIA, "BTC"),
+      isShortable: true,
+      imageUrl: "https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744",
+    },
+    {
+      name: "Binance Coin",
+      symbol: "BNB",
+      decimals: 18,
+      address: getContract(SEPOLIA, "BNB"),
+      isShortable: true,
+      coingeckoUrl: "https://www.coingecko.com/en/coins/binance-coin",
+      imageUrl: "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png",
+      isNative: true,
+    },
+    // {
+    //   name: "Chainlink",
+    //   symbol: "LINK",
+    //   decimals: 18,
+    //   address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
+    //   isStable: false,
+    //   isShortable: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/877/thumb/chainlink-new-logo.png?1547034700",
+    // },
+    // {
+    //   name: "Uniswap",
+    //   symbol: "UNI",
+    //   decimals: 18,
+    //   address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
+    //   isStable: false,
+    //   isShortable: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/12504/thumb/uniswap-uni.png?1600306604",
+    // },
+    // {
+    //   name: "USD Coin",
+    //   symbol: "USDC",
+    //   decimals: 6,
+    //   address: "0x290ddff16eDDD30Fc5214d357c3502980266dAC4",
+    //   isStable: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389",
+    // },
+    {
+      name: "Tether",
+      symbol: "USDT",
+      decimals: 18,
+      address: getContract(SEPOLIA, "USDT"),
+      isStable: true,
+      imageUrl: "https://assets.coingecko.com/coins/images/325/thumb/Tether-logo.png?1598003707",
+    },
+    {
+      name: "Binance USD",
+      symbol: "BUSD",
+      decimals: 18,
+      address: getContract(SEPOLIA, "BUSD"),
+      isStable: true,
+      coingeckoUrl: "https://www.coingecko.com/en/coins/binance-usd",
+      imageUrl: "https://assets.coingecko.com/coins/images/9576/small/BUSD.png",
+    },
+    // {
+    //   name: "Dai",
+    //   symbol: "DAI",
+    //   decimals: 18,
+    //   address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    //   isStable: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734",
+    // },
+    // {
+    //   name: "Frax",
+    //   symbol: "FRAX",
+    //   decimals: 18,
+    //   address: "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
+    //   isStable: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/13422/small/frax_logo.png?1608476506",
+    // },
+    // {
+    //   name: "Magic Internet Money",
+    //   symbol: "MIM",
+    //   decimals: 18,
+    //   address: "0xFEa7a6a0B346362BF88A9e4A88416B77a57D6c2A",
+    //   isStable: true,
+    //   isTempHidden: true,
+    //   imageUrl: "https://assets.coingecko.com/coins/images/16786/small/mimlogopng.png",
+    // },
+  ],
 };
 
 export const ADDITIONAL_TOKENS: { [chainId: number]: Token[] } = {
@@ -509,6 +624,28 @@ export const ADDITIONAL_TOKENS: { [chainId: number]: Token[] } = {
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
+  [SEPOLIA]: [
+    {
+      name: "GMX",
+      symbol: "GMX",
+      address: getContract(SEPOLIA, "GMX"),
+      decimals: 18,
+      imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+    },
+    {
+      name: "Escrowed GMX",
+      symbol: "esGMX",
+      address: getContract(SEPOLIA, "ES_GMX"),
+      decimals: 18,
+    },
+    {
+      name: "GMX LP",
+      symbol: "GLP",
+      address: getContract(SEPOLIA, "GLP"),
+      decimals: 18,
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+    },
+  ],
 };
 
 export const PLATFORM_TOKENS: { [chainId: number]: { [symbol: string]: Token } } = {
@@ -561,6 +698,23 @@ export const PLATFORM_TOKENS: { [chainId: number]: { [symbol: string]: Token } }
       symbol: "GLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+    },
+  },
+  [SEPOLIA]: {
+    // arbitrum
+    GMX: {
+      name: "GMX",
+      symbol: "GMX",
+      decimals: 18,
+      address: getContract(SEPOLIA, "GMX"),
+      imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+    },
+    GLP: {
+      name: "GMX LP",
+      symbol: "GLP",
+      decimals: 18,
+      address: getContract(SEPOLIA, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
@@ -716,6 +870,51 @@ export const ICONLINKS = {
       arbitrum: "https://arbiscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
     },
   },
+  [SEPOLIA]: {
+    GMX: {
+      coingecko: "https://www.coingecko.com/en/coins/gmx",
+      sepolia: "https://sepolia.etherscan.io/address/0x7419462686053b66B657353D6dFe69BfdB2a3554",
+    },
+    GLP: {
+      sepolia: "https://sepolia.etherscan.io/token/0x196b6BDFFC308B031Ac87183D8db1f06a46d821E",
+      reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=ARBITRUM",
+    },
+    ETH: {
+      coingecko: "https://www.coingecko.com/en/coins/ethereum",
+    },
+    BTC: {
+      coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
+      sepolia: "https://sepolia.etherscan.io/address/0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+    },
+    // LINK: {
+    //   coingecko: "https://www.coingecko.com/en/coins/chainlink",
+    //   sepolia: "https://sepolia.etherscan.io/address/0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+    // },
+    // UNI: {
+    //   coingecko: "https://www.coingecko.com/en/coins/uniswap",
+    //   sepolia: "https://sepolia.etherscan.io/address/0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+    // },
+    USDC: {
+      coingecko: "https://www.coingecko.com/en/coins/usd-coin",
+      sepolia: "https://sepolia.etherscan.io/address/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+    },
+    USDT: {
+      coingecko: "https://www.coingecko.com/en/coins/tether",
+      sepolia: "https://sepolia.etherscan.io/address/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+    },
+    // DAI: {
+    //   coingecko: "https://www.coingecko.com/en/coins/dai",
+    //   sepolia: "https://sepolia.etherscan.io/address/0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+    // },
+    // MIM: {
+    //   coingecko: "https://www.coingecko.com/en/coins/magic-internet-money",
+    //   sepolia: "https://sepolia.etherscan.io/address/0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a",
+    // },
+    // FRAX: {
+    //   coingecko: "https://www.coingecko.com/en/coins/frax",
+    //   sepolia: "https://sepolia.etherscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+    // },
+  },
 };
 
 export const GLP_POOL_COLORS = {
@@ -738,7 +937,7 @@ export const TOKENS_BY_SYMBOL_MAP: { [chainId: number]: { [symbol: string]: Toke
 export const WRAPPED_TOKENS_MAP: { [chainId: number]: Token } = {};
 export const NATIVE_TOKENS_MAP: { [chainId: number]: Token } = {};
 
-const CHAIN_IDS = [MAINNET, TESTNET, ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET];
+const CHAIN_IDS = [MAINNET, TESTNET, ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET, SEPOLIA];
 
 for (let j = 0; j < CHAIN_IDS.length; j++) {
   const chainId = CHAIN_IDS[j];

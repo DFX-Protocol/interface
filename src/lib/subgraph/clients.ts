@@ -1,5 +1,5 @@
 import { createClient } from "./utils";
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, ETH_MAINNET, HEDERA_TESTNET } from "config/chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, ETH_MAINNET, HEDERA_TESTNET, SEPOLIA } from "config/chains";
 
 export const chainlinkClient = createClient(ETH_MAINNET, "chainLink");
 
@@ -10,6 +10,9 @@ export const nissohGraphClient = createClient(ARBITRUM, "nissohVault");
 export const hederaTestnetGraphClient = createClient(HEDERA_TESTNET, "stats");
 export const hederaTestnetReferralsGraphClient = createClient(HEDERA_TESTNET, "referrals");
 // export const nissohGraphClient = createClient(ARBITRUM, "nissohVault");
+
+export const SepoliaGraphClient = createClient(SEPOLIA, "stats");
+export const SepoliaReferralsGraphClient = createClient(SEPOLIA, "referrals");
 
 
 export const avalancheGraphClient = createClient(AVALANCHE, "stats");
@@ -24,6 +27,8 @@ export function getGmxGraphClient(chainId: number) {
     return null;
   } else if (chainId === HEDERA_TESTNET) {
     return hederaTestnetGraphClient;
+  } else if (chainId === SEPOLIA) {
+    return SepoliaGraphClient;
   }
 
   throw new Error(`Unsupported chain ${chainId}`);

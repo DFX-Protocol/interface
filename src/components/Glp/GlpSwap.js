@@ -38,9 +38,6 @@ import RewardTracker from "abis/RewardTracker.json";
 import Vester from "abis/Vester.json";
 import RewardRouter from "abis/RewardRouter.json";
 import Token from "abis/Token.json";
-
-import arrowIcon from "img/ic_convert_down.svg";
-
 import "./GlpSwap.css";
 import AssetDropdown from "pages/Dashboard/AssetDropdown";
 import SwapErrorModal from "./SwapErrorModal";

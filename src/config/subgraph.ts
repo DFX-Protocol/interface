@@ -1,4 +1,4 @@
-import { ARBITRUM, AVALANCHE, ETH_MAINNET, HEDERA_TESTNET } from "./chains";
+import { ARBITRUM, AVALANCHE, ETH_MAINNET, HEDERA_TESTNET, SEPOLIA } from "./chains";
 import { isDevelopment } from "./env";
 import { getSubgraphUrlKey } from "./localStorage";
 
@@ -22,6 +22,13 @@ const SUBGRAPH_URLS = {
   },
   // TODO: Add hedera subgraph URL
   [HEDERA_TESTNET]: {
+    // stats: "https://api.thegraph.com/subgraphs/name/gdev8317/gmx-arbitrum-stats
+    stats: "https://api.thegraph.com/subgraphs/name/gmx-io/gmx-stats",
+    referrals: "https://api.thegraph.com/subgraphs/name/gmx-io/gmx-arbitrum-referrals",
+    nissohVault: "https://api.thegraph.com/subgraphs/name/nissoh/gmx-vault",
+  },
+  // TODO: Add sepolia subgraph URL
+  [SEPOLIA]: {
     // stats: "https://api.thegraph.com/subgraphs/name/gdev8317/gmx-arbitrum-stats
     stats: "https://api.thegraph.com/subgraphs/name/gmx-io/gmx-stats",
     referrals: "https://api.thegraph.com/subgraphs/name/gmx-io/gmx-arbitrum-referrals",
