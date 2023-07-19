@@ -8,7 +8,7 @@ import Timelock from "abis/Timelock.json";
 import { MAX_REFERRAL_CODE_LENGTH, isAddressZero, isHashZero } from "lib/legacy";
 import { getContract } from "config/contracts";
 import { REGEX_VERIFY_BYTES32 } from "components/Referrals/referralsHelper";
-import { SUPPORTED_CHAIN_IDS, ARBITRUM, AVALANCHE } from "config/chains";
+import { SUPPORTED_CHAIN_IDS, ARBITRUM, AVALANCHE, SEPOLIA } from "config/chains";
 import { arbitrumReferralsGraphClient, avalancheReferralsGraphClient } from "lib/subgraph/clients";
 import { callContract, contractFetcher } from "lib/contracts";
 import { helperToast } from "lib/helperToast";
@@ -20,6 +20,10 @@ export function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
   } else if (chainId === AVALANCHE) {
+    return avalancheReferralsGraphClient;
+  }
+  // TODO: Change this when deploying on mainnet
+  else if (chainId === SEPOLIA) {
     return avalancheReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
