@@ -20,7 +20,7 @@ import { t } from "@lingui/macro";
 import { isLocal } from "config/env";
 
 const { AddressZero } = ethers.constants;
-
+// TODO: Update following params according to backend
 // use a random placeholder account instead of the zero address as the zero address might have tokens
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 

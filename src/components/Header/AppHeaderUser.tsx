@@ -11,7 +11,7 @@ import cx from "classnames";
 import { Trans } from "@lingui/macro";
 import NetworkDropdown from "../NetworkDropdown/NetworkDropdown";
 import LanguagePopupHome from "../NetworkDropdown/LanguagePopupHome";
-import { ARBITRUM, ARBITRUM_TESTNET, HEDERA_TESTNET, getChainName, SEPOLIA } from "config/chains";
+import { ARBITRUM, ARBITRUM_TESTNET, HEDERA_TESTNET, getChainName, SEPOLIA, BASE_TESTNET } from "config/chains";
 import { switchNetwork } from "lib/wallets";
 import { useChainId } from "lib/chains";
 import { isDevelopment } from "config/env";
@@ -66,6 +66,13 @@ if (isDevelopment()) {
     icon: getIcon(SEPOLIA, "network"),
     color: "#E841424D",
   });
+  NETWORK_OPTIONS.push({
+    label: getChainName(BASE_TESTNET),
+    value: BASE_TESTNET,
+    icon: getIcon(BASE_TESTNET, "network"),
+    color: "#E841424D",
+  });
+
 }
 
 export function AppHeaderUser({

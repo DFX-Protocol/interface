@@ -15,22 +15,24 @@ export const ARBITRUM_TESTNET = 421611;
 export const FEES_HIGH_BPS = 50;
 export const HEDERA_TESTNET = 296;
 export const SEPOLIA = 11155111;
+export const BASE_TESTNET = 84531;
 
 // TODO take it from web3
-export const DEFAULT_CHAIN_ID = ARBITRUM;
+export const DEFAULT_CHAIN_ID = BASE_TESTNET;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
-export const SUPPORTED_CHAIN_IDS = [ARBITRUM, AVALANCHE, HEDERA_TESTNET, SEPOLIA];
+export const SUPPORTED_CHAIN_IDS = [ARBITRUM, AVALANCHE, HEDERA_TESTNET, SEPOLIA, BASE_TESTNET];
 
 if (isDevelopment()) {
-  SUPPORTED_CHAIN_IDS.push(ARBITRUM_TESTNET, AVALANCHE_FUJI, HEDERA_TESTNET, SEPOLIA);
+  SUPPORTED_CHAIN_IDS.push(ARBITRUM_TESTNET, AVALANCHE_FUJI, HEDERA_TESTNET, SEPOLIA, BASE_TESTNET);
 }
 
 export const IS_NETWORK_DISABLED = {
   [ARBITRUM]: false,
   [AVALANCHE]: false,
   [HEDERA_TESTNET]: false,
-  [SEPOLIA]: false
+  [SEPOLIA]: false,
+  [BASE_TESTNET]: false
 };
 
 export const CHAIN_NAMES_MAP = {
@@ -41,7 +43,8 @@ export const CHAIN_NAMES_MAP = {
   [AVALANCHE]: "Avalanche",
   [AVALANCHE_FUJI]: "Avalanche Fuji",
   [HEDERA_TESTNET]: "Hedera Testnet",
-  [SEPOLIA]: "Sepolia Testnet"
+  [SEPOLIA]: "Sepolia Testnet",
+  [BASE_TESTNET]: "Base Testnet"
 };
 
 export const GAS_PRICE_ADJUSTMENT_MAP = {
@@ -49,6 +52,7 @@ export const GAS_PRICE_ADJUSTMENT_MAP = {
   [AVALANCHE]: "3000000000", // 3 gwei
   [HEDERA_TESTNET]: "0",
   [SEPOLIA]: "0",
+  [BASE_TESTNET]: "1000000000" // 1 gwei
 };
 
 export const MAX_GAS_PRICE_MAP = {
@@ -60,6 +64,7 @@ export const HIGH_EXECUTION_FEES_MAP = {
   [AVALANCHE]: 3, // 3 USD
   [HEDERA_TESTNET]: 3,
   [SEPOLIA]: 3,
+  [BASE_TESTNET]: 2 // 2 USD
 };
 
 const constants = {
@@ -161,6 +166,19 @@ const constants = {
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
   },
+  [BASE_TESTNET]: {
+    nativeTokenSymbol: "ETH",
+    wrappedTokenSymbol: "WETH",
+    defaultCollateralSymbol: "USDT",
+    defaultFlagOrdersEnabled: false,
+    positionReaderPropsLength: 9,
+    v2: true,
+
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    // contract requires that execution fee be strictly greater than instead of gte
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
+  },
 };
 
 const ALCHEMY_WHITELISTED_DOMAINS = ["gmx.io", "app.gmx.io"];
@@ -188,7 +206,8 @@ export const RPC_PROVIDERS = {
   [AVALANCHE]: ["https://api.avax.network/ext/bc/C/rpc"],
   [AVALANCHE_FUJI]: ["https://api.avax-test.network/ext/bc/C/rpc"],
   [HEDERA_TESTNET]: ["https://testnet.hashio.io/api"],
-  [SEPOLIA]: ["https://eth-sepolia.public.blastapi.io"]
+  [SEPOLIA]: ["https://eth-sepolia.public.blastapi.io"],
+  [BASE_TESTNET]: ["https://base-goerli.blockpi.network/v1/rpc/public"]
 };
 
 export const FALLBACK_PROVIDERS = {
@@ -285,6 +304,17 @@ export const NETWORK_METADATA: { [chainId: number]: NetworkMetadata } = {
     rpcUrls: RPC_PROVIDERS[SEPOLIA],
     blockExplorerUrls: ["https://sepolia.etherscan.io"],
   },
+  [BASE_TESTNET]: {
+    chainId: "0x" + BASE_TESTNET.toString(16),
+    chainName: "Base Testnet",
+    nativeCurrency: {
+      name: "ETH",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    rpcUrls: RPC_PROVIDERS[BASE_TESTNET],
+    blockExplorerUrls: ["https://goerli.basescan.org/"],
+  },
 };
 
 export const getConstant = (chainId: number, key: string) => {
@@ -349,6 +379,8 @@ export function getExplorerUrl(chainId) {
     return "https://hashscan.io/testnet/dashboard";
   } else if (chainId === SEPOLIA) {
     return "https://sepolia.etherscan.io/";
+  } else if (chainId === BASE_TESTNET) {
+    return "https://goerli.basescan.org/";
   }
   return "https://etherscan.io/";
 }

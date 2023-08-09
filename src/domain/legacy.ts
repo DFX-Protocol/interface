@@ -15,7 +15,7 @@ import Token from "abis/Token.json";
 import PositionRouter from "abis/PositionRouter.json";
 
 import { getContract } from "config/contracts";
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, SEPOLIA, getConstant, getHighExecutionFee } from "config/chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, BASE_TESTNET, SEPOLIA, getConstant, getHighExecutionFee } from "config/chains";
 import { DECREASE, getOrderKey, INCREASE, SWAP, USD_DECIMALS } from "lib/legacy";
 
 import { groupBy } from "lodash";
@@ -381,7 +381,6 @@ export function useExecutionFee(library, active, chainId, infoTokens) {
   });
 
   let multiplier;
-  // TODO: Update multiplier for hedera
   if (chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) {
     multiplier = 2150000;
   }
@@ -390,8 +389,11 @@ export function useExecutionFee(library, active, chainId, infoTokens) {
   if (chainId === AVALANCHE) {
     multiplier = 700000;
   }
-
+  // TODO: Update multiplier for hedera
   if (chainId === SEPOLIA) {
+    multiplier = 2150000;
+  }
+  if (chainId === BASE_TESTNET) {
     multiplier = 2150000;
   }
   let finalExecutionFee = minExecutionFee;

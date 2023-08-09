@@ -1,9 +1,10 @@
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, HEDERA_TESTNET, SEPOLIA } from "config/chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, AVALANCHE_FUJI, BASE_TESTNET, HEDERA_TESTNET, SEPOLIA } from "config/chains";
 import arbitrum from "img/ic_arbitrum_24.svg";
 import avalanche from "img/ic_avalanche_24.svg";
 import avalancheTestnet from "img/ic_avalanche_testnet_24.svg";
 import hedera from "img/ic_hedera_24.svg";
 import sepolia from "img/ic_sepolia_24.svg";
+import base from "img/ic_base_24.svg";
 
 import dfxIcon from "img/ic_dfx.svg";
 import dlpIcon from "img/ic_dlp.svg";
@@ -41,6 +42,13 @@ const ICONS = {
     gmx: dfxHedera,
     glp: dlpHedera,
   },
+  // TODO: Update below icons
+  [BASE_TESTNET]: {
+    network: base,
+    gmx: dfxHedera,
+    glp: dlpHedera,
+  },
+
   // TODO: update icons
   common: {
     dfx: dfxIcon,
