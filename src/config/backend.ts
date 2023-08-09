@@ -1,7 +1,7 @@
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, MAINNET } from "./chains";
+import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, BASE_TESTNET, MAINNET } from "./chains";
 
 // TODO: update stats API URL
-export const GMX_STATS_API_URL = "https://stats.gmx.io/api";
+export const GMX_STATS_API_URL = "https://arbitrum.gmx-oracle.io/";
 // TODO: Remove backend probably
 const BACKEND_URLS = {
   default: "https://gmx-server-mainnet.uw.r.appspot.com",
@@ -10,6 +10,7 @@ const BACKEND_URLS = {
   [ARBITRUM_TESTNET]: "https://gambit-server-devnet.uc.r.appspot.com",
   [ARBITRUM]: "https://gmx-server-mainnet.uw.r.appspot.com",
   [AVALANCHE]: "https://gmx-avax-server.uc.r.appspot.com",
+  // [BASE_TESTNET]: "https://gmx-server-mainnet.uw.r.appspot.com",
 };
 
 export function getServerBaseUrl(chainId: number) {
