@@ -15,7 +15,7 @@ export const ARBITRUM_TESTNET = 421611;
 export const FEES_HIGH_BPS = 50;
 export const HEDERA_TESTNET = 296;
 export const SEPOLIA = 11155111;
-export const BASE_TESTNET = 84531;
+export const BASE_TESTNET = 84532;
 
 // TODO take it from web3
 export const DEFAULT_CHAIN_ID = BASE_TESTNET;
@@ -207,7 +207,7 @@ export const RPC_PROVIDERS = {
   [AVALANCHE_FUJI]: ["https://api.avax-test.network/ext/bc/C/rpc"],
   [HEDERA_TESTNET]: ["https://testnet.hashio.io/api"],
   [SEPOLIA]: ["https://eth-sepolia.public.blastapi.io"],
-  [BASE_TESTNET]: ["https://base-goerli.blockpi.network/v1/rpc/public"]
+  [BASE_TESTNET]: ["https://sepolia.base.org"]
 };
 
 export const FALLBACK_PROVIDERS = {
@@ -313,7 +313,7 @@ export const NETWORK_METADATA: { [chainId: number]: NetworkMetadata } = {
       decimals: 18,
     },
     rpcUrls: RPC_PROVIDERS[BASE_TESTNET],
-    blockExplorerUrls: ["https://goerli.basescan.org/"],
+    blockExplorerUrls: ["https://sepolia.basescan.org/"],
   },
 };
 
@@ -380,7 +380,7 @@ export function getExplorerUrl(chainId) {
   } else if (chainId === SEPOLIA) {
     return "https://sepolia.etherscan.io/";
   } else if (chainId === BASE_TESTNET) {
-    return "https://goerli.basescan.org/";
+    return "https://sepolia.basescan.org/";
   }
   return "https://etherscan.io/";
 }

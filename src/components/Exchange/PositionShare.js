@@ -40,7 +40,7 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
   const sharePositionBgImg = useLoadImage(shareBgImg);
   const positionRef = useRef();
   const tweetLink = getTwitterIntentURL(
-    `Latest $${positionToShare?.indexToken?.symbol} trade on @GMX_IO`,
+    `Latest $${positionToShare?.indexToken?.symbol} trade on @DFX_SO`,
     getShareURL(uploadedImageInfo, userAffiliateCode)
   );
 
@@ -167,7 +167,7 @@ function PositionShareCard({
                 <p className="code">{code}</p>
               </>
             ) : (
-              <p className="code">https://gmx.io</p>
+              <p className="code">https://dfx.so</p>
             )}
           </div>
         </div>

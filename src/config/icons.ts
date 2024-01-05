@@ -11,6 +11,8 @@ import dlpIcon from "img/ic_dlp.svg";
 import gmxArbitrum from "img/ic_gmx_arbitrum.svg";
 import dfxHedera from "img/ic_dfx_hedera.svg";
 import dlpHedera from "img/ic_dlp_hedera.svg";
+import dfxBaseTestnet from "img/ic_dfx_base_white.svg";
+import dlpBaseTestnet from "img/ic_dlp_base_white.svg";
 import gmxAvax from "img/ic_gmx_avax.svg";
 import glpArbitrum from "img/ic_glp_arbitrum.svg";
 import glpAvax from "img/ic_glp_avax.svg";
@@ -42,14 +44,12 @@ const ICONS = {
     gmx: dfxHedera,
     glp: dlpHedera,
   },
-  // TODO: Update below icons
   [BASE_TESTNET]: {
     network: base,
-    gmx: dfxHedera,
-    glp: dlpHedera,
+    gmx: dfxBaseTestnet,
+    glp: dlpBaseTestnet,
   },
 
-  // TODO: update icons
   common: {
     dfx: dfxIcon,
     dlp: dlpIcon,

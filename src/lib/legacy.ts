@@ -1429,7 +1429,7 @@ export function getHomeUrl() {
     return "http://localhost:3010";
   }
 
-  return "https://gmx.io";
+  return "https://dfx.so";
 }
 
 export function getAppBaseUrl() {
@@ -1437,7 +1437,7 @@ export function getAppBaseUrl() {
     return "http://localhost:3011/#";
   }
 
-  return "https://app.gmx.io/#";
+  return "https://app.dfx.so/#";
 }
 
 export function getRootShareApiUrl() {
@@ -1453,7 +1453,7 @@ export function getTradePageUrl() {
     return "http://localhost:3011/#/trade";
   }
 
-  return "https://app.gmx.io/#/trade";
+  return "https://app.dfx.so/#/trade";
 }
 
 export function importImage(name) {
