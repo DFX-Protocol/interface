@@ -21,17 +21,17 @@ export const BASE_TESTNET = 84532;
 export const DEFAULT_CHAIN_ID = BASE_TESTNET;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
-export const SUPPORTED_CHAIN_IDS = [ARBITRUM, AVALANCHE, HEDERA_TESTNET, SEPOLIA, BASE_TESTNET];
+export const SUPPORTED_CHAIN_IDS = [BASE_TESTNET];
 
 if (isDevelopment()) {
-  SUPPORTED_CHAIN_IDS.push(ARBITRUM_TESTNET, AVALANCHE_FUJI, HEDERA_TESTNET, SEPOLIA, BASE_TESTNET);
+  SUPPORTED_CHAIN_IDS.push(BASE_TESTNET);
 }
 
 export const IS_NETWORK_DISABLED = {
-  [ARBITRUM]: false,
-  [AVALANCHE]: false,
-  [HEDERA_TESTNET]: false,
-  [SEPOLIA]: false,
+  [ARBITRUM]: true,
+  [AVALANCHE]: true,
+  [HEDERA_TESTNET]: true,
+  [SEPOLIA]: true,
   [BASE_TESTNET]: false
 };
 
@@ -181,7 +181,7 @@ const constants = {
   },
 };
 
-const ALCHEMY_WHITELISTED_DOMAINS = ["gmx.io", "app.gmx.io"];
+const ALCHEMY_WHITELISTED_DOMAINS = ["dfx.so", "app.dfx.so"];
 
 export const RPC_PROVIDERS = {
   [ETH_MAINNET]: ["https://rpc.ankr.com/eth"],

@@ -21,7 +21,7 @@ export const BaseTestnetReferralsGraphClient = createClient(BASE_TESTNET, "refer
 export const avalancheGraphClient = createClient(AVALANCHE, "stats");
 export const avalancheReferralsGraphClient = createClient(AVALANCHE, "referrals");
 
-export function getGmxGraphClient(chainId: number) {
+export function getDfxGraphClient(chainId: number) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
   } else if (chainId === AVALANCHE) {

@@ -17,7 +17,7 @@ export const homeEventsData: EventData[] = [];
 
 export const appEventsData: EventData[] = [
   // {
-  //   id: "glp-manager-updates",
+  //   id: "dlp-manager-updates",
   //   title: "DLP Manager Updates",
   //   isActive: true,
   //   validTill: "18 Dec 2022, 12:00",
@@ -26,7 +26,7 @@ export const appEventsData: EventData[] = [
   //   buttons: [
   //     {
   //       text: "Read More",
-  //       link: "https://medium.com/@gmx.io/gmx-deployment-updates-nov-2022-16572314874d",
+  //       link: "https://medium.com/@dfx.so/dfx-deployment-updates-nov-2022-16572314874d",
   //       newTab: true,
   //     },
   //   ],

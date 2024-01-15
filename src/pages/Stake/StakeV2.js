@@ -13,11 +13,11 @@ import Vester from "abis/Vester.json";
 import RewardRouter from "abis/RewardRouter.json";
 import RewardReader from "abis/RewardReader.json";
 import Token from "abis/Token.json";
-import GlpManager from "abis/GlpManager.json";
+import DlpManager from "abis/DlpManager.json";
 
 import { ethers } from "ethers";
 import {
-  GLP_DECIMALS,
+  DLP_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
   PLACEHOLDER_ACCOUNT,
@@ -28,7 +28,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "lib/legacy";
-import { useGmxPrice, useTotalGmxStaked, useTotalGmxSupply } from "domain/legacy";
+import { useDfxPrice, useTotalDfxStaked, useTotalDfxSupply } from "domain/legacy";
 import { ARBITRUM, getChainName, getConstant } from "config/chains";
 
 import useSWR from "swr";
@@ -47,7 +47,7 @@ import { approveTokens } from "domain/tokens";
 import { bigNumberify, expandDecimals, formatAmount, formatAmountFree, formatKeyAmount, parseValue } from "lib/numbers";
 import { useChainId } from "lib/chains";
 import ExternalLink from "components/ExternalLink/ExternalLink";
-import GMXAprTooltip from "components/Stake/GMXAprTooltip";
+import DFXAprTooltip from "components/Stake/DFXAprTooltip";
 import Button from "components/Button/Button";
 
 const { AddressZero } = ethers.constants;
@@ -204,7 +204,7 @@ function UnstakeModal(props) {
     unstakeMethodName,
     multiplierPointsAmount,
     reservedAmount,
-    bonusGmxInFeeGmx,
+    bonusDfxInFeeDfx,
     setPendingTxns,
   } = props;
   const [isUnstaking, setIsUnstaking] = useState(false);
@@ -217,16 +217,16 @@ function UnstakeModal(props) {
     multiplierPointsAmount.gt(0) &&
     amount &&
     amount.gt(0) &&
-    bonusGmxInFeeGmx &&
-    bonusGmxInFeeGmx.gt(0)
+    bonusDfxInFeeDfx &&
+    bonusDfxInFeeDfx.gt(0)
   ) {
-    burnAmount = multiplierPointsAmount.mul(amount).div(bonusGmxInFeeGmx);
+    burnAmount = multiplierPointsAmount.mul(amount).div(bonusDfxInFeeDfx);
   }
 
   const shouldShowReductionAmount = true;
   let rewardReductionBasisPoints;
-  if (burnAmount && bonusGmxInFeeGmx) {
-    rewardReductionBasisPoints = burnAmount.mul(BASIS_POINTS_DIVISOR).div(bonusGmxInFeeGmx);
+  if (burnAmount && bonusDfxInFeeDfx) {
+    rewardReductionBasisPoints = burnAmount.mul(BASIS_POINTS_DIVISOR).div(bonusDfxInFeeDfx);
   }
 
   const getError = () => {
@@ -313,7 +313,7 @@ function UnstakeModal(props) {
           <div className="Modal-note">
             <Trans>
               Unstaking will burn&nbsp;
-              <ExternalLink className="display-inline" href="https://gmxio.gitbook.io/gmx/rewards">
+              <ExternalLink className="display-inline" href="https://docs.dfx.so">
                 {formatAmount(burnAmount, 18, 4, true)} Multiplier Points
               </ExternalLink>
               .&nbsp;
@@ -452,7 +452,7 @@ function VesterDepositModal(props) {
                   onChange={(e) => setValue(e.target.value)}
                 />
               </div>
-              <div className="PositionEditor-token-symbol">esGMX</div>
+              <div className="PositionEditor-token-symbol">esDFX</div>
             </div>
           </div>
           <div className="VesterDepositModal-info-rows">
@@ -460,7 +460,7 @@ function VesterDepositModal(props) {
               <div className="Exchange-info-label">
                 <Trans>Wallet</Trans>
               </div>
-              <div className="align-right">{formatAmount(balance, 18, 2, true)} esGMX</div>
+              <div className="align-right">{formatAmount(balance, 18, 2, true)} esDFX</div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">
@@ -484,12 +484,12 @@ function VesterDepositModal(props) {
                         <StatsTooltipRow
                           showDollar={false}
                           label={t`Deposited`}
-                          value={`${formatAmount(vestedAmount, 18, 2, true)} esGMX`}
+                          value={`${formatAmount(vestedAmount, 18, 2, true)} esDFX`}
                         />
                         <StatsTooltipRow
                           showDollar={false}
                           label={t`Max Capacity`}
-                          value={`${formatAmount(maxVestableAmount, 18, 2, true)} esGMX`}
+                          value={`${formatAmount(maxVestableAmount, 18, 2, true)} esDFX`}
                         />
                       </div>
                     );
@@ -530,7 +530,7 @@ function VesterDepositModal(props) {
                             <br />
                             <Trans>
                               You need a total of at least {formatAmount(nextReserveAmount, 18, 2, true)}{" "}
-                              {stakeTokenLabel} to vest {formatAmount(amount, 18, 2, true)} esGMX.
+                              {stakeTokenLabel} to vest {formatAmount(amount, 18, 2, true)} esDFX.
                             </Trans>
                           </>
                         )}
@@ -582,7 +582,7 @@ function VesterWithdrawModal(props) {
             This will withdraw and unreserve all tokens as well as pause vesting.
             <br />
             <br />
-            esGMX tokens that have been converted to DFX will remain as DFX tokens.
+            esDFX tokens that have been converted to DFX will remain as DFX tokens.
             <br />
             <br />
             To claim DFX tokens without withdrawing, use the "Claim" button under the Total Rewards section.
@@ -616,20 +616,20 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-gmx"],
+  const [shouldClaimDfx, setShouldClaimDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-dfx"],
     true
   );
-  const [shouldStakeGmx, setShouldStakeGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-gmx"],
+  const [shouldStakeDfx, setShouldStakeDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-dfx"],
     true
   );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-es-gmx"],
+  const [shouldClaimEsDfx, setShouldClaimEsDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-es-dfx"],
     true
   );
-  const [shouldStakeEsGmx, setShouldStakeEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-es-gmx"],
+  const [shouldStakeEsDfx, setShouldStakeEsDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-es-dfx"],
     true
   );
   const [shouldStakeMultiplierPoints, setShouldStakeMultiplierPoints] = useState(true);
@@ -642,19 +642,19 @@ function CompoundModal(props) {
     true
   );
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
+  const dfxAddress = getContract(chainId, "DFX");
+  const stakedDfxTrackerAddress = getContract(chainId, "StakedDfxTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress],
+    active && [active, chainId, dfxAddress, "allowance", account, stakedDfxTrackerAddress],
     {
       fetcher: contractFetcher(library, Token),
     }
   );
 
-  const needApproval = shouldStakeGmx && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
+  const needApproval = shouldStakeDfx && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
 
   const isPrimaryEnabled = () => {
     return !isCompounding && !isApproving && !isCompounding;
@@ -678,8 +678,8 @@ function CompoundModal(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: dfxAddress,
+        spender: stakedDfxTrackerAddress,
         chainId,
       });
       return;
@@ -693,10 +693,10 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx || shouldStakeGmx,
-        shouldStakeGmx,
-        shouldClaimEsGmx || shouldStakeEsGmx,
-        shouldStakeEsGmx,
+        shouldClaimDfx || shouldStakeDfx,
+        shouldStakeDfx,
+        shouldClaimEsDfx || shouldStakeEsDfx,
+        shouldStakeEsDfx,
         shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth,
         shouldConvertWeth,
@@ -716,18 +716,18 @@ function CompoundModal(props) {
       });
   };
 
-  const toggleShouldStakeGmx = (value) => {
+  const toggleShouldStakeDfx = (value) => {
     if (value) {
-      setShouldClaimGmx(true);
+      setShouldClaimDfx(true);
     }
-    setShouldStakeGmx(value);
+    setShouldStakeDfx(value);
   };
 
-  const toggleShouldStakeEsGmx = (value) => {
+  const toggleShouldStakeEsDfx = (value) => {
     if (value) {
-      setShouldClaimEsGmx(true);
+      setShouldClaimEsDfx(true);
     }
-    setShouldStakeEsGmx(value);
+    setShouldStakeEsDfx(value);
   };
 
   const toggleConvertWeth = (value) => {
@@ -751,23 +751,23 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx} disabled={shouldStakeGmx}>
+            <Checkbox isChecked={shouldClaimDfx} setIsChecked={setShouldClaimDfx} disabled={shouldStakeDfx}>
               <Trans>Claim DFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldStakeGmx} setIsChecked={toggleShouldStakeGmx}>
+            <Checkbox isChecked={shouldStakeDfx} setIsChecked={toggleShouldStakeDfx}>
               <Trans>Stake DFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx} disabled={shouldStakeEsGmx}>
-              <Trans>Claim esGMX Rewards</Trans>
+            <Checkbox isChecked={shouldClaimEsDfx} setIsChecked={setShouldClaimEsDfx} disabled={shouldStakeEsDfx}>
+              <Trans>Claim esDFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldStakeEsGmx} setIsChecked={toggleShouldStakeEsGmx}>
-              <Trans>Stake esGMX Rewards</Trans>
+            <Checkbox isChecked={shouldStakeEsDfx} setIsChecked={toggleShouldStakeEsDfx}>
+              <Trans>Stake esDFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
@@ -805,12 +805,12 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-gmx"],
+  const [shouldClaimDfx, setShouldClaimDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-dfx"],
     true
   );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-es-gmx"],
+  const [shouldClaimEsDfx, setShouldClaimEsDfx] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-es-dfx"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -842,10 +842,10 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx,
-        false, // shouldStakeGmx
-        shouldClaimEsGmx,
-        false, // shouldStakeEsGmx
+        shouldClaimDfx,
+        false, // shouldStakeDfx
+        shouldClaimEsDfx,
+        false, // shouldStakeEsDfx
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
         shouldConvertWeth,
@@ -877,13 +877,13 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={t`Claim Rewards`}>
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx}>
+            <Checkbox isChecked={shouldClaimDfx} setIsChecked={setShouldClaimDfx}>
               <Trans>Claim DFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx}>
-              <Trans>Claim esGMX Rewards</Trans>
+            <Checkbox isChecked={shouldClaimEsDfx} setIsChecked={setShouldClaimEsDfx}>
+              <Trans>Claim esDFX Rewards</Trans>
             </Checkbox>
           </div>
           <div>
@@ -961,56 +961,56 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const gmxAddress = getContract(chainId, "GMX");
-  const esGmxAddress = getContract(chainId, "ES_GMX");
-  const bnGmxAddress = getContract(chainId, "BN_GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const dfxAddress = getContract(chainId, "DFX");
+  const esDfxAddress = getContract(chainId, "ES_DFX");
+  const bnDfxAddress = getContract(chainId, "BN_DFX");
+  const dlpAddress = getContract(chainId, "DLP");
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
-  const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
+  const stakedDfxTrackerAddress = getContract(chainId, "StakedDfxTracker");
+  const bonusDfxTrackerAddress = getContract(chainId, "BonusDfxTracker");
+  const feeDfxTrackerAddress = getContract(chainId, "FeeDfxTracker");
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedDlpTrackerAddress = getContract(chainId, "StakedDlpTracker");
+  const feeDlpTrackerAddress = getContract(chainId, "FeeDlpTracker");
 
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const dlpManagerAddress = getContract(chainId, "DlpManager");
 
-  const stakedGmxDistributorAddress = getContract(chainId, "StakedGmxDistributor");
-  const stakedGlpDistributorAddress = getContract(chainId, "StakedGlpDistributor");
+  const stakedDfxDistributorAddress = getContract(chainId, "StakedDfxDistributor");
+  const stakedDlpDistributorAddress = getContract(chainId, "StakedDlpDistributor");
 
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const dfxVesterAddress = getContract(chainId, "DfxVester");
+  const dlpVesterAddress = getContract(chainId, "DlpVester");
 
-  const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
+  const vesterAddresses = [dfxVesterAddress, dlpVesterAddress];
 
-  const excludedEsGmxAccounts = [stakedGmxDistributorAddress, stakedGlpDistributorAddress];
+  const excludedEsDfxAccounts = [stakedDfxDistributorAddress, stakedDlpDistributorAddress];
 
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
   const wrappedTokenSymbol = getConstant(chainId, "wrappedTokenSymbol");
 
-  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
+  const walletTokens = [dfxAddress, esDfxAddress, dlpAddress, stakedDfxTrackerAddress];
   const depositTokens = [
-    gmxAddress,
-    esGmxAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    bnGmxAddress,
-    glpAddress,
+    dfxAddress,
+    esDfxAddress,
+    stakedDfxTrackerAddress,
+    bonusDfxTrackerAddress,
+    bnDfxAddress,
+    dlpAddress,
   ];
   const rewardTrackersForDepositBalances = [
-    stakedGmxTrackerAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGlpTrackerAddress,
+    stakedDfxTrackerAddress,
+    stakedDfxTrackerAddress,
+    bonusDfxTrackerAddress,
+    feeDfxTrackerAddress,
+    feeDfxTrackerAddress,
+    feeDlpTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    stakedGlpTrackerAddress,
-    feeGlpTrackerAddress,
+    stakedDfxTrackerAddress,
+    bonusDfxTrackerAddress,
+    feeDfxTrackerAddress,
+    stakedDlpTrackerAddress,
+    feeDlpTrackerAddress,
   ];
 
   const { data: walletBalances } = useSWR(
@@ -1046,15 +1046,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { data: stakedGmxSupply } = useSWR(
-    [`StakeV2:stakedGmxSupply:${active}`, chainId, gmxAddress, "balanceOf", stakedGmxTrackerAddress],
+  const { data: stakedDfxSupply } = useSWR(
+    [`StakeV2:stakedDfxSupply:${active}`, chainId, dfxAddress, "balanceOf", stakedDfxTrackerAddress],
     {
       fetcher: contractFetcher(library, Token),
     }
   );
 
-  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: contractFetcher(library, GlpManager),
+  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, dlpManagerAddress, "getAums"], {
+    fetcher: contractFetcher(library, DlpManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(
@@ -1064,10 +1064,10 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { data: esGmxSupply } = useSWR(
-    [`StakeV2:esGmxSupply:${active}`, chainId, readerAddress, "getTokenSupply", esGmxAddress],
+  const { data: esDfxSupply } = useSWR(
+    [`StakeV2:esDfxSupply:${active}`, chainId, readerAddress, "getTokenSupply", esDfxAddress],
     {
-      fetcher: contractFetcher(library, ReaderV2, [excludedEsGmxAccounts]),
+      fetcher: contractFetcher(library, ReaderV2, [excludedEsDfxAccounts]),
     }
   );
 
@@ -1078,26 +1078,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { gmxPrice, gmxPriceFromArbitrum, gmxPriceFromAvalanche } = useGmxPrice(
+  const { dfxPrice, dfxPriceFromArbitrum, dfxPriceFromAvalanche } = useDfxPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalGmxSupply } = useTotalGmxSupply();
+  let { total: totalDfxSupply } = useTotalDfxSupply();
 
-  let { avax: avaxGmxStaked, arbitrum: arbitrumGmxStaked, total: totalGmxStaked } = useTotalGmxStaked();
+  let { avax: avaxDfxStaked, arbitrum: arbitrumDfxStaked, total: totalDfxStaked } = useTotalDfxStaked();
 
-  const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
-  const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
+  const dfxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
+  const { data: dfxSupply } = useSWR([dfxSupplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
-  const isGmxTransferEnabled = true;
+  const isDfxTransferEnabled = true;
 
-  let esGmxSupplyUsd;
-  if (esGmxSupply && gmxPrice) {
-    esGmxSupplyUsd = esGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  let esDfxSupplyUsd;
+  if (esDfxSupply && dfxPrice) {
+    esDfxSupplyUsd = esDfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
   }
 
   let aum;
@@ -1118,190 +1118,190 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     vestingData,
     aum,
     nativeTokenPrice,
-    stakedGmxSupply,
-    gmxPrice,
-    gmxSupply
+    stakedDfxSupply,
+    dfxPrice,
+    dfxSupply
   );
 
   let hasMultiplierPoints = false;
   let multiplierPointsAmount;
-  if (processedData && processedData.bonusGmxTrackerRewards && processedData.bnGmxInFeeGmx) {
-    multiplierPointsAmount = processedData.bonusGmxTrackerRewards.add(processedData.bnGmxInFeeGmx);
+  if (processedData && processedData.bonusDfxTrackerRewards && processedData.bnDfxInFeeDfx) {
+    multiplierPointsAmount = processedData.bonusDfxTrackerRewards.add(processedData.bnDfxInFeeDfx);
     if (multiplierPointsAmount.gt(0)) {
       hasMultiplierPoints = true;
     }
   }
   let totalRewardTokens;
-  if (processedData && processedData.bnGmxInFeeGmx && processedData.bonusGmxInFeeGmx) {
-    totalRewardTokens = processedData.bnGmxInFeeGmx.add(processedData.bonusGmxInFeeGmx);
+  if (processedData && processedData.bnDfxInFeeDfx && processedData.bonusDfxInFeeDfx) {
+    totalRewardTokens = processedData.bnDfxInFeeDfx.add(processedData.bonusDfxInFeeDfx);
   }
 
-  let totalRewardTokensAndGlp;
-  if (totalRewardTokens && processedData && processedData.glpBalance) {
-    totalRewardTokensAndGlp = totalRewardTokens.add(processedData.glpBalance);
+  let totalRewardTokensAndDlp;
+  if (totalRewardTokens && processedData && processedData.dlpBalance) {
+    totalRewardTokensAndDlp = totalRewardTokens.add(processedData.dlpBalance);
   }
 
-  const bonusGmxInFeeGmx = processedData ? processedData.bonusGmxInFeeGmx : undefined;
+  const bonusDfxInFeeDfx = processedData ? processedData.bonusDfxInFeeDfx : undefined;
 
-  let stakedGmxSupplyUsd;
-  if (!totalGmxStaked.isZero() && gmxPrice) {
-    stakedGmxSupplyUsd = totalGmxStaked.mul(gmxPrice).div(expandDecimals(1, 18));
+  let stakedDfxSupplyUsd;
+  if (!totalDfxStaked.isZero() && dfxPrice) {
+    stakedDfxSupplyUsd = totalDfxStaked.mul(dfxPrice).div(expandDecimals(1, 18));
   }
 
   let totalSupplyUsd;
-  if (totalGmxSupply && !totalGmxSupply.isZero() && gmxPrice) {
-    totalSupplyUsd = totalGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  if (totalDfxSupply && !totalDfxSupply.isZero() && dfxPrice) {
+    totalSupplyUsd = totalDfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
   }
 
-  let maxUnstakeableGmx = bigNumberify(0);
+  let maxUnstakeableDfx = bigNumberify(0);
   if (
     totalRewardTokens &&
     vestingData &&
-    vestingData.gmxVesterPairAmount &&
+    vestingData.dfxVesterPairAmount &&
     multiplierPointsAmount &&
-    processedData.bonusGmxInFeeGmx
+    processedData.bonusDfxInFeeDfx
   ) {
-    const availableTokens = totalRewardTokens.sub(vestingData.gmxVesterPairAmount);
-    const stakedTokens = processedData.bonusGmxInFeeGmx;
+    const availableTokens = totalRewardTokens.sub(vestingData.dfxVesterPairAmount);
+    const stakedTokens = processedData.bonusDfxInFeeDfx;
     const divisor = multiplierPointsAmount.add(stakedTokens);
     if (divisor.gt(0)) {
-      maxUnstakeableGmx = availableTokens.mul(stakedTokens).div(divisor);
+      maxUnstakeableDfx = availableTokens.mul(stakedTokens).div(divisor);
     }
   }
 
-  const showStakeGmxModal = () => {
-    if (!isGmxTransferEnabled) {
+  const showStakeDfxModal = () => {
+    if (!isDfxTransferEnabled) {
       helperToast.error(t`DFX transfers not yet enabled`);
       return;
     }
 
     setIsStakeModalVisible(true);
     setStakeModalTitle(t`Stake DFX`);
-    setStakeModalMaxAmount(processedData.gmxBalance);
+    setStakeModalMaxAmount(processedData.dfxBalance);
     setStakeValue("");
     setStakingTokenSymbol("DFX");
-    setStakingTokenAddress(gmxAddress);
-    setStakingFarmAddress(stakedGmxTrackerAddress);
-    setStakeMethodName("stakeGmx");
+    setStakingTokenAddress(dfxAddress);
+    setStakingFarmAddress(stakedDfxTrackerAddress);
+    setStakeMethodName("stakeDfx");
   };
 
-  const showStakeEsGmxModal = () => {
+  const showStakeEsDfxModal = () => {
     setIsStakeModalVisible(true);
-    setStakeModalTitle(t`Stake esGMX`);
-    setStakeModalMaxAmount(processedData.esGmxBalance);
+    setStakeModalTitle(t`Stake esDFX`);
+    setStakeModalMaxAmount(processedData.esDfxBalance);
     setStakeValue("");
-    setStakingTokenSymbol("esGMX");
-    setStakingTokenAddress(esGmxAddress);
+    setStakingTokenSymbol("esDFX");
+    setStakingTokenAddress(esDfxAddress);
     setStakingFarmAddress(AddressZero);
-    setStakeMethodName("stakeEsGmx");
+    setStakeMethodName("stakeEsDfx");
   };
 
-  const showGmxVesterDepositModal = () => {
-    let remainingVestableAmount = vestingData.gmxVester.maxVestableAmount.sub(vestingData.gmxVester.vestedAmount);
-    if (processedData.esGmxBalance.lt(remainingVestableAmount)) {
-      remainingVestableAmount = processedData.esGmxBalance;
+  const showDfxVesterDepositModal = () => {
+    let remainingVestableAmount = vestingData.dfxVester.maxVestableAmount.sub(vestingData.dfxVester.vestedAmount);
+    if (processedData.esDfxBalance.lt(remainingVestableAmount)) {
+      remainingVestableAmount = processedData.esDfxBalance;
     }
 
     setIsVesterDepositModalVisible(true);
     setVesterDepositTitle(t`DFX Vault`);
-    setVesterDepositStakeTokenLabel("staked DFX + esGMX + Multiplier Points");
+    setVesterDepositStakeTokenLabel("staked DFX + esDFX + Multiplier Points");
     setVesterDepositMaxAmount(remainingVestableAmount);
-    setVesterDepositBalance(processedData.esGmxBalance);
-    setVesterDepositEscrowedBalance(vestingData.gmxVester.escrowedBalance);
-    setVesterDepositVestedAmount(vestingData.gmxVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.gmxVester.maxVestableAmount);
-    setVesterDepositAverageStakedAmount(vestingData.gmxVester.averageStakedAmount);
-    setVesterDepositReserveAmount(vestingData.gmxVester.pairAmount);
+    setVesterDepositBalance(processedData.esDfxBalance);
+    setVesterDepositEscrowedBalance(vestingData.dfxVester.escrowedBalance);
+    setVesterDepositVestedAmount(vestingData.dfxVester.vestedAmount);
+    setVesterDepositMaxVestableAmount(vestingData.dfxVester.maxVestableAmount);
+    setVesterDepositAverageStakedAmount(vestingData.dfxVester.averageStakedAmount);
+    setVesterDepositReserveAmount(vestingData.dfxVester.pairAmount);
     setVesterDepositMaxReserveAmount(totalRewardTokens);
     setVesterDepositValue("");
-    setVesterDepositAddress(gmxVesterAddress);
+    setVesterDepositAddress(dfxVesterAddress);
   };
 
-  const showGlpVesterDepositModal = () => {
-    let remainingVestableAmount = vestingData.glpVester.maxVestableAmount.sub(vestingData.glpVester.vestedAmount);
-    if (processedData.esGmxBalance.lt(remainingVestableAmount)) {
-      remainingVestableAmount = processedData.esGmxBalance;
+  const showDlpVesterDepositModal = () => {
+    let remainingVestableAmount = vestingData.dlpVester.maxVestableAmount.sub(vestingData.dlpVester.vestedAmount);
+    if (processedData.esDfxBalance.lt(remainingVestableAmount)) {
+      remainingVestableAmount = processedData.esDfxBalance;
     }
 
     setIsVesterDepositModalVisible(true);
     setVesterDepositTitle(t`DLP Vault`);
     setVesterDepositStakeTokenLabel("staked DLP");
     setVesterDepositMaxAmount(remainingVestableAmount);
-    setVesterDepositBalance(processedData.esGmxBalance);
-    setVesterDepositEscrowedBalance(vestingData.glpVester.escrowedBalance);
-    setVesterDepositVestedAmount(vestingData.glpVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.glpVester.maxVestableAmount);
-    setVesterDepositAverageStakedAmount(vestingData.glpVester.averageStakedAmount);
-    setVesterDepositReserveAmount(vestingData.glpVester.pairAmount);
-    setVesterDepositMaxReserveAmount(processedData.glpBalance);
+    setVesterDepositBalance(processedData.esDfxBalance);
+    setVesterDepositEscrowedBalance(vestingData.dlpVester.escrowedBalance);
+    setVesterDepositVestedAmount(vestingData.dlpVester.vestedAmount);
+    setVesterDepositMaxVestableAmount(vestingData.dlpVester.maxVestableAmount);
+    setVesterDepositAverageStakedAmount(vestingData.dlpVester.averageStakedAmount);
+    setVesterDepositReserveAmount(vestingData.dlpVester.pairAmount);
+    setVesterDepositMaxReserveAmount(processedData.dlpBalance);
     setVesterDepositValue("");
-    setVesterDepositAddress(glpVesterAddress);
+    setVesterDepositAddress(dlpVesterAddress);
   };
 
-  const showGmxVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.gmxVesterVestedAmount || vestingData.gmxVesterVestedAmount.eq(0)) {
+  const showDfxVesterWithdrawModal = () => {
+    if (!vestingData || !vestingData.dfxVesterVestedAmount || vestingData.dfxVesterVestedAmount.eq(0)) {
       helperToast.error(t`You have not deposited any tokens for vesting.`);
       return;
     }
 
     setIsVesterWithdrawModalVisible(true);
     setVesterWithdrawTitle(t`Withdraw from DFX Vault`);
-    setVesterWithdrawAddress(gmxVesterAddress);
+    setVesterWithdrawAddress(dfxVesterAddress);
   };
 
-  const showGlpVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.glpVesterVestedAmount || vestingData.glpVesterVestedAmount.eq(0)) {
+  const showDlpVesterWithdrawModal = () => {
+    if (!vestingData || !vestingData.dlpVesterVestedAmount || vestingData.dlpVesterVestedAmount.eq(0)) {
       helperToast.error(t`You have not deposited any tokens for vesting.`);
       return;
     }
 
     setIsVesterWithdrawModalVisible(true);
     setVesterWithdrawTitle(t`Withdraw from DLP Vault`);
-    setVesterWithdrawAddress(glpVesterAddress);
+    setVesterWithdrawAddress(dlpVesterAddress);
   };
 
-  const showUnstakeGmxModal = () => {
-    if (!isGmxTransferEnabled) {
+  const showUnstakeDfxModal = () => {
+    if (!isDfxTransferEnabled) {
       helperToast.error(t`DFX transfers not yet enabled`);
       return;
     }
     setIsUnstakeModalVisible(true);
     setUnstakeModalTitle(t`Unstake DFX`);
-    let maxAmount = processedData.gmxInStakedGmx;
+    let maxAmount = processedData.dfxInStakedDfx;
     if (
-      processedData.gmxInStakedGmx &&
+      processedData.dfxInStakedDfx &&
       vestingData &&
-      vestingData.gmxVesterPairAmount.gt(0) &&
-      maxUnstakeableGmx &&
-      maxUnstakeableGmx.lt(processedData.gmxInStakedGmx)
+      vestingData.dfxVesterPairAmount.gt(0) &&
+      maxUnstakeableDfx &&
+      maxUnstakeableDfx.lt(processedData.dfxInStakedDfx)
     ) {
-      maxAmount = maxUnstakeableGmx;
+      maxAmount = maxUnstakeableDfx;
     }
     setUnstakeModalMaxAmount(maxAmount);
-    setUnstakeModalReservedAmount(vestingData.gmxVesterPairAmount);
+    setUnstakeModalReservedAmount(vestingData.dfxVesterPairAmount);
     setUnstakeValue("");
     setUnstakingTokenSymbol("DFX");
-    setUnstakeMethodName("unstakeGmx");
+    setUnstakeMethodName("unstakeDfx");
   };
 
-  const showUnstakeEsGmxModal = () => {
+  const showUnstakeEsDfxModal = () => {
     setIsUnstakeModalVisible(true);
-    setUnstakeModalTitle(t`Unstake esGMX`);
-    let maxAmount = processedData.esGmxInStakedGmx;
+    setUnstakeModalTitle(t`Unstake esDFX`);
+    let maxAmount = processedData.esDfxInStakedDfx;
     if (
-      processedData.esGmxInStakedGmx &&
+      processedData.esDfxInStakedDfx &&
       vestingData &&
-      vestingData.gmxVesterPairAmount.gt(0) &&
-      maxUnstakeableGmx &&
-      maxUnstakeableGmx.lt(processedData.esGmxInStakedGmx)
+      vestingData.dfxVesterPairAmount.gt(0) &&
+      maxUnstakeableDfx &&
+      maxUnstakeableDfx.lt(processedData.esDfxInStakedDfx)
     ) {
-      maxAmount = maxUnstakeableGmx;
+      maxAmount = maxUnstakeableDfx;
     }
     setUnstakeModalMaxAmount(maxAmount);
-    setUnstakeModalReservedAmount(vestingData.gmxVesterPairAmount);
+    setUnstakeModalReservedAmount(vestingData.dfxVesterPairAmount);
     setUnstakeValue("");
-    setUnstakingTokenSymbol("esGMX");
-    setUnstakeMethodName("unstakeEsGmx");
+    setUnstakingTokenSymbol("esDFX");
+    setUnstakeMethodName("unstakeEsDfx");
   };
 
   const renderMultiplierPointsLabel = useCallback(() => {
@@ -1317,7 +1317,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           return (
             <Trans>
               Boost your rewards with Multiplier Points.&nbsp;
-              <ExternalLink href="https://gmxio.gitbook.io/gmx/rewards#multiplier-points">More info</ExternalLink>.
+              <ExternalLink href="https://docs.dfx.so">More info</ExternalLink>.
             </Trans>
           );
         }}
@@ -1326,28 +1326,28 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
   }, []);
 
   let earnMsg;
-  if (totalRewardTokensAndGlp && totalRewardTokensAndGlp.gt(0)) {
-    let gmxAmountStr;
-    if (processedData.gmxInStakedGmx && processedData.gmxInStakedGmx.gt(0)) {
-      gmxAmountStr = formatAmount(processedData.gmxInStakedGmx, 18, 2, true) + " DFX";
+  if (totalRewardTokensAndDlp && totalRewardTokensAndDlp.gt(0)) {
+    let dfxAmountStr;
+    if (processedData.dfxInStakedDfx && processedData.dfxInStakedDfx.gt(0)) {
+      dfxAmountStr = formatAmount(processedData.dfxInStakedDfx, 18, 2, true) + " DFX";
     }
-    let esGmxAmountStr;
-    if (processedData.esGmxInStakedGmx && processedData.esGmxInStakedGmx.gt(0)) {
-      esGmxAmountStr = formatAmount(processedData.esGmxInStakedGmx, 18, 2, true) + " esGMX";
+    let esDfxAmountStr;
+    if (processedData.esDfxInStakedDfx && processedData.esDfxInStakedDfx.gt(0)) {
+      esDfxAmountStr = formatAmount(processedData.esDfxInStakedDfx, 18, 2, true) + " esDFX";
     }
     let mpAmountStr;
-    if (processedData.bonusGmxInFeeGmx && processedData.bnGmxInFeeGmx.gt(0)) {
-      mpAmountStr = formatAmount(processedData.bnGmxInFeeGmx, 18, 2, true) + " MP";
+    if (processedData.bonusDfxInFeeDfx && processedData.bnDfxInFeeDfx.gt(0)) {
+      mpAmountStr = formatAmount(processedData.bnDfxInFeeDfx, 18, 2, true) + " MP";
     }
-    let glpStr;
-    if (processedData.glpBalance && processedData.glpBalance.gt(0)) {
-      glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " DLP";
+    let dlpStr;
+    if (processedData.dlpBalance && processedData.dlpBalance.gt(0)) {
+      dlpStr = formatAmount(processedData.dlpBalance, 18, 2, true) + " DLP";
     }
-    const amountStr = [gmxAmountStr, esGmxAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
+    const amountStr = [dfxAmountStr, esDfxAmountStr, mpAmountStr, dlpStr].filter((s) => s).join(", ");
     earnMsg = (
       <div>
         <Trans>
-          You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndGlp, 18, 2, true)} tokens.
+          You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndDlp, 18, 2, true)} tokens.
           <br />
           Tokens: {amountStr}.
         </Trans>
@@ -1393,7 +1393,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         rewardRouterAddress={rewardRouterAddress}
         unstakeMethodName={unstakeMethodName}
         multiplierPointsAmount={multiplierPointsAmount}
-        bonusGmxInFeeGmx={bonusGmxInFeeGmx}
+        bonusDfxInFeeDfx={bonusDfxInFeeDfx}
       />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
@@ -1458,8 +1458,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           </div>
           <div className="Page-description">
             <Trans>
-              Stake <ExternalLink href="https://gmxio.gitbook.io/gmx/tokenomics">DFX</ExternalLink> and{" "}
-              <ExternalLink href="https://gmxio.gitbook.io/gmx/glp">DLP</ExternalLink> to earn rewards.
+              Stake <ExternalLink href="https://docs.dfx.so">DFX</ExternalLink> and{" "}
+              <ExternalLink href="https://docs.dfx.so">DLP</ExternalLink> to earn rewards.
             </Trans>
           </div>
           {earnMsg && <div className="Page-description">{earnMsg}</div>}
@@ -1467,7 +1467,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
       </div>
       <div className="StakeV2-content">
         <div className="StakeV2-cards">
-          <div className="App-card StakeV2-gmx-card">
+          <div className="App-card StakeV2-dfx-card">
             <div className="App-card-title">DFX</div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
@@ -1476,21 +1476,21 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Price</Trans>
                 </div>
                 <div>
-                  {!gmxPrice && "..."}
-                  {gmxPrice && (
+                  {!dfxPrice && "..."}
+                  {dfxPrice && (
                     <Tooltip
                       position="right-bottom"
                       className="nowrap"
-                      handle={"$" + formatAmount(gmxPrice, USD_DECIMALS, 2, true)}
+                      handle={"$" + formatAmount(dfxPrice, USD_DECIMALS, 2, true)}
                       renderContent={() => (
                         <>
                           <StatsTooltipRow
                             label={t`Price on Avalanche`}
-                            value={formatAmount(gmxPriceFromAvalanche, USD_DECIMALS, 2, true)}
+                            value={formatAmount(dfxPriceFromAvalanche, USD_DECIMALS, 2, true)}
                           />
                           <StatsTooltipRow
                             label={t`Price on Arbitrum`}
-                            value={formatAmount(gmxPriceFromArbitrum, USD_DECIMALS, 2, true)}
+                            value={formatAmount(dfxPriceFromArbitrum, USD_DECIMALS, 2, true)}
                           />
                         </>
                       )}
@@ -1503,8 +1503,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Wallet</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "gmxBalance", 18, 2, true)} DFX ($
-                  {formatKeyAmount(processedData, "gmxBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dfxBalance", 18, 2, true)} DFX ($
+                  {formatKeyAmount(processedData, "dfxBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
@@ -1512,8 +1512,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Staked</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "gmxInStakedGmx", 18, 2, true)} DFX ($
-                  {formatKeyAmount(processedData, "gmxInStakedGmxUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dfxInStakedDfx", 18, 2, true)} DFX ($
+                  {formatKeyAmount(processedData, "dfxInStakedDfxUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1523,10 +1523,10 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "gmxAprTotalWithBoost", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "dfxAprTotalWithBoost", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => (
-                      <GMXAprTooltip processedData={processedData} nativeTokenSymbol={nativeTokenSymbol} />
+                      <DFXAprTooltip processedData={processedData} nativeTokenSymbol={nativeTokenSymbol} />
                     )}
                   />
                 </div>
@@ -1537,7 +1537,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   <Tooltip
-                    handle={`$${formatKeyAmount(processedData, "totalGmxRewardsUsd", USD_DECIMALS, 2, true)}`}
+                    handle={`$${formatKeyAmount(processedData, "totalDfxRewardsUsd", USD_DECIMALS, 2, true)}`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1546,22 +1546,22 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             label={`${nativeTokenSymbol} (${wrappedTokenSymbol})`}
                             value={`${formatKeyAmount(
                               processedData,
-                              "feeGmxTrackerRewards",
+                              "feeDfxTrackerRewards",
                               18,
                               4
-                            )} ($${formatKeyAmount(processedData, "feeGmxTrackerRewardsUsd", USD_DECIMALS, 2, true)})`}
+                            )} ($${formatKeyAmount(processedData, "feeDfxTrackerRewardsUsd", USD_DECIMALS, 2, true)})`}
                             showDollar={false}
                           />
                           <StatsTooltipRow
                             label="Escrowed DFX"
                             value={`${formatKeyAmount(
                               processedData,
-                              "stakedGmxTrackerRewards",
+                              "stakedDfxTrackerRewards",
                               18,
                               4
                             )} ($${formatKeyAmount(
                               processedData,
-                              "stakedGmxTrackerRewardsUsd",
+                              "stakedDfxTrackerRewardsUsd",
                               USD_DECIMALS,
                               2,
                               true
@@ -1592,7 +1592,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                           <Trans>
                             You are earning {formatAmount(processedData.boostBasisPoints, 2, 2, false)}% more{" "}
                             {nativeTokenSymbol} rewards using{" "}
-                            {formatAmount(processedData.bnGmxInFeeGmx, 18, 4, 2, true)} Staked Multiplier Points.
+                            {formatAmount(processedData.bnDfxInFeeDfx, 18, 4, 2, true)} Staked Multiplier Points.
                           </Trans>
                           <br />
                           <br />
@@ -1609,23 +1609,23 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Total Staked</Trans>
                 </div>
                 <div>
-                  {!totalGmxStaked && "..."}
-                  {totalGmxStaked && (
+                  {!totalDfxStaked && "..."}
+                  {totalDfxStaked && (
                     <Tooltip
                       position="right-bottom"
                       className="nowrap"
                       handle={
-                        formatAmount(totalGmxStaked, 18, 0, true) +
+                        formatAmount(totalDfxStaked, 18, 0, true) +
                         " DFX" +
-                        ` ($${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)})`
+                        ` ($${formatAmount(stakedDfxSupplyUsd, USD_DECIMALS, 0, true)})`
                       }
                       renderContent={() => (
                         <StatsTooltip
                           showDollar={false}
                           title={t`Staked`}
-                          avaxValue={avaxGmxStaked}
-                          arbitrumValue={arbitrumGmxStaked}
-                          total={totalGmxStaked}
+                          avaxValue={avaxDfxStaked}
+                          arbitrumValue={arbitrumDfxStaked}
+                          total={totalDfxStaked}
                           decimalsForConversion={18}
                           symbol="DFX"
                         />
@@ -1638,26 +1638,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">
                   <Trans>Total Supply</Trans>
                 </div>
-                {!totalGmxSupply && "..."}
-                {totalGmxSupply && (
+                {!totalDfxSupply && "..."}
+                {totalDfxSupply && (
                   <div>
-                    {formatAmount(totalGmxSupply, 18, 0, true)} DFX ($
+                    {formatAmount(totalDfxSupply, 18, 0, true)} DFX ($
                     {formatAmount(totalSupplyUsd, USD_DECIMALS, 0, true)})
                   </div>
                 )}
               </div>
               <div className="App-card-divider" />
               <div className="App-card-buttons m-0">
-                <Button variant="semi-clear" to="/buy_gmx">
+                <Button variant="semi-clear" to="/buy_dfx">
                   <Trans>Buy DFX</Trans>
                 </Button>
                 {active && (
-                  <Button variant="semi-clear" onClick={() => showStakeGmxModal()}>
+                  <Button variant="semi-clear" onClick={() => showStakeDfxModal()}>
                     <Trans>Stake</Trans>
                   </Button>
                 )}
                 {active && (
-                  <Button variant="semi-clear" onClick={() => showUnstakeGmxModal()}>
+                  <Button variant="semi-clear" onClick={() => showUnstakeDfxModal()}>
                     <Trans>Unstake</Trans>
                   </Button>
                 )}
@@ -1696,21 +1696,21 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Escrowed DFX</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "totalEsGmxRewards", 18, 4, true)} ($
-                  {formatKeyAmount(processedData, "totalEsGmxRewardsUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "totalEsDfxRewards", 18, 4, true)} ($
+                  {formatKeyAmount(processedData, "totalEsDfxRewardsUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">
                   <Trans>Multiplier Points</Trans>
                 </div>
-                <div>{formatKeyAmount(processedData, "bonusGmxTrackerRewards", 18, 4, true)}</div>
+                <div>{formatKeyAmount(processedData, "bonusDfxTrackerRewards", 18, 4, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">
                   <Trans>Staked Multiplier Points</Trans>
                 </div>
-                <div>{formatKeyAmount(processedData, "bnGmxInFeeGmx", 18, 4, true)}</div>
+                <div>{formatKeyAmount(processedData, "bnDfxInFeeDfx", 18, 4, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">
@@ -1748,15 +1748,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">
                   <Trans>Price</Trans>
                 </div>
-                <div>${formatKeyAmount(processedData, "glpPrice", USD_DECIMALS, 3, true)}</div>
+                <div>${formatKeyAmount(processedData, "dlpPrice", USD_DECIMALS, 3, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">
                   <Trans>Wallet</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} DLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dlpBalance", DLP_DECIMALS, 2, true)} DLP ($
+                  {formatKeyAmount(processedData, "dlpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
@@ -1764,8 +1764,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Staked</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} DLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dlpBalance", DLP_DECIMALS, 2, true)} DLP ($
+                  {formatKeyAmount(processedData, "dlpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1775,21 +1775,21 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "glpAprTotal", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "dlpAprTotal", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
                         <>
                           <StatsTooltipRow
                             label={`${nativeTokenSymbol} (${wrappedTokenSymbol}) APR`}
-                            value={`${formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%`}
+                            value={`${formatKeyAmount(processedData, "dlpAprForNativeToken", 2, 2, true)}%`}
                             showDollar={false}
                           />
 
-                          {processedData?.glpAprForEsGmx.gt(0) && (
+                          {processedData?.dlpAprForEsDfx.gt(0) && (
                             <StatsTooltipRow
                               label="Escrowed DFX APR"
-                              value={`${formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%`}
+                              value={`${formatKeyAmount(processedData, "dlpAprForEsDfx", 2, 2, true)}%`}
                               showDollar={false}
                             />
                           )}
@@ -1801,7 +1801,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <br />
                             <br />
                             Historical DLP APRs can be checked in this{" "}
-                            <ExternalLink href="https://dune.com/saulius/gmx-analytics">
+                            <ExternalLink href="https://dune.com/saulius/dfx-analytics">
                               community dashboard
                             </ExternalLink>
                             .
@@ -1818,7 +1818,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   <Tooltip
-                    handle={`$${formatKeyAmount(processedData, "totalGlpRewardsUsd", USD_DECIMALS, 2, true)}`}
+                    handle={`$${formatKeyAmount(processedData, "totalDlpRewardsUsd", USD_DECIMALS, 2, true)}`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1827,22 +1827,22 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             label={`${nativeTokenSymbol} (${wrappedTokenSymbol})`}
                             value={`${formatKeyAmount(
                               processedData,
-                              "feeGlpTrackerRewards",
+                              "feeDlpTrackerRewards",
                               18,
                               4
-                            )} ($${formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})`}
+                            )} ($${formatKeyAmount(processedData, "feeDlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})`}
                             showDollar={false}
                           />
                           <StatsTooltipRow
                             label="Escrowed DFX"
                             value={`${formatKeyAmount(
                               processedData,
-                              "stakedGlpTrackerRewards",
+                              "stakedDlpTrackerRewards",
                               18,
                               4
                             )} ($${formatKeyAmount(
                               processedData,
-                              "stakedGlpTrackerRewardsUsd",
+                              "stakedDlpTrackerRewardsUsd",
                               USD_DECIMALS,
                               2,
                               true
@@ -1861,8 +1861,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Total Staked</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} DLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dlpSupply", 18, 2, true)} DLP ($
+                  {formatKeyAmount(processedData, "dlpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
@@ -1870,16 +1870,16 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Total Supply</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} DLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "dlpSupply", 18, 2, true)} DLP ($
+                  {formatKeyAmount(processedData, "dlpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-buttons m-0">
-                <Button variant="semi-clear" to="/buy_glp">
+                <Button variant="semi-clear" to="/buy_dlp">
                   <Trans>Buy DLP</Trans>
                 </Button>
-                <Button variant="semi-clear" to="/buy_glp#redeem">
+                <Button variant="semi-clear" to="/buy_dlp#redeem">
                   <Trans>Sell DLP</Trans>
                 </Button>
                 {hasInsurance && (
@@ -1903,15 +1903,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">
                   <Trans>Price</Trans>
                 </div>
-                <div>${formatAmount(gmxPrice, USD_DECIMALS, 2, true)}</div>
+                <div>${formatAmount(dfxPrice, USD_DECIMALS, 2, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">
                   <Trans>Wallet</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "esGmxBalance", 18, 2, true)} esGMX ($
-                  {formatKeyAmount(processedData, "esGmxBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "esDfxBalance", 18, 2, true)} esDFX ($
+                  {formatKeyAmount(processedData, "esDfxBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
@@ -1919,8 +1919,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Staked</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "esGmxInStakedGmx", 18, 2, true)} esGMX ($
-                  {formatKeyAmount(processedData, "esGmxInStakedGmxUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "esDfxInStakedDfx", 18, 2, true)} esDFX ($
+                  {formatKeyAmount(processedData, "esDfxInStakedDfxUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1930,10 +1930,10 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "gmxAprTotalWithBoost", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "dfxAprTotalWithBoost", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => (
-                      <GMXAprTooltip processedData={processedData} nativeTokenSymbol={nativeTokenSymbol} />
+                      <DFXAprTooltip processedData={processedData} nativeTokenSymbol={nativeTokenSymbol} />
                     )}
                   />
                 </div>
@@ -1948,8 +1948,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Total Staked</Trans>
                 </div>
                 <div>
-                  {formatKeyAmount(processedData, "stakedEsGmxSupply", 18, 0, true)} esGMX ($
-                  {formatKeyAmount(processedData, "stakedEsGmxSupplyUsd", USD_DECIMALS, 0, true)})
+                  {formatKeyAmount(processedData, "stakedEsDfxSupply", 18, 0, true)} esDFX ($
+                  {formatKeyAmount(processedData, "stakedEsDfxSupplyUsd", USD_DECIMALS, 0, true)})
                 </div>
               </div>
               <div className="App-card-row">
@@ -1957,19 +1957,19 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <Trans>Total Supply</Trans>
                 </div>
                 <div>
-                  {formatAmount(esGmxSupply, 18, 0, true)} esGMX (${formatAmount(esGmxSupplyUsd, USD_DECIMALS, 0, true)}
+                  {formatAmount(esDfxSupply, 18, 0, true)} esDFX (${formatAmount(esDfxSupplyUsd, USD_DECIMALS, 0, true)}
                   )
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-buttons m-0">
                 {active && (
-                  <Button variant="semi-clear" onClick={() => showStakeEsGmxModal()}>
+                  <Button variant="semi-clear" onClick={() => showStakeEsDfxModal()}>
                     <Trans>Stake</Trans>
                   </Button>
                 )}
                 {active && (
-                  <Button variant="semi-clear" onClick={() => showUnstakeEsGmxModal()}>
+                  <Button variant="semi-clear" onClick={() => showUnstakeEsDfxModal()}>
                     <Trans>Unstake</Trans>
                   </Button>
                 )}
@@ -1991,17 +1991,17 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           </div>
           <div className="Page-description">
             <Trans>
-              Convert esGMX tokens to DFX tokens.
+              Convert esDFX tokens to DFX tokens.
               <br />
               Please read the{" "}
-              <ExternalLink href="https://gmxio.gitbook.io/gmx/rewards#vesting">vesting details</ExternalLink> before
+              <ExternalLink href="https://docs.dfx.so">vesting details</ExternalLink> before
               using the vaults.
             </Trans>
           </div>
         </div>
         <div>
           <div className="StakeV2-cards">
-            <div className="App-card StakeV2-gmx-card">
+            <div className="App-card StakeV2-dfx-card">
               <div className="App-card-title">
                 <Trans>DFX Vault</Trans>
               </div>
@@ -2021,18 +2021,18 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <StatsTooltipRow
                               showDollar={false}
                               label="DFX"
-                              value={formatAmount(processedData.gmxInStakedGmx, 18, 2, true)}
+                              value={formatAmount(processedData.dfxInStakedDfx, 18, 2, true)}
                             />
 
                             <StatsTooltipRow
                               showDollar={false}
-                              label="esGMX"
-                              value={formatAmount(processedData.esGmxInStakedGmx, 18, 2, true)}
+                              label="esDFX"
+                              value={formatAmount(processedData.esDfxInStakedDfx, 18, 2, true)}
                             />
                             <StatsTooltipRow
                               showDollar={false}
                               label="Multiplier Points"
-                              value={formatAmount(processedData.bnGmxInFeeGmx, 18, 2, true)}
+                              value={formatAmount(processedData.bnDfxInFeeDfx, 18, 2, true)}
                             />
                           </>
                         );
@@ -2045,7 +2045,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     <Trans>Reserved for Vesting</Trans>
                   </div>
                   <div>
-                    {formatKeyAmount(vestingData, "gmxVesterPairAmount", 18, 2, true)} /{" "}
+                    {formatKeyAmount(vestingData, "dfxVesterPairAmount", 18, 2, true)} /{" "}
                     {formatAmount(totalRewardTokens, 18, 2, true)}
                   </div>
                 </div>
@@ -2055,9 +2055,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "gmxVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                      handle={`${formatKeyAmount(vestingData, "dfxVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                         vestingData,
-                        "gmxVesterVestedAmount",
+                        "dfxVesterVestedAmount",
                         18,
                         4,
                         true
@@ -2067,9 +2067,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                         return (
                           <div>
                             <Trans>
-                              {formatKeyAmount(vestingData, "gmxVesterClaimSum", 18, 4, true)} tokens have been
+                              {formatKeyAmount(vestingData, "dfxVesterClaimSum", 18, 4, true)} tokens have been
                               converted to DFX from the{" "}
-                              {formatKeyAmount(vestingData, "gmxVesterVestedAmount", 18, 4, true)} esGMX deposited for
+                              {formatKeyAmount(vestingData, "dfxVesterVestedAmount", 18, 4, true)} esDFX deposited for
                               vesting.
                             </Trans>
                           </div>
@@ -2084,11 +2084,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "gmxVesterClaimable", 18, 4, true)} DFX`}
+                      handle={`${formatKeyAmount(vestingData, "dfxVesterClaimable", 18, 4, true)} DFX`}
                       position="right-bottom"
                       renderContent={() => (
                         <Trans>
-                          {formatKeyAmount(vestingData, "gmxVesterClaimable", 18, 4, true)} DFX tokens can be claimed,
+                          {formatKeyAmount(vestingData, "dfxVesterClaimable", 18, 4, true)} DFX tokens can be claimed,
                           use the options under the Total Rewards section to claim them.
                         </Trans>
                       )}
@@ -2103,19 +2103,19 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     </Button>
                   )}
                   {active && (
-                    <Button variant="semi-clear" onClick={() => showGmxVesterDepositModal()}>
+                    <Button variant="semi-clear" onClick={() => showDfxVesterDepositModal()}>
                       <Trans>Deposit</Trans>
                     </Button>
                   )}
                   {active && (
-                    <Button variant="semi-clear" onClick={() => showGmxVesterWithdrawModal()}>
+                    <Button variant="semi-clear" onClick={() => showDfxVesterWithdrawModal()}>
                       <Trans>Withdraw</Trans>
                     </Button>
                   )}
                 </div>
               </div>
             </div>
-            <div className="App-card StakeV2-gmx-card">
+            <div className="App-card StakeV2-dfx-card">
               <div className="App-card-title">
                 <Trans>DLP Vault</Trans>
               </div>
@@ -2125,15 +2125,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <div className="label">
                     <Trans>Staked Tokens</Trans>
                   </div>
-                  <div>{formatAmount(processedData.glpBalance, 18, 2, true)} DLP</div>
+                  <div>{formatAmount(processedData.dlpBalance, 18, 2, true)} DLP</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">
                     <Trans>Reserved for Vesting</Trans>
                   </div>
                   <div>
-                    {formatKeyAmount(vestingData, "glpVesterPairAmount", 18, 2, true)} /{" "}
-                    {formatAmount(processedData.glpBalance, 18, 2, true)}
+                    {formatKeyAmount(vestingData, "dlpVesterPairAmount", 18, 2, true)} /{" "}
+                    {formatAmount(processedData.dlpBalance, 18, 2, true)}
                   </div>
                 </div>
                 <div className="App-card-row">
@@ -2142,9 +2142,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "glpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                      handle={`${formatKeyAmount(vestingData, "dlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                         vestingData,
-                        "glpVesterVestedAmount",
+                        "dlpVesterVestedAmount",
                         18,
                         4,
                         true
@@ -2154,9 +2154,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                         return (
                           <div>
                             <Trans>
-                              {formatKeyAmount(vestingData, "glpVesterClaimSum", 18, 4, true)} tokens have been
+                              {formatKeyAmount(vestingData, "dlpVesterClaimSum", 18, 4, true)} tokens have been
                               converted to DFX from the{" "}
-                              {formatKeyAmount(vestingData, "glpVesterVestedAmount", 18, 4, true)} esGMX deposited for
+                              {formatKeyAmount(vestingData, "dlpVesterVestedAmount", 18, 4, true)} esDFX deposited for
                               vesting.
                             </Trans>
                           </div>
@@ -2171,11 +2171,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "glpVesterClaimable", 18, 4, true)} DFX`}
+                      handle={`${formatKeyAmount(vestingData, "dlpVesterClaimable", 18, 4, true)} DFX`}
                       position="right-bottom"
                       renderContent={() => (
                         <Trans>
-                          {formatKeyAmount(vestingData, "glpVesterClaimable", 18, 4, true)} DFX tokens can be claimed,
+                          {formatKeyAmount(vestingData, "dlpVesterClaimable", 18, 4, true)} DFX tokens can be claimed,
                           use the options under the Total Rewards section to claim them.
                         </Trans>
                       )}
@@ -2190,12 +2190,12 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     </Button>
                   )}
                   {active && (
-                    <Button variant="semi-clear" onClick={() => showGlpVesterDepositModal()}>
+                    <Button variant="semi-clear" onClick={() => showDlpVesterDepositModal()}>
                       <Trans>Deposit</Trans>
                     </Button>
                   )}
                   {active && (
-                    <Button variant="semi-clear" onClick={() => showGlpVesterWithdrawModal()}>
+                    <Button variant="semi-clear" onClick={() => showDlpVesterWithdrawModal()}>
                       <Trans>Withdraw</Trans>
                     </Button>
                   )}

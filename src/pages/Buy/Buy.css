@@ -1,4 +1,4 @@
-.BuyGMXGLP {
+.BuyDFXDLP {
   background-image: url("../../img/background.png");
   min-height: 100%;
   background-attachment: fixed;
@@ -9,12 +9,12 @@
 
 }
 
-.BuyGMXGLP-container {
+.BuyDFXDLP-container {
   padding: 0 0 3.1rem 0;
   width: 100%;
 }
 
 
-.BuyGMXGLP-container .section-title-content {
+.BuyDFXDLP-container .section-title-content {
   justify-content: flex-start;
 }

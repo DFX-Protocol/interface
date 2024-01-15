@@ -31,20 +31,20 @@ export function RedirectPopupModal({
       <br />
       <Trans>
         The website is a community deployed and maintained instance of the open source{" "}
-        <ExternalLink href="https://github.com/gmx-io/gmx-interface">DFX front end</ExternalLink>, hosted and served on
+        <ExternalLink href="https://github.com/DFX-Protocol/interface">DFX front end</ExternalLink>, hosted and served on
         the distributed, peer-to-peer <ExternalLink href="https://ipfs.io/">IPFS network</ExternalLink>.
       </Trans>
       <br />
       <br />
       <Trans>
         Alternative links can be found in the{" "}
-        <ExternalLink href="https://gmxio.gitbook.io/gmx/app-links">docs</ExternalLink>.
+        <ExternalLink href="https://docs.dfx.so">docs</ExternalLink>.
         <br />
         <br />
-        By clicking Agree you accept the <ExternalLink href="https://gmx.io/#/terms-and-conditions">
+        By clicking Agree you accept the <ExternalLink href="https://dfx.so/#/terms-and-conditions">
           T&Cs
         </ExternalLink>{" "}
-        and <ExternalLink href="https://gmx.io/#/referral-terms">Referral T&Cs</ExternalLink>.
+        and <ExternalLink href="https://dfx.so/#/referral-terms">Referral T&Cs</ExternalLink>.
         <br />
         <br />
       </Trans>

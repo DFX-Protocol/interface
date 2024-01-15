@@ -11,7 +11,7 @@ import cx from "classnames";
 import { Trans } from "@lingui/macro";
 import NetworkDropdown from "../NetworkDropdown/NetworkDropdown";
 import LanguagePopupHome from "../NetworkDropdown/LanguagePopupHome";
-import { ARBITRUM, ARBITRUM_TESTNET, HEDERA_TESTNET, getChainName, SEPOLIA, BASE_TESTNET } from "config/chains";
+import { getChainName, BASE_TESTNET } from "config/chains";
 import { switchNetwork } from "lib/wallets";
 import { useChainId } from "lib/chains";
 import { isDevelopment } from "config/env";
@@ -28,51 +28,20 @@ type Props = {
 
 const NETWORK_OPTIONS = [
   {
-    label: getChainName(ARBITRUM),
-    value: ARBITRUM,
-    icon: getIcon(ARBITRUM, "network"),
-    color: "#264f79",
-  },
-  // {
-  //   label: getChainName(AVALANCHE),
-  //   value: AVALANCHE,
-  //   icon: getIcon(AVALANCHE, "network"),
-  //   color: "#E841424D",
-  // },
-];
-
-if (isDevelopment()) {
-  NETWORK_OPTIONS.push({
-    label: getChainName(ARBITRUM_TESTNET),
-    value: ARBITRUM_TESTNET,
-    icon: getIcon(ARBITRUM_TESTNET, "network"),
-    color: "#264f79",
-  });
-  // NETWORK_OPTIONS.push({
-  //   label: getChainName(AVALANCHE_FUJI),
-  //   value: AVALANCHE_FUJI,
-  //   icon: getIcon(AVALANCHE_FUJI, "network"),
-  //   color: "#E841424D",
-  // });
-  NETWORK_OPTIONS.push({
-    label: getChainName(HEDERA_TESTNET),
-    value: HEDERA_TESTNET,
-    icon: getIcon(HEDERA_TESTNET, "network"),
-    color: "#E841424D",
-  });
-  NETWORK_OPTIONS.push({
-    label: getChainName(SEPOLIA),
-    value: SEPOLIA,
-    icon: getIcon(SEPOLIA, "network"),
-    color: "#E841424D",
-  });
-  NETWORK_OPTIONS.push({
     label: getChainName(BASE_TESTNET),
     value: BASE_TESTNET,
     icon: getIcon(BASE_TESTNET, "network"),
     color: "#E841424D",
-  });
+  },
+];
 
+if (isDevelopment()) {
+  // NETWORK_OPTIONS.push({
+  //   label: getChainName(ARBITRUM_TESTNET),
+  //   value: ARBITRUM_TESTNET,
+  //   icon: getIcon(ARBITRUM_TESTNET, "network"),
+  //   color: "#264f79",
+  // });
 }
 
 export function AppHeaderUser({

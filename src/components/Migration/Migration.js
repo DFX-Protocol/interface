@@ -14,7 +14,7 @@ import { getContract } from "config/contracts";
 
 import Reader from "abis/Reader.json";
 import Token from "abis/Token.json";
-import GmxMigrator from "abis/GmxMigrator.json";
+import DfxMigrator from "abis/DfxMigrator.json";
 import { CHAIN_ID, getExplorerUrl } from "config/chains";
 import { contractFetcher } from "lib/contracts";
 import { helperToast } from "lib/helperToast";
@@ -35,14 +35,14 @@ const { MaxUint256, AddressZero } = ethers.constants;
 
 const precision = 1000000;
 const decimals = 6;
-const gmxPrice = bigNumberify(2 * precision);
+const dfxPrice = bigNumberify(2 * precision);
 const tokens = [
   {
     name: "GMT",
     symbol: "GMT",
     address: getContract(CHAIN_ID, "GMT"),
     price: bigNumberify(10.97 * precision),
-    iouToken: getContract(CHAIN_ID, "GMT_GMX_IOU"),
+    iouToken: getContract(CHAIN_ID, "GMT_Dfx_IOU"),
     cap: MaxUint256,
     bonus: 0,
   },
@@ -51,7 +51,7 @@ const tokens = [
     symbol: "xGMT",
     address: getContract(CHAIN_ID, "XGMT"),
     price: bigNumberify(90.31 * precision),
-    iouToken: getContract(CHAIN_ID, "XGMT_GMX_IOU"),
+    iouToken: getContract(CHAIN_ID, "XGMT_Dfx_IOU"),
     cap: MaxUint256,
     bonus: 0,
   },
@@ -60,7 +60,7 @@ const tokens = [
     symbol: "LP",
     address: getContract(CHAIN_ID, "GMT_USDG_PAIR"),
     price: bigNumberify(parseInt(6.68 * precision)),
-    iouToken: getContract(CHAIN_ID, "GMT_USDG_GMX_IOU"),
+    iouToken: getContract(CHAIN_ID, "GMT_USDG_Dfx_IOU"),
     cap: expandDecimals(483129, 18),
     bonus: 10,
   },
@@ -69,14 +69,14 @@ const tokens = [
     symbol: "LP",
     address: getContract(CHAIN_ID, "XGMT_USDG_PAIR"),
     price: bigNumberify(parseInt(19.27 * precision)),
-    iouToken: getContract(CHAIN_ID, "XGMT_USDG_GMX_IOU"),
+    iouToken: getContract(CHAIN_ID, "XGMT_USDG_Dfx_IOU"),
     cap: expandDecimals(150191, 18),
     bonus: 10,
   },
 ];
 
 const readerAddress = getContract(CHAIN_ID, "Reader");
-const gmxMigratorAddress = getContract(CHAIN_ID, "GmxMigrator");
+const dfxMigratorAddress = getContract(CHAIN_ID, "DfxMigrator");
 
 function MigrationModal(props) {
   const {
@@ -97,7 +97,7 @@ function MigrationModal(props) {
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance, mutate: updateTokenAllowance } = useSWR(
-    [active, CHAIN_ID, token.address, "allowance", account, gmxMigratorAddress],
+    [active, CHAIN_ID, token.address, "allowance", account, dfxMigratorAddress],
     {
       fetcher: contractFetcher(library, Token),
     }
@@ -131,13 +131,13 @@ function MigrationModal(props) {
   let totalAmountUsd;
 
   if (amount) {
-    baseAmount = amount.mul(token.price).div(gmxPrice);
+    baseAmount = amount.mul(token.price).div(dfxPrice);
     bonusAmount = baseAmount.mul(token.bonus).div(100);
     totalAmount = baseAmount.add(bonusAmount);
 
-    baseAmountUsd = baseAmount.mul(gmxPrice);
-    bonusAmountUsd = bonusAmount.mul(gmxPrice);
-    totalAmountUsd = totalAmount.mul(gmxPrice);
+    baseAmountUsd = baseAmount.mul(dfxPrice);
+    bonusAmountUsd = bonusAmount.mul(dfxPrice);
+    totalAmountUsd = totalAmount.mul(dfxPrice);
   }
 
   const getError = () => {
@@ -155,7 +155,7 @@ function MigrationModal(props) {
         setIsApproving,
         library,
         tokenAddress: token.address,
-        spender: gmxMigratorAddress,
+        spender: dfxMigratorAddress,
         chainId: CHAIN_ID,
         onApproveSubmitted: () => {
           setIsPendingApproval(true);
@@ -165,7 +165,7 @@ function MigrationModal(props) {
     }
 
     setIsMigrating(true);
-    const contract = new ethers.Contract(gmxMigratorAddress, GmxMigrator.abi, library.getSigner());
+    const contract = new ethers.Contract(dfxMigratorAddress, DfxMigrator.abi, library.getSigner());
     contract
       .migrate(token.address, amount)
       .then(async (res) => {
@@ -345,26 +345,26 @@ export default function Migration() {
   );
 
   const { data: migratedAmounts, mutate: updateMigratedAmounts } = useSWR(
-    ["Migration:migratedAmounts", CHAIN_ID, gmxMigratorAddress, "getTokenAmounts"],
+    ["Migration:migratedAmounts", CHAIN_ID, dfxMigratorAddress, "getTokenAmounts"],
     {
-      fetcher: contractFetcher(library, GmxMigrator, [tokenAddresses]),
+      fetcher: contractFetcher(library, DfxMigrator, [tokenAddresses]),
     }
   );
 
-  let gmxBalance;
-  let totalMigratedGmx;
+  let dfxBalance;
+  let totalMigratedDfx;
   let totalMigratedUsd;
 
   if (iouBalances) {
-    gmxBalance = bigNumberify(0);
-    totalMigratedGmx = bigNumberify(0);
+    dfxBalance = bigNumberify(0);
+    totalMigratedDfx = bigNumberify(0);
 
     for (let i = 0; i < iouBalances.length / 2; i++) {
-      gmxBalance = gmxBalance.add(iouBalances[i * 2]);
-      totalMigratedGmx = totalMigratedGmx.add(iouBalances[i * 2 + 1]);
+      dfxBalance = dfxBalance.add(iouBalances[i * 2]);
+      totalMigratedDfx = totalMigratedDfx.add(iouBalances[i * 2 + 1]);
     }
 
-    totalMigratedUsd = totalMigratedGmx.mul(gmxPrice);
+    totalMigratedUsd = totalMigratedDfx.mul(dfxPrice);
   }
 
   useEffect(() => {
@@ -413,7 +413,7 @@ export default function Migration() {
         </div>
       </div>
       <div className="Migration-note">
-        <Trans>Your wallet: {formatAmount(gmxBalance, 18, 4, true)}</Trans> DFX
+        <Trans>Your wallet: {formatAmount(dfxBalance, 18, 4, true)}</Trans> DFX
       </div>
       <div className="Migration-cards">
         {tokens.map((token, index) => {

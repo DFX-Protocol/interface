@@ -11,21 +11,21 @@ import { ethers } from "ethers";
 
 import {
   USD_DECIMALS,
-  GMX_DECIMALS,
-  GLP_DECIMALS,
+  DFX_DECIMALS,
+  DLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
   importImage,
   arrayURLFetcher,
 } from "lib/legacy";
-import { useTotalGmxInLiquidity, useGmxPrice, useTotalGmxStaked, useTotalGmxSupply } from "domain/legacy";
+import { useTotalDfxInLiquidity, useDfxPrice, useTotalDfxStaked, useTotalDfxSupply } from "domain/legacy";
 
 import { getContract } from "config/contracts";
 
 import VaultV2 from "abis/VaultV2.json";
 import ReaderV2 from "abis/ReaderV2.json";
-import GlpManager from "abis/GlpManager.json";
+import DlpManager from "abis/DlpManager.json";
 import Footer from "components/Footer/Footer";
 
 import "./DashboardV2.css";
@@ -40,7 +40,7 @@ import { ARBITRUM, AVALANCHE, getChainName } from "config/chains";
 import { getServerUrl } from "config/backend";
 import { contractFetcher } from "lib/contracts";
 import { useInfoTokens } from "domain/tokens";
-import { getTokenBySymbol, getWhitelistedTokens, GLP_POOL_COLORS } from "config/tokens";
+import { getTokenBySymbol, getWhitelistedTokens, DLP_POOL_COLORS } from "config/tokens";
 import { bigNumberify, expandDecimals, formatAmount, formatKeyAmount, numberWithCommas } from "lib/numbers";
 import { useChainId } from "lib/chains";
 import { formatDate } from "lib/dates";
@@ -102,7 +102,7 @@ export default function DashboardV2() {
     }
   );
 
-  let { total: totalGmxSupply } = useTotalGmxSupply();
+  let { total: totalDfxSupply } = useTotalDfxSupply();
 
   const currentVolumeInfo = useVolumeInfo();
 
@@ -119,16 +119,16 @@ export default function DashboardV2() {
 
   const readerAddress = getContract(chainId, "Reader");
   const vaultAddress = getContract(chainId, "Vault");
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const dlpManagerAddress = getContract(chainId, "DlpManager");
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const dfxAddress = getContract(chainId, "DFX");
+  const dlpAddress = getContract(chainId, "DLP");
   const usdgAddress = getContract(chainId, "USDG");
 
-  const tokensForSupplyQuery = [gmxAddress, glpAddress, usdgAddress];
+  const tokensForSupplyQuery = [dfxAddress, dlpAddress, usdgAddress];
 
-  const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: contractFetcher(library, GlpManager),
+  const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, dlpManagerAddress, "getAums"], {
+    fetcher: contractFetcher(library, DlpManager),
   });
 
   const { data: totalSupplies } = useSWR(
@@ -139,7 +139,7 @@ export default function DashboardV2() {
   );
 
   const { data: totalTokenWeights } = useSWR(
-    [`GlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: contractFetcher(library, VaultV2),
     }
@@ -209,24 +209,24 @@ export default function DashboardV2() {
       { total: 0 }
     );
 
-  const { gmxPrice, gmxPriceFromArbitrum, gmxPriceFromAvalanche } = useGmxPrice(
+  const { dfxPrice, dfxPriceFromArbitrum, dfxPriceFromAvalanche } = useDfxPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalGmxInLiquidity } = useTotalGmxInLiquidity(chainId, active);
+  let { total: totalDfxInLiquidity } = useTotalDfxInLiquidity(chainId, active);
 
-  let { avax: avaxStakedGmx, arbitrum: arbitrumStakedGmx, total: totalStakedGmx } = useTotalGmxStaked();
+  let { avax: avaxStakedDfx, arbitrum: arbitrumStakedDfx, total: totalStakedDfx } = useTotalDfxStaked();
 
-  let gmxMarketCap;
-  if (gmxPrice && totalGmxSupply) {
-    gmxMarketCap = gmxPrice.mul(totalGmxSupply).div(expandDecimals(1, GMX_DECIMALS));
+  let dfxMarketCap;
+  if (dfxPrice && totalDfxSupply) {
+    dfxMarketCap = dfxPrice.mul(totalDfxSupply).div(expandDecimals(1, DFX_DECIMALS));
   }
 
-  let stakedGmxSupplyUsd;
-  if (gmxPrice && totalStakedGmx) {
-    stakedGmxSupplyUsd = totalStakedGmx.mul(gmxPrice).div(expandDecimals(1, GMX_DECIMALS));
+  let stakedDfxSupplyUsd;
+  if (dfxPrice && totalStakedDfx) {
+    stakedDfxSupplyUsd = totalStakedDfx.mul(dfxPrice).div(expandDecimals(1, DFX_DECIMALS));
   }
 
   let aum;
@@ -234,34 +234,34 @@ export default function DashboardV2() {
     aum = aums[0].add(aums[1]).div(2);
   }
 
-  let glpPrice;
-  let glpSupply;
-  let glpMarketCap;
+  let dlpPrice;
+  let dlpSupply;
+  let dlpMarketCap;
   if (aum && totalSupplies && totalSupplies[3]) {
-    glpSupply = totalSupplies[3];
-    glpPrice =
-      aum && aum.gt(0) && glpSupply.gt(0)
-        ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(glpSupply)
+    dlpSupply = totalSupplies[3];
+    dlpPrice =
+      aum && aum.gt(0) && dlpSupply.gt(0)
+        ? aum.mul(expandDecimals(1, DLP_DECIMALS)).div(dlpSupply)
         : expandDecimals(1, USD_DECIMALS);
-    glpMarketCap = glpPrice.mul(glpSupply).div(expandDecimals(1, GLP_DECIMALS));
+    dlpMarketCap = dlpPrice.mul(dlpSupply).div(expandDecimals(1, DLP_DECIMALS));
   }
 
   let tvl;
-  if (glpMarketCap && gmxPrice && totalStakedGmx) {
-    tvl = glpMarketCap.add(gmxPrice.mul(totalStakedGmx).div(expandDecimals(1, GMX_DECIMALS)));
+  if (dlpMarketCap && dfxPrice && totalStakedDfx) {
+    tvl = dlpMarketCap.add(dfxPrice.mul(totalStakedDfx).div(expandDecimals(1, DFX_DECIMALS)));
   }
 
   const ethFloorPriceFund = expandDecimals(350 + 148 + 384, 18);
-  const glpFloorPriceFund = expandDecimals(660001, 18);
+  const dlpFloorPriceFund = expandDecimals(660001, 18);
   const usdcFloorPriceFund = expandDecimals(784598 + 200000, 30);
 
   let totalFloorPriceFundUsd;
 
-  if (eth && eth.contractMinPrice && glpPrice) {
+  if (eth && eth.contractMinPrice && dlpPrice) {
     const ethFloorPriceFundUsd = ethFloorPriceFund.mul(eth.contractMinPrice).div(expandDecimals(1, eth.decimals));
-    const glpFloorPriceFundUsd = glpFloorPriceFund.mul(glpPrice).div(expandDecimals(1, 18));
+    const dlpFloorPriceFundUsd = dlpFloorPriceFund.mul(dlpPrice).div(expandDecimals(1, 18));
 
-    totalFloorPriceFundUsd = ethFloorPriceFundUsd.add(glpFloorPriceFundUsd).add(usdcFloorPriceFund);
+    totalFloorPriceFundUsd = ethFloorPriceFundUsd.add(dlpFloorPriceFundUsd).add(usdcFloorPriceFund);
   }
 
   let adjustedUsdgSupply = bigNumberify(0);
@@ -321,7 +321,7 @@ export default function DashboardV2() {
                     <br />
                     <br />
                     Get lower fees to{" "}
-                    <Link to="/buy_glp" target="_blank" rel="noopener noreferrer">
+                    <Link to="/buy_dlp" target="_blank" rel="noopener noreferrer">
                       buy DLP
                     </Link>{" "}
                     with {tokenInfo.symbol}, and to{" "}
@@ -348,7 +348,7 @@ export default function DashboardV2() {
               )}
               <br />
               <div>
-                <ExternalLink href="https://gmxio.gitbook.io/gmx/glp">
+                <ExternalLink href="https://docs.dfx.so">
                   <Trans>More Info</Trans>
                 </ExternalLink>
               </div>
@@ -361,19 +361,19 @@ export default function DashboardV2() {
 
   let stakedPercent = 0;
 
-  if (totalGmxSupply && !totalGmxSupply.isZero() && !totalStakedGmx.isZero()) {
-    stakedPercent = totalStakedGmx.mul(100).div(totalGmxSupply).toNumber();
+  if (totalDfxSupply && !totalDfxSupply.isZero() && !totalStakedDfx.isZero()) {
+    stakedPercent = totalStakedDfx.mul(100).div(totalDfxSupply).toNumber();
   }
 
   let liquidityPercent = 0;
 
-  if (totalGmxSupply && !totalGmxSupply.isZero() && totalGmxInLiquidity) {
-    liquidityPercent = totalGmxInLiquidity.mul(100).div(totalGmxSupply).toNumber();
+  if (totalDfxSupply && !totalDfxSupply.isZero() && totalDfxInLiquidity) {
+    liquidityPercent = totalDfxInLiquidity.mul(100).div(totalDfxSupply).toNumber();
   }
 
   let notStakedPercent = 100 - stakedPercent - liquidityPercent;
 
-  let gmxDistributionData = [
+  let dfxDistributionData = [
     {
       name: t`staked`,
       value: stakedPercent,
@@ -393,17 +393,17 @@ export default function DashboardV2() {
 
   const totalStatsStartDate = chainId === AVALANCHE ? t`06 Jan 2022` : t`01 Sep 2021`;
 
-  let stableGlp = 0;
-  let totalGlp = 0;
+  let stableDlp = 0;
+  let totalDlp = 0;
 
-  let glpPool = tokenList.map((token) => {
+  let dlpPool = tokenList.map((token) => {
     const tokenInfo = infoTokens[token.address];
     if (tokenInfo.usdgAmount && adjustedUsdgSupply && adjustedUsdgSupply.gt(0)) {
       const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
       if (tokenInfo.isStable) {
-        stableGlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
+        stableDlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
       }
-      totalGlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
+      totalDlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
       return {
         fullname: token.name,
         name: token.symbol,
@@ -413,40 +413,40 @@ export default function DashboardV2() {
     return null;
   });
 
-  let stablePercentage = totalGlp > 0 ? ((stableGlp * 100) / totalGlp).toFixed(2) : "0.0";
+  let stablePercentage = totalDlp > 0 ? ((stableDlp * 100) / totalDlp).toFixed(2) : "0.0";
 
-  glpPool = glpPool.filter(function (element) {
+  dlpPool = dlpPool.filter(function (element) {
     return element !== null;
   });
 
-  glpPool = glpPool.sort(function (a, b) {
+  dlpPool = dlpPool.sort(function (a, b) {
     if (a.value < b.value) return 1;
     else return -1;
   });
 
-  gmxDistributionData = gmxDistributionData.sort(function (a, b) {
+  dfxDistributionData = dfxDistributionData.sort(function (a, b) {
     if (a.value < b.value) return 1;
     else return -1;
   });
 
-  const [gmxActiveIndex, setGMXActiveIndex] = useState(null);
+  const [dfxActiveIndex, setDFXActiveIndex] = useState(null);
 
-  const onGMXDistributionChartEnter = (_, index) => {
-    setGMXActiveIndex(index);
+  const onDFXDistributionChartEnter = (_, index) => {
+    setDFXActiveIndex(index);
   };
 
-  const onGMXDistributionChartLeave = (_, index) => {
-    setGMXActiveIndex(null);
+  const onDFXDistributionChartLeave = (_, index) => {
+    setDFXActiveIndex(null);
   };
 
-  const [glpActiveIndex, setGLPActiveIndex] = useState(null);
+  const [dlpActiveIndex, setDLPActiveIndex] = useState(null);
 
-  const onGLPPoolChartEnter = (_, index) => {
-    setGLPActiveIndex(index);
+  const onDLPPoolChartEnter = (_, index) => {
+    setDLPActiveIndex(index);
   };
 
-  const onGLPPoolChartLeave = (_, index) => {
-    setGLPActiveIndex(null);
+  const onDLPPoolChartLeave = (_, index) => {
+    setDLPActiveIndex(null);
   };
 
   const CustomTooltip = ({ active, payload }) => {
@@ -475,9 +475,9 @@ export default function DashboardV2() {
               <Trans>
                 {chainName} Total Stats start from {totalStatsStartDate}.<br /> For detailed stats:
               </Trans>{" "}
-              {chainId === ARBITRUM && <ExternalLink href="https://stats.gmx.io">https://stats.gmx.io</ExternalLink>}
+              {chainId === ARBITRUM && <ExternalLink href="https://stats.dfx.so">https://stats.dfx.so</ExternalLink>}
               {chainId === AVALANCHE && (
-                <ExternalLink href="https://stats.gmx.io/avalanche">https://stats.gmx.io/avalanche</ExternalLink>
+                <ExternalLink href="https://stats.dfx.so/avalanche">https://stats.dfx.so/avalanche</ExternalLink>
               )}
               .
             </div>
@@ -683,13 +683,13 @@ export default function DashboardV2() {
             </div>
           </div>
           <div className="DashboardV2-token-cards">
-            <div className="stats-wrapper stats-wrapper--gmx">
+            <div className="stats-wrapper stats-wrapper--dfx">
               <div className="App-card">
                 <div className="stats-block">
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={currentIcons.gmx} width="40" alt="DFX Token Icon" />
+                        <img src={currentIcons.dfx} width="40" alt="DFX Token Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
                         <div className="App-card-title-mark-title">DFX</div>
@@ -707,22 +707,22 @@ export default function DashboardV2() {
                         <Trans>Price</Trans>
                       </div>
                       <div>
-                        {!gmxPrice && "..."}
-                        {gmxPrice && (
+                        {!dfxPrice && "..."}
+                        {dfxPrice && (
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={"$" + formatAmount(gmxPrice, USD_DECIMALS, 2, true)}
+                            handle={"$" + formatAmount(dfxPrice, USD_DECIMALS, 2, true)}
                             renderContent={() => (
                               <>
                                 <StatsTooltipRow
                                   label={t`Price on Arbitrum`}
-                                  value={formatAmount(gmxPriceFromArbitrum, USD_DECIMALS, 2, true)}
+                                  value={formatAmount(dfxPriceFromArbitrum, USD_DECIMALS, 2, true)}
                                   showDollar={true}
                                 />
                                 <StatsTooltipRow
                                   label={t`Price on Avalanche`}
-                                  value={formatAmount(gmxPriceFromAvalanche, USD_DECIMALS, 2, true)}
+                                  value={formatAmount(dfxPriceFromAvalanche, USD_DECIMALS, 2, true)}
                                   showDollar={true}
                                 />
                               </>
@@ -735,7 +735,7 @@ export default function DashboardV2() {
                       <div className="label">
                         <Trans>Supply</Trans>
                       </div>
-                      <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} DFX</div>
+                      <div>{formatAmount(totalDfxSupply, DFX_DECIMALS, 0, true)} DFX</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">
@@ -745,14 +745,14 @@ export default function DashboardV2() {
                         <TooltipComponent
                           position="right-bottom"
                           className="nowrap"
-                          handle={`$${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)}`}
+                          handle={`$${formatAmount(stakedDfxSupplyUsd, USD_DECIMALS, 0, true)}`}
                           renderContent={() => (
                             <StatsTooltip
                               title={t`Staked`}
-                              arbitrumValue={arbitrumStakedGmx}
-                              avaxValue={avaxStakedGmx}
-                              total={totalStakedGmx}
-                              decimalsForConversion={GMX_DECIMALS}
+                              arbitrumValue={arbitrumStakedDfx}
+                              avaxValue={avaxStakedDfx}
+                              total={totalStakedDfx}
+                              decimalsForConversion={DFX_DECIMALS}
                               showDollar={false}
                             />
                           )}
@@ -763,15 +763,15 @@ export default function DashboardV2() {
                       <div className="label">
                         <Trans>Market Cap</Trans>
                       </div>
-                      <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(dfxMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                   </div>
                 </div>
-                <div className="stats-piechart" onMouseLeave={onGMXDistributionChartLeave}>
-                  {gmxDistributionData.length > 0 && (
+                <div className="stats-piechart" onMouseLeave={onDFXDistributionChartLeave}>
+                  {dfxDistributionData.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
-                        data={gmxDistributionData}
+                        data={dfxDistributionData}
                         cx={100}
                         cy={100}
                         innerRadius={73}
@@ -781,23 +781,23 @@ export default function DashboardV2() {
                         startAngle={90}
                         endAngle={-270}
                         paddingAngle={2}
-                        onMouseEnter={onGMXDistributionChartEnter}
-                        onMouseOut={onGMXDistributionChartLeave}
-                        onMouseLeave={onGMXDistributionChartLeave}
+                        onMouseEnter={onDFXDistributionChartEnter}
+                        onMouseOut={onDFXDistributionChartLeave}
+                        onMouseLeave={onDFXDistributionChartLeave}
                       >
-                        {gmxDistributionData.map((entry, index) => (
+                        {dfxDistributionData.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
                             style={{
                               filter:
-                                gmxActiveIndex === index
+                                dfxActiveIndex === index
                                   ? `drop-shadow(0px 0px 6px ${hexToRgba(entry.color, 0.7)})`
                                   : "none",
                               cursor: "pointer",
                             }}
                             stroke={entry.color}
-                            strokeWidth={gmxActiveIndex === index ? 1 : 1}
+                            strokeWidth={dfxActiveIndex === index ? 1 : 1}
                           />
                         ))}
                       </Pie>
@@ -814,7 +814,7 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={currentIcons.glp} width="40" alt="DLP Icon" />
+                        <img src={currentIcons.dlp} width="40" alt="DLP Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
                         <div className="App-card-title-mark-title">DLP</div>
@@ -831,25 +831,25 @@ export default function DashboardV2() {
                       <div className="label">
                         <Trans>Price</Trans>
                       </div>
-                      <div>${formatAmount(glpPrice, USD_DECIMALS, 3, true)}</div>
+                      <div>${formatAmount(dlpPrice, USD_DECIMALS, 3, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">
                         <Trans>Supply</Trans>
                       </div>
-                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} DLP</div>
+                      <div>{formatAmount(dlpSupply, DLP_DECIMALS, 0, true)} DLP</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">
                         <Trans>Total Staked</Trans>
                       </div>
-                      <div>${formatAmount(glpMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(dlpMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">
                         <Trans>Market Cap</Trans>
                       </div>
-                      <div>${formatAmount(glpMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(dlpMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">
@@ -859,11 +859,11 @@ export default function DashboardV2() {
                     </div>
                   </div>
                 </div>
-                <div className="stats-piechart" onMouseOut={onGLPPoolChartLeave}>
-                  {glpPool.length > 0 && (
+                <div className="stats-piechart" onMouseOut={onDLPPoolChartLeave}>
+                  {dlpPool.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
-                        data={glpPool}
+                        data={dlpPool}
                         cx={100}
                         cy={100}
                         innerRadius={73}
@@ -872,24 +872,24 @@ export default function DashboardV2() {
                         dataKey="value"
                         startAngle={90}
                         endAngle={-270}
-                        onMouseEnter={onGLPPoolChartEnter}
-                        onMouseOut={onGLPPoolChartLeave}
-                        onMouseLeave={onGLPPoolChartLeave}
+                        onMouseEnter={onDLPPoolChartEnter}
+                        onMouseOut={onDLPPoolChartLeave}
+                        onMouseLeave={onDLPPoolChartLeave}
                         paddingAngle={2}
                       >
-                        {glpPool.map((entry, index) => (
+                        {dlpPool.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={GLP_POOL_COLORS[entry.name]}
+                            fill={DLP_POOL_COLORS[entry.name]}
                             style={{
                               filter:
-                                glpActiveIndex === index
-                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(GLP_POOL_COLORS[entry.name], 0.7)})`
+                                dlpActiveIndex === index
+                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(DLP_POOL_COLORS[entry.name], 0.7)})`
                                   : "none",
                               cursor: "pointer",
                             }}
-                            stroke={GLP_POOL_COLORS[entry.name]}
-                            strokeWidth={glpActiveIndex === index ? 1 : 1}
+                            stroke={DLP_POOL_COLORS[entry.name]}
+                            strokeWidth={dlpActiveIndex === index ? 1 : 1}
                           />
                         ))}
                       </Pie>

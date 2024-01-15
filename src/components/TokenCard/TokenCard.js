@@ -14,8 +14,8 @@ import { useChainId } from "lib/chains";
 import ExternalLink from "components/ExternalLink/ExternalLink";
 import { getIcon } from "config/icons";
 
-const glpIcon = getIcon("common", "dlp");
-const gmxIcon = getIcon("common", "dfx");
+const dlpIcon = getIcon("common", "dlp");
+const dfxIcon = getIcon("common", "dfx");
 
 export default function TokenCard({ showRedirectModal, redirectPopupTimestamp }) {
   const isHome = isHomeSite();
@@ -63,26 +63,26 @@ export default function TokenCard({ showRedirectModal, redirectPopupTimestamp })
     <div className="Home-token-card-options">
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={gmxIcon} width="40" alt="DFX Icons" /> DFX
+          <img src={dfxIcon} width="40" alt="DFX Icons" /> DFX
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
             <Trans>DFX is the utility and governance token. Accrues 30% of the platform's generated fees.</Trans>
           </div>
           <div className="Home-token-card-option-apr">
-            <Trans>Arbitrum APR:</Trans> <APRLabel chainId={ARBITRUM} label="gmxAprTotal" />,{" "}
-            <Trans>Sepolia APR:</Trans> <APRLabel chainId={SEPOLIA} label="gmxAprTotal" key="SEPOLIA" />
+            <Trans>Arbitrum APR:</Trans> <APRLabel chainId={ARBITRUM} label="dfxAprTotal" />,{" "}
+            <Trans>Sepolia APR:</Trans> <APRLabel chainId={SEPOLIA} label="dfxAprTotal" key="SEPOLIA" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
-              <BuyLink to="/buy_gmx" className="default-btn" network={ARBITRUM}>
+              <BuyLink to="/buy_dfx" className="default-btn" network={ARBITRUM}>
                 <Trans>Buy on Arbitrum</Trans>
               </BuyLink>
-              <BuyLink to="/buy_gmx" className="default-btn" network={SEPOLIA}>
+              <BuyLink to="/buy_dfx" className="default-btn" network={SEPOLIA}>
                 <Trans>Buy on Sepolia Testnet</Trans>
               </BuyLink>
             </div>
-            <ExternalLink href="https://gmxio.gitbook.io/gmx/tokenomics" className="default-btn read-more">
+            <ExternalLink href="https://docs.dfx.so" className="default-btn read-more">
               <Trans>Read more</Trans>
             </ExternalLink>
           </div>
@@ -90,27 +90,27 @@ export default function TokenCard({ showRedirectModal, redirectPopupTimestamp })
       </div>
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={glpIcon} width="40" alt="DLP Icon" /> DLP
+          <img src={dlpIcon} width="40" alt="DLP Icon" /> DLP
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
             <Trans>DLP is the liquidity provider token. Accrues 70% of the platform's generated fees.</Trans>
           </div>
           <div className="Home-token-card-option-apr">
-            <Trans>Arbitrum APR:</Trans> <APRLabel chainId={ARBITRUM} label="glpAprTotal" key="ARBITRUM" />,{" "}
-            <Trans>Sepolia APR:</Trans> <APRLabel chainId={SEPOLIA} label="glpAprTotal" key="SEPOLIA" />
+            <Trans>Arbitrum APR:</Trans> <APRLabel chainId={ARBITRUM} label="dlpAprTotal" key="ARBITRUM" />,{" "}
+            <Trans>Sepolia APR:</Trans> <APRLabel chainId={SEPOLIA} label="dlpAprTotal" key="SEPOLIA" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
-              <BuyLink to="/buy_glp" className="default-btn" network={ARBITRUM}>
+              <BuyLink to="/buy_dlp" className="default-btn" network={ARBITRUM}>
                 <Trans>Buy on Arbitrum</Trans>
               </BuyLink>
-              <BuyLink to="/buy_glp" className="default-btn" network={SEPOLIA}>
+              <BuyLink to="/buy_dlp" className="default-btn" network={SEPOLIA}>
                 <Trans>Buy on Sepolia Testnet</Trans>
               </BuyLink>
             </div>
             <a
-              href="https://gmxio.gitbook.io/gmx/glp"
+              href="https://docs.dfx.so"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"

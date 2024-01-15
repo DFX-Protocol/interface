@@ -787,7 +787,7 @@ export default function StakeV1() {
       <div className="Stake-note">
         <Trans>
           The Gambit protocol is in beta, please read the&nbsp;
-          <ExternalLink href="https://gambit.gitbook.io/gambit/staking">staking details</ExternalLink>
+          <ExternalLink href="https://docs.dfx.so">staking details</ExternalLink>
           &nbsp; before participating.
         </Trans>
       </div>

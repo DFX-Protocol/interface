@@ -5,60 +5,60 @@ import { formatKeyAmount } from "lib/numbers";
 
 type Props = {
   processedData: {
-    gmxAprForEsGmx: BigNumber;
-    gmxAprForNativeToken: BigNumber;
-    gmxAprForNativeTokenWithBoost: BigNumber;
-    gmxBoostAprForNativeToken?: BigNumber;
+    dfxAprForEsDfx: BigNumber;
+    dfxAprForNativeToken: BigNumber;
+    dfxAprForNativeTokenWithBoost: BigNumber;
+    dfxBoostAprForNativeToken?: BigNumber;
   };
   nativeTokenSymbol: string;
 };
 
-function renderEscrowedGMXApr(processedData) {
-  if (!processedData?.gmxAprForEsGmx?.gt(0)) return;
+function renderEscrowedDFXApr(processedData) {
+  if (!processedData?.dfxAprForEsDfx?.gt(0)) return;
   return (
     <StatsTooltipRow
       label={t`Escrowed DFX APR`}
       showDollar={false}
-      value={`${formatKeyAmount(processedData, "gmxAprForEsGmx", 2, 2, true)}%`}
+      value={`${formatKeyAmount(processedData, "dfxAprForEsDfx", 2, 2, true)}%`}
     />
   );
 }
 
-export default function GMXAprTooltip({ processedData, nativeTokenSymbol }: Props) {
+export default function DFXAprTooltip({ processedData, nativeTokenSymbol }: Props) {
   return (
     <>
-      {(!processedData.gmxBoostAprForNativeToken || processedData.gmxBoostAprForNativeToken.eq(0)) && (
+      {(!processedData.dfxBoostAprForNativeToken || processedData.dfxBoostAprForNativeToken.eq(0)) && (
         <StatsTooltipRow
           label={t`${nativeTokenSymbol} APR`}
           showDollar={false}
-          value={`${formatKeyAmount(processedData, "gmxAprForNativeToken", 2, 2, true)}%`}
+          value={`${formatKeyAmount(processedData, "dfxAprForNativeToken", 2, 2, true)}%`}
         />
       )}
-      {processedData?.gmxBoostAprForNativeToken?.gt(0) ? (
+      {processedData?.dfxBoostAprForNativeToken?.gt(0) ? (
         <div>
           <StatsTooltipRow
             label={t`${nativeTokenSymbol} Base APR`}
             showDollar={false}
-            value={`${formatKeyAmount(processedData, "gmxAprForNativeToken", 2, 2, true)}%`}
+            value={`${formatKeyAmount(processedData, "dfxAprForNativeToken", 2, 2, true)}%`}
           />
           <StatsTooltipRow
             label={t`${nativeTokenSymbol} Boosted APR`}
             showDollar={false}
-            value={`${formatKeyAmount(processedData, "gmxBoostAprForNativeToken", 2, 2, true)}%`}
+            value={`${formatKeyAmount(processedData, "dfxBoostAprForNativeToken", 2, 2, true)}%`}
           />
           <div className="Tooltip-divider" />
           <StatsTooltipRow
             label={t`${nativeTokenSymbol} Total APR`}
             showDollar={false}
-            value={`${formatKeyAmount(processedData, "gmxAprForNativeTokenWithBoost", 2, 2, true)}%`}
+            value={`${formatKeyAmount(processedData, "dfxAprForNativeTokenWithBoost", 2, 2, true)}%`}
           />
           <br />
-          {renderEscrowedGMXApr(processedData)}
+          {renderEscrowedDFXApr(processedData)}
           <br />
           <Trans>The Boosted APR is from your staked Multiplier Points.</Trans>
         </div>
       ) : (
-        renderEscrowedGMXApr(processedData)
+        renderEscrowedDFXApr(processedData)
       )}
       <div>
         <br />

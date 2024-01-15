@@ -620,113 +620,113 @@ export const TOKENS: { [chainId: number]: Token[] } = {
 export const ADDITIONAL_TOKENS: { [chainId: number]: Token[] } = {
   [ARBITRUM]: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(ARBITRUM, "GMX"),
+      name: "DFX",
+      symbol: "DFX",
+      address: getContract(ARBITRUM, "DFX"),
       decimals: 18,
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(ARBITRUM, "ES_GMX"),
+      name: "Escrowed DFX",
+      symbol: "esDFX",
+      address: getContract(ARBITRUM, "ES_DFX"),
       decimals: 18,
     },
     {
-      name: "GMX LP",
-      symbol: "GLP",
-      address: getContract(ARBITRUM, "GLP"),
+      name: "DFX LP",
+      symbol: "DLP",
+      address: getContract(ARBITRUM, "DLP"),
       decimals: 18,
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
   [AVALANCHE]: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(AVALANCHE, "GMX"),
+      name: "DFX",
+      symbol: "DFX",
+      address: getContract(AVALANCHE, "DFX"),
       decimals: 18,
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(AVALANCHE, "ES_GMX"),
+      name: "Escrowed DFX",
+      symbol: "esDFX",
+      address: getContract(AVALANCHE, "ES_DFX"),
       decimals: 18,
     },
     {
-      name: "GMX LP",
-      symbol: "GLP",
-      address: getContract(ARBITRUM, "GLP"),
+      name: "DFX LP",
+      symbol: "DLP",
+      address: getContract(ARBITRUM, "DLP"),
       decimals: 18,
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
   // TODO: Update native tokens
   [HEDERA_TESTNET]: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(ARBITRUM, "GMX"),
+      name: "DFX",
+      symbol: "DFX",
+      address: getContract(ARBITRUM, "DFX"),
       decimals: 18,
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(ARBITRUM, "ES_GMX"),
+      name: "Escrowed DFX",
+      symbol: "esDFX",
+      address: getContract(ARBITRUM, "ES_DFX"),
       decimals: 18,
     },
     {
-      name: "GMX LP",
-      symbol: "GLP",
-      address: getContract(ARBITRUM, "GLP"),
+      name: "DFX LP",
+      symbol: "DLP",
+      address: getContract(ARBITRUM, "DLP"),
       decimals: 18,
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
   [SEPOLIA]: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(SEPOLIA, "GMX"),
+      name: "DFX",
+      symbol: "DFX",
+      address: getContract(SEPOLIA, "DFX"),
       decimals: 18,
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(SEPOLIA, "ES_GMX"),
+      name: "Escrowed DFX",
+      symbol: "esDFX",
+      address: getContract(SEPOLIA, "ES_DFX"),
       decimals: 18,
     },
     {
-      name: "GMX LP",
-      symbol: "GLP",
-      address: getContract(SEPOLIA, "GLP"),
+      name: "DFX LP",
+      symbol: "DLP",
+      address: getContract(SEPOLIA, "DLP"),
       decimals: 18,
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
   [BASE_TESTNET]: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(BASE_TESTNET, "GMX"),
+      name: "DFX",
+      symbol: "DFX",
+      address: getContract(BASE_TESTNET, "DFX"),
       decimals: 18,
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(BASE_TESTNET, "ES_GMX"),
+      name: "Escrowed DFX",
+      symbol: "esDFX",
+      address: getContract(BASE_TESTNET, "ES_DFX"),
       decimals: 18,
     },
     {
-      name: "GMX LP",
-      symbol: "GLP",
-      address: getContract(BASE_TESTNET, "GLP"),
+      name: "DFX LP",
+      symbol: "DLP",
+      address: getContract(BASE_TESTNET, "DLP"),
       decimals: 18,
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   ],
 };
@@ -734,108 +734,108 @@ export const ADDITIONAL_TOKENS: { [chainId: number]: Token[] } = {
 export const PLATFORM_TOKENS: { [chainId: number]: { [symbol: string]: Token } } = {
   [ARBITRUM]: {
     // arbitrum
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    DFX: {
+      name: "DFX",
+      symbol: "DFX",
       decimals: 18,
-      address: getContract(ARBITRUM, "GMX"),
+      address: getContract(ARBITRUM, "DFX"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    DLP: {
+      name: "DFX LP",
+      symbol: "DLP",
       decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "StakedDlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
   [AVALANCHE]: {
     // avalanche
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    DFX: {
+      name: "DFX",
+      symbol: "DFX",
       decimals: 18,
-      address: getContract(AVALANCHE, "GMX"),
+      address: getContract(AVALANCHE, "DFX"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    DLP: {
+      name: "DFX LP",
+      symbol: "DLP",
       decimals: 18,
-      address: getContract(AVALANCHE, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(AVALANCHE, "StakedDlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
   // TODO: Update platfrom tokens
   [HEDERA_TESTNET]: {
     // arbitrum
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    DFX: {
+      name: "DFX",
+      symbol: "DFX",
       decimals: 18,
-      address: getContract(ARBITRUM, "GMX"),
+      address: getContract(ARBITRUM, "DFX"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    DLP: {
+      name: "DFX LP",
+      symbol: "DLP",
       decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "StakedDlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
   [SEPOLIA]: {
     // arbitrum
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    DFX: {
+      name: "DFX",
+      symbol: "DFX",
       decimals: 18,
-      address: getContract(SEPOLIA, "GMX"),
+      address: getContract(SEPOLIA, "DFX"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    DLP: {
+      name: "DFX LP",
+      symbol: "DLP",
       decimals: 18,
-      address: getContract(SEPOLIA, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(SEPOLIA, "StakedDlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
   [BASE_TESTNET]: {
     // arbitrum
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    DFX: {
+      name: "DFX",
+      symbol: "DFX",
       decimals: 18,
-      address: getContract(BASE_TESTNET, "GMX"),
+      address: getContract(BASE_TESTNET, "DFX"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    DLP: {
+      name: "DFX LP",
+      symbol: "DLP",
       decimals: 18,
-      address: getContract(BASE_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(BASE_TESTNET, "StakedDlpTracker"), // address of fsGLP token because user only holds fsGLP
+      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/DFX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
 };
 // TODO: Update icon links
 export const ICONLINKS = {
   [ARBITRUM_TESTNET]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
-    GLP: {
+    DLP: {
       arbitrum: "https://testnet.arbiscan.io/token/0xb4f81Fa74e06b5f762A104e47276BA9b2929cb27",
     },
   },
   [ARBITRUM]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
-    GLP: {
+    DLP: {
       arbitrum: "https://arbiscan.io/token/0x1aDDD80E6039594eE970E5872D247bf0414C8903",
       reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=ARBITRUM",
     },
@@ -876,11 +876,11 @@ export const ICONLINKS = {
     },
   },
   [AVALANCHE]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
     },
-    GLP: {
+    DLP: {
       avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
       reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=AVAX",
     },
@@ -926,11 +926,11 @@ export const ICONLINKS = {
     },
   },
   [HEDERA_TESTNET]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
-    GLP: {
+    DLP: {
       arbitrum: "https://arbiscan.io/token/0x1aDDD80E6039594eE970E5872D247bf0414C8903",
       reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=ARBITRUM",
     },
@@ -971,11 +971,11 @@ export const ICONLINKS = {
     },
   },
   [SEPOLIA]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       sepolia: "https://sepolia.etherscan.io/address/0x7419462686053b66B657353D6dFe69BfdB2a3554",
     },
-    GLP: {
+    DLP: {
       sepolia: "https://sepolia.etherscan.io/token/0x196b6BDFFC308B031Ac87183D8db1f06a46d821E",
       reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=ARBITRUM",
     },
@@ -1016,11 +1016,11 @@ export const ICONLINKS = {
     // },
   },
   [BASE_TESTNET]: {
-    GMX: {
+    DFX: {
       coingecko: "https://www.coingecko.com/en/coins/gmx",
       sepolia: "https://sepolia.etherscan.io/address/0x7419462686053b66B657353D6dFe69BfdB2a3554",
     },
-    GLP: {
+    DLP: {
       sepolia: "https://sepolia.etherscan.io/token/0x196b6BDFFC308B031Ac87183D8db1f06a46d821E",
       reserves: "https://portfolio.nansen.ai/dashboard/gmx?chain=ARBITRUM",
     },
@@ -1050,7 +1050,7 @@ export const ICONLINKS = {
   },
 };
 
-export const GLP_POOL_COLORS = {
+export const DLP_POOL_COLORS = {
   ETH: "#6062a6",
   WETH: "#6062a6",
   BTC: "#F7931A",

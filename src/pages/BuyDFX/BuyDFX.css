@@ -1,15 +1,15 @@
-.BuyGMXGLP {
+.BuyDFXDLP {
   background: #101124;
   justify-content: space-between;
 }
 
-.BuyGMXGLP-container {
+.BuyDFXDLP-container {
   padding-top: 4.65rem;
   padding-bottom: 3.1rem;
   width: 100%;
 }
 
-.BuyGMXGLP-description {
+.BuyDFXDLP-description {
   letter-spacing: 0px;
   color: #d4d4d4;
 }
@@ -20,7 +20,7 @@
   grid-template-columns: 1fr 1fr;
   margin-top: 1.5rem;
 }
-.buy-gmx {
+.buy-dfx {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,7 +175,7 @@
 }
 
 @media (max-width: 400px) {
-  .BuyGMXGLP-description {
+  .BuyDFXDLP-description {
     font-size: var(--font-base);
     line-height: 2rem;
   }

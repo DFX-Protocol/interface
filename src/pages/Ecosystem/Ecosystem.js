@@ -22,24 +22,24 @@ const NETWORK_ICON_ALTS = {
 };
 
 export default function Ecosystem() {
-  const gmxPages = [
+  const dfxPages = [
     {
       title: "DFX Governance",
-      link: "https://gov.gmx.io/",
-      linkLabel: "gov.gmx.io",
+      link: "https://gov.dfx.so/",
+      linkLabel: "gov.dfx.so",
       about: t`DFX Governance Page`,
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
       title: "DFX Stats",
-      link: "https://stats.gmx.io/",
-      linkLabel: "stats.gmx.io",
+      link: "https://stats.dfx.so/",
+      linkLabel: "stats.dfx.so",
       about: t`DFX Stats Page`,
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
       title: "DFX Proposals",
-      link: "https://snapshot.org/#/gmx.eth",
+      link: "https://snapshot.org/#/dfx.eth",
       linkLabel: "snapshot.org",
       about: t`DFX Proposals Voting page`,
       chainIds: [ARBITRUM, AVALANCHE],
@@ -65,8 +65,8 @@ export default function Ecosystem() {
     },
     {
       title: "DFX Leaderboard",
-      link: "https://www.gmx.house/",
-      linkLabel: "gmx.house",
+      link: "https://www.dfx.house/",
+      linkLabel: "dfx.house",
       about: t`Leaderboard for DFX traders`,
       creatorLabel: "@Itburnz",
       creatorLink: "https://t.me/Itburnz",
@@ -92,7 +92,7 @@ export default function Ecosystem() {
     },
     {
       title: "DegenClip",
-      link: "https://degenclip.com/gmx",
+      link: "https://degenclip.com/dfx",
       linkLabel: "degenclip.com",
       about: t`Community curated tweet collection`,
       creatorLabel: "@ox21l",
@@ -101,7 +101,7 @@ export default function Ecosystem() {
     },
     {
       title: "DFX Yield Simulator",
-      link: "https://gmx.defisims.com/",
+      link: "https://dfx.defisims.com/",
       linkLabel: "defisims.com",
       about: t`Yield simulator for DFX`,
       creatorLabel: "@kyzoeth",
@@ -203,7 +203,7 @@ export default function Ecosystem() {
     },
     {
       title: "TokenTerminal",
-      link: "https://tokenterminal.com/terminal/projects/gmx",
+      link: "https://tokenterminal.com/terminal/projects/dfx",
       linkLabel: "tokenterminal.com",
       about: t`DFX fundamentals`,
       creatorLabel: "@tokenterminal",
@@ -221,7 +221,7 @@ export default function Ecosystem() {
     },
     {
       title: "Shogun Dashboard (Dune Arbitrum)",
-      link: "https://dune.com/shogun/gmx-analytics-arbitrum",
+      link: "https://dune.com/shogun/dfx-analytics-arbitrum",
       linkLabel: "dune.com",
       about: t`Protocol analytics`,
       creatorLabel: "@JamesCliffyz",
@@ -230,7 +230,7 @@ export default function Ecosystem() {
     },
     {
       title: "Shogun Dashboard (Dune Avalanche)",
-      link: "https://dune.com/shogun/gmx-analytics-avalanche",
+      link: "https://dune.com/shogun/dfx-analytics-avalanche",
       linkLabel: "dune.com",
       about: t`Protocol analytics`,
       creatorLabel: "@JamesCliffyz",
@@ -257,7 +257,7 @@ export default function Ecosystem() {
     },
     {
       title: "DFX Open Trades Ranking and Stats",
-      link: "https://dune.com/HanSolar/gmx-open-trade-ranking-and-stats",
+      link: "https://dune.com/HanSolar/dfx-open-trade-ranking-and-stats",
       linkLabel: "dune.com",
       about: t`Open trades ranking and stats`,
       creatorLabel: "@hansolar21",
@@ -266,7 +266,7 @@ export default function Ecosystem() {
     },
     {
       title: "DFX Everything Dashboard",
-      link: "https://dune.com/gmxtrader/gmx-dashboard-insights",
+      link: "https://dune.com/gmxtrader/dfx-dashboard-insights",
       linkLabel: "dune.com",
       about: t`Overall protocol analytics`,
       creatorLabel: "@gmxtrader",
@@ -417,7 +417,7 @@ export default function Ecosystem() {
       linkLabel: "beefy.com",
       about: t`DLP and DFX autocompounding vaults`,
       announcementLabel: "beefy.com",
-      announcementLink: "https://beefy.com/articles/earn-glp-with-beefy-s-new-glp-strategy-and-vaults/",
+      announcementLink: "https://beefy.com/articles/earn-dlp-with-beefy-s-new-dlp-strategy-and-vaults/",
       chainIds: [ARBITRUM, AVALANCHE],
     },
   ];
@@ -465,7 +465,7 @@ export default function Ecosystem() {
             </div>
           </div>
           <div className="DashboardV2-projects">
-            {gmxPages.map((item) => {
+            {dfxPages.map((item) => {
               const linkLabel = item.linkLabel ? item.linkLabel : item.link;
               return (
                 <div className="App-card" key={item.title}>

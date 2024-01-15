@@ -67,7 +67,6 @@ function applySpread(amount, spread) {
 
 function shouldSwap(collateralToken, receiveToken) {
   // If position collateral is WETH in contract, then position.collateralToken is { symbol: “ETH”, isNative: true, … }
-  // @see https://github.com/gmx-io/gmx-interface/blob/master/src/pages/Exchange/Exchange.js#L162
   // meaning if collateralToken.isNative === true in reality position has WETH as a collateral
   // and if collateralToken.isNative === true and receiveToken.isNative === true then position’s WETH will be unwrapped and user will receive native ETH
   const isCollateralWrapped = collateralToken.isNative;
@@ -872,7 +871,7 @@ export default function PositionSeller(props) {
           <div className="Confirmation-box-warning">
             <Trans>
               Reducing the position at the current price will forfeit a&nbsp;
-              <ExternalLink href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change">
+              <ExternalLink href="https://docs.dfx.so">
                 pending profit
               </ExternalLink>{" "}
               of {deltaStr}. <br />
@@ -889,7 +888,7 @@ export default function PositionSeller(props) {
         <div className="Confirmation-box-warning">
           <Trans>
             This order will forfeit a&nbsp;
-            <ExternalLink href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change">profit</ExternalLink> of{" "}
+            <ExternalLink href="https://docs.dfx.so">profit</ExternalLink> of{" "}
             {deltaStr}. <br />
           </Trans>
           <Trans>

@@ -14,7 +14,7 @@ export default function ExchangeBanner(props) {
           Trade on DFX and win <span className="ExchangeBanner-price">$250.000</span> in prizes! Live until November
           30th,{" "}
           <ExternalLink
-            href="https://gmxio.substack.com/p/gmx-trading-competition-win-250000"
+            href="https://dfxso.substack.com/p/dfx-trading-competition-win-250000"
             className="ExchangeBanner-link"
           >
             click here

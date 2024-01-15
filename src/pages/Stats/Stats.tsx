@@ -58,7 +58,7 @@ export default function Stats() {
   const vaultAddress = getContract(chainId, "Vault");
 
   const { data: totalTokenWeights } = useSWR<BigNumber>(
-    [`GlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: contractFetcher(library, VaultV2),
     }

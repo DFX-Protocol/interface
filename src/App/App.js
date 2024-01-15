@@ -26,11 +26,10 @@ import Actions from "pages/Actions/Actions";
 import OrdersOverview from "pages/OrdersOverview/OrdersOverview";
 import PositionsOverview from "pages/PositionsOverview/PositionsOverview";
 import Referrals from "pages/Referrals/Referrals";
-import BuyGlp from "pages/BuyGlp/BuyGlp";
-import BuyGMX from "pages/BuyGMX/BuyGMX";
+import BuyDlp from "pages/BuyDlp/BuyDlp";
 import Buy from "pages/Buy/Buy";
 import NftWallet from "pages/NftWallet/NftWallet";
-import ClaimEsGmx from "pages/ClaimEsGmx/ClaimEsGmx";
+import ClaimEsDfx from "pages/ClaimEsDfx/ClaimEsDfx";
 import BeginAccountTransfer from "pages/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "pages/CompleteAccountTransfer/CompleteAccountTransfer";
 
@@ -494,8 +493,8 @@ function FullApp() {
                   connectWallet={connectWallet}
                 />
               </Route>
-              <Route exact path="/buy_glp">
-                <BuyGlp
+              <Route exact path="/buy_Dlp">
+                <BuyDlp
                   savedSlippageAmount={savedSlippageAmount}
                   setPendingTxns={setPendingTxns}
                   connectWallet={connectWallet}
@@ -505,8 +504,8 @@ function FullApp() {
               <Route exact path="/jobs">
                 <Jobs />
               </Route>
-              <Route exact path="/buy_gmx">
-                <BuyGMX />
+              <Route exact path="/buy_dfx">
+                <BuyDlp />
               </Route>
               {/* <Route exact path="/ecosystem">
                 <Ecosystem />
@@ -520,8 +519,8 @@ function FullApp() {
               <Route exact path="/nft_wallet">
                 <NftWallet />
               </Route>
-              <Route exact path="/claim_es_gmx">
-                <ClaimEsGmx setPendingTxns={setPendingTxns} />
+              <Route exact path="/claim_es_dfx">
+                <ClaimEsDfx setPendingTxns={setPendingTxns} />
               </Route>
               <Route exact path="/actions">
                 <Actions />

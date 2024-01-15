@@ -9,22 +9,22 @@ import cx from "classnames";
 import { IoMdSwap } from "react-icons/io";
 import { getContract } from "config/contracts";
 import {
-  getBuyGlpToAmount,
-  getBuyGlpFromAmount,
-  getSellGlpFromAmount,
-  getSellGlpToAmount,
+  getBuyDlpToAmount,
+  getBuyDlpFromAmount,
+  getSellDlpFromAmount,
+  getSellDlpToAmount,
   adjustForDecimals,
-  GLP_DECIMALS,
+  DLP_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
-  GLP_COOLDOWN_DURATION,
+  DLP_COOLDOWN_DURATION,
   SECONDS_PER_YEAR,
   USDG_DECIMALS,
   PLACEHOLDER_ACCOUNT,
   importImage,
 } from "lib/legacy";
 
-import { useGmxPrice } from "domain/legacy";
+import { useDfxPrice } from "domain/legacy";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -33,12 +33,12 @@ import Tooltip from "../Tooltip/Tooltip";
 import ReaderV2 from "abis/ReaderV2.json";
 import RewardReader from "abis/RewardReader.json";
 import VaultV2 from "abis/VaultV2.json";
-import GlpManager from "abis/GlpManager.json";
+import DlpManager from "abis/DlpManager.json";
 import RewardTracker from "abis/RewardTracker.json";
 import Vester from "abis/Vester.json";
 import RewardRouter from "abis/RewardRouter.json";
 import Token from "abis/Token.json";
-import "./GlpSwap.css";
+import "./DlpSwap.css";
 import AssetDropdown from "pages/Dashboard/AssetDropdown";
 import SwapErrorModal from "./SwapErrorModal";
 import StatsTooltipRow from "../StatsTooltip/StatsTooltipRow";
@@ -62,7 +62,7 @@ function getStakingData(stakingInfo) {
     return;
   }
 
-  const keys = ["stakedGlpTracker", "feeGlpTracker"];
+  const keys = ["stakedDlpTracker", "feeDlpTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -95,7 +95,7 @@ function getTooltipContent(managedUsd, tokenInfo, token) {
   );
 }
 
-export default function GlpSwap(props) {
+export default function DlpSwap(props) {
   const {
     savedSlippageAmount,
     isBuying,
@@ -105,7 +105,7 @@ export default function GlpSwap(props) {
     savedShouldDisableValidationForTesting,
   } = props;
   const history = useHistory();
-  const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
+  const swapLabel = isBuying ? "BuyDlp" : "SellDlp";
   const tabLabel = isBuying ? t`Buy DLP` : t`Sell DLP`;
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
@@ -114,7 +114,7 @@ export default function GlpSwap(props) {
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const visibleTokens = tokenList.filter((t) => !t.isTempHidden);
   const [swapValue, setSwapValue] = useState("");
-  const [glpValue, setGlpValue] = useState("");
+  const [dlpValue, setDlpValue] = useState("");
   const [swapTokenAddress, setSwapTokenAddress] = useLocalStorageByChainId(
     chainId,
     `${swapLabel}-swap-token-address`,
@@ -131,20 +131,20 @@ export default function GlpSwap(props) {
   const rewardReaderAddress = getContract(chainId, "RewardReader");
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedDlpTrackerAddress = getContract(chainId, "StakedDlpTracker");
+  const feeDlpTrackerAddress = getContract(chainId, "FeeDlpTracker");
   const usdgAddress = getContract(chainId, "USDG");
-  const glpManagerAddress = getContract(chainId, "GlpManager");
-  const glpRewardRouterAddress = getContract(chainId, "GlpRewardRouter");
+  const dlpManagerAddress = getContract(chainId, "DlpManager");
+  const dlpRewardRouterAddress = getContract(chainId, "DlpRewardRouter");
 
-  const tokensForBalanceAndSupplyQuery = [stakedGlpTrackerAddress, usdgAddress];
-  const glpIcon = getIcon(chainId, "dlp");
+  const tokensForBalanceAndSupplyQuery = [stakedDlpTrackerAddress, usdgAddress];
+  const dlpIcon = getIcon(chainId, "dlp");
 
   const isFeesHigh = feeBasisPoints > FEES_HIGH_BPS;
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(
-    [`GlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    [`DlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: contractFetcher(library, ReaderV2, [tokenAddresses]),
     }
@@ -152,7 +152,7 @@ export default function GlpSwap(props) {
 
   const { data: balancesAndSupplies } = useSWR(
     [
-      `GlpSwap:getTokenBalancesWithSupplies:${active}`,
+      `DlpSwap:getTokenBalancesWithSupplies:${active}`,
       chainId,
       readerAddress,
       "getTokenBalancesWithSupplies",
@@ -163,12 +163,12 @@ export default function GlpSwap(props) {
     }
   );
 
-  const { data: aums } = useSWR([`GlpSwap:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: contractFetcher(library, GlpManager),
+  const { data: aums } = useSWR([`DlpSwap:getAums:${active}`, chainId, dlpManagerAddress, "getAums"], {
+    fetcher: contractFetcher(library, DlpManager),
   });
 
   const { data: totalTokenWeights } = useSWR(
-    [`GlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: contractFetcher(library, VaultV2),
     }
@@ -176,39 +176,39 @@ export default function GlpSwap(props) {
 
   const tokenAllowanceAddress = swapTokenAddress === AddressZero ? nativeTokenAddress : swapTokenAddress;
   const { data: tokenAllowance } = useSWR(
-    [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, glpManagerAddress],
+    [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, dlpManagerAddress],
     {
       fetcher: contractFetcher(library, Token),
     }
   );
 
   const { data: lastPurchaseTime } = useSWR(
-    [`GlpSwap:lastPurchaseTime:${active}`, chainId, glpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
+    [`DlpSwap:lastPurchaseTime:${active}`, chainId, dlpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, GlpManager),
+      fetcher: contractFetcher(library, DlpManager),
     }
   );
 
-  const { data: glpBalance } = useSWR(
-    [`GlpSwap:glpBalance:${active}`, chainId, feeGlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
+  const { data: dlpBalance } = useSWR(
+    [`DlpSwap:dlpBalance:${active}`, chainId, feeDlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const dlpVesterAddress = getContract(chainId, "DlpVester");
   const { data: reservedAmount } = useSWR(
-    [`GlpSwap:reservedAmount:${active}`, chainId, glpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
+    [`DlpSwap:reservedAmount:${active}`, chainId, dlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: contractFetcher(library, Vester),
     }
   );
 
-  const { gmxPrice } = useGmxPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { dfxPrice } = useDfxPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const rewardTrackersForStakingInfo = [stakedGlpTrackerAddress, feeGlpTrackerAddress];
+  const rewardTrackersForStakingInfo = [stakedDlpTrackerAddress, feeDlpTrackerAddress];
   const { data: stakingInfo } = useSWR(
-    [`GlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    [`DlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: contractFetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
@@ -216,33 +216,33 @@ export default function GlpSwap(props) {
 
   const stakingData = getStakingData(stakingInfo);
 
-  const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(GLP_COOLDOWN_DURATION) : undefined;
+  const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(DLP_COOLDOWN_DURATION) : undefined;
   const inCooldownWindow = redemptionTime && parseInt(Date.now() / 1000) < redemptionTime;
 
-  const glpSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+  const dlpSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
   const usdgSupply = balancesAndSupplies ? balancesAndSupplies[3] : bigNumberify(0);
   let aum;
   if (aums && aums.length > 0) {
     aum = isBuying ? aums[0] : aums[1];
   }
-  const glpPrice =
-    aum && aum.gt(0) && glpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(glpSupply)
+  const dlpPrice =
+    aum && aum.gt(0) && dlpSupply.gt(0)
+      ? aum.mul(expandDecimals(1, DLP_DECIMALS)).div(dlpSupply)
       : expandDecimals(1, USD_DECIMALS);
-  let glpBalanceUsd;
-  if (glpBalance) {
-    glpBalanceUsd = glpBalance.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+  let dlpBalanceUsd;
+  if (dlpBalance) {
+    dlpBalanceUsd = dlpBalance.mul(dlpPrice).div(expandDecimals(1, DLP_DECIMALS));
   }
-  const glpSupplyUsd = glpSupply.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+  const dlpSupplyUsd = dlpSupply.mul(dlpPrice).div(expandDecimals(1, DLP_DECIMALS));
 
   let reserveAmountUsd;
   if (reservedAmount) {
-    reserveAmountUsd = reservedAmount.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+    reserveAmountUsd = reservedAmount.mul(dlpPrice).div(expandDecimals(1, DLP_DECIMALS));
   }
 
-  let maxSellAmount = glpBalance;
-  if (glpBalance && reservedAmount) {
-    maxSellAmount = glpBalance.sub(reservedAmount);
+  let maxSellAmount = dlpBalance;
+  if (dlpBalance && reservedAmount) {
+    maxSellAmount = dlpBalance.sub(reservedAmount);
   }
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
@@ -252,13 +252,13 @@ export default function GlpSwap(props) {
   const swapTokenBalance = swapTokenInfo && swapTokenInfo.balance ? swapTokenInfo.balance : bigNumberify(0);
 
   const swapAmount = parseValue(swapValue, swapToken && swapToken.decimals);
-  const glpAmount = parseValue(glpValue, GLP_DECIMALS);
+  const dlpAmount = parseValue(dlpValue, DLP_DECIMALS);
 
   const needApproval =
     isBuying && swapTokenAddress !== AddressZero && tokenAllowance && swapAmount && swapAmount.gt(tokenAllowance);
 
   const swapUsdMin = getUsd(swapAmount, swapTokenAddress, false, infoTokens);
-  const glpUsdMax = glpAmount && glpPrice ? glpAmount.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS)) : undefined;
+  const dlpUsdMax = dlpAmount && dlpPrice ? dlpAmount.mul(dlpPrice).div(expandDecimals(1, DLP_DECIMALS)) : undefined;
 
   let isSwapTokenCapReached;
   if (swapTokenInfo.managedUsd && swapTokenInfo.maxUsdgAmount) {
@@ -272,9 +272,9 @@ export default function GlpSwap(props) {
     setSwapValue(e.target.value);
   };
 
-  const onGlpValueChange = (e) => {
+  const onDlpValueChange = (e) => {
     setAnchorOnSwapAmount(false);
-    setGlpValue(e.target.value);
+    setDlpValue(e.target.value);
   };
 
   const onSelectSwapToken = (token) => {
@@ -286,83 +286,83 @@ export default function GlpSwap(props) {
 
   let totalApr = bigNumberify(0);
 
-  let feeGlpTrackerAnnualRewardsUsd;
-  let feeGlpTrackerApr;
+  let feeDlpTrackerAnnualRewardsUsd;
+  let feeDlpTrackerApr;
   if (
     stakingData &&
-    stakingData.feeGlpTracker &&
-    stakingData.feeGlpTracker.tokensPerInterval &&
+    stakingData.feeDlpTracker &&
+    stakingData.feeDlpTracker.tokensPerInterval &&
     nativeToken &&
     nativeToken.minPrice &&
-    glpSupplyUsd &&
-    glpSupplyUsd.gt(0)
+    dlpSupplyUsd &&
+    dlpSupplyUsd.gt(0)
   ) {
-    feeGlpTrackerAnnualRewardsUsd = stakingData.feeGlpTracker.tokensPerInterval
+    feeDlpTrackerAnnualRewardsUsd = stakingData.feeDlpTracker.tokensPerInterval
       .mul(SECONDS_PER_YEAR)
       .mul(nativeToken.minPrice)
       .div(expandDecimals(1, 18));
-    feeGlpTrackerApr = feeGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(glpSupplyUsd);
-    totalApr = totalApr.add(feeGlpTrackerApr);
+    feeDlpTrackerApr = feeDlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(dlpSupplyUsd);
+    totalApr = totalApr.add(feeDlpTrackerApr);
   }
 
-  let stakedGlpTrackerAnnualRewardsUsd;
-  let stakedGlpTrackerApr;
+  let stakedDlpTrackerAnnualRewardsUsd;
+  let stakedDlpTrackerApr;
 
   if (
-    gmxPrice &&
+    dfxPrice &&
     stakingData &&
-    stakingData.stakedGlpTracker &&
-    stakingData.stakedGlpTracker.tokensPerInterval &&
-    glpSupplyUsd &&
-    glpSupplyUsd.gt(0)
+    stakingData.stakedDlpTracker &&
+    stakingData.stakedDlpTracker.tokensPerInterval &&
+    dlpSupplyUsd &&
+    dlpSupplyUsd.gt(0)
   ) {
-    stakedGlpTrackerAnnualRewardsUsd = stakingData.stakedGlpTracker.tokensPerInterval
+    stakedDlpTrackerAnnualRewardsUsd = stakingData.stakedDlpTracker.tokensPerInterval
       .mul(SECONDS_PER_YEAR)
-      .mul(gmxPrice)
+      .mul(dfxPrice)
       .div(expandDecimals(1, 18));
-    stakedGlpTrackerApr = stakedGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(glpSupplyUsd);
-    totalApr = totalApr.add(stakedGlpTrackerApr);
+    stakedDlpTrackerApr = stakedDlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(dlpSupplyUsd);
+    totalApr = totalApr.add(stakedDlpTrackerApr);
   }
 
   useEffect(() => {
     const updateSwapAmounts = () => {
       if (anchorOnSwapAmount) {
         if (!swapAmount) {
-          setGlpValue("");
+          setDlpValue("");
           setFeeBasisPoints("");
           return;
         }
 
         if (isBuying) {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGlpToAmount(
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyDlpToAmount(
             swapAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            dlpPrice,
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLP_DECIMALS, GLP_DECIMALS);
-          setGlpValue(nextValue);
+          const nextValue = formatAmountFree(nextAmount, DLP_DECIMALS, DLP_DECIMALS);
+          setDlpValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGlpFromAmount(
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellDlpFromAmount(
             swapAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            dlpPrice,
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLP_DECIMALS, GLP_DECIMALS);
-          setGlpValue(nextValue);
+          const nextValue = formatAmountFree(nextAmount, DLP_DECIMALS, DLP_DECIMALS);
+          setDlpValue(nextValue);
           setFeeBasisPoints(feeBps);
         }
 
         return;
       }
 
-      if (!glpAmount) {
+      if (!dlpAmount) {
         setSwapValue("");
         setFeeBasisPoints("");
         return;
@@ -370,11 +370,11 @@ export default function GlpSwap(props) {
 
       if (swapToken) {
         if (isBuying) {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-            glpAmount,
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyDlpFromAmount(
+            dlpAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            dlpPrice,
             usdgSupply,
             totalTokenWeights
           );
@@ -382,11 +382,11 @@ export default function GlpSwap(props) {
           setSwapValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGlpToAmount(
-            glpAmount,
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellDlpToAmount(
+            dlpAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            dlpPrice,
             usdgSupply,
             totalTokenWeights,
             true
@@ -404,11 +404,11 @@ export default function GlpSwap(props) {
     isBuying,
     anchorOnSwapAmount,
     swapAmount,
-    glpAmount,
+    dlpAmount,
     swapToken,
     swapTokenAddress,
     infoTokens,
-    glpPrice,
+    dlpPrice,
     usdgSupply,
     totalTokenWeights,
   ]);
@@ -426,7 +426,7 @@ export default function GlpSwap(props) {
     }
 
     setAnchorOnSwapAmount(false);
-    setGlpValue(formatAmountFree(maxSellAmount, GLP_DECIMALS, GLP_DECIMALS));
+    setDlpValue(formatAmountFree(maxSellAmount, DLP_DECIMALS, DLP_DECIMALS));
   };
 
   const getError = () => {
@@ -442,7 +442,7 @@ export default function GlpSwap(props) {
     if (!swapAmount || swapAmount.eq(0)) {
       return [t`Enter an amount`];
     }
-    if (!glpAmount || glpAmount.eq(0)) {
+    if (!dlpAmount || dlpAmount.eq(0)) {
       return [t`Enter an amount`];
     }
 
@@ -468,7 +468,7 @@ export default function GlpSwap(props) {
     }
 
     if (!isBuying) {
-      if (maxSellAmount && glpAmount && glpAmount.gt(maxSellAmount)) {
+      if (maxSellAmount && dlpAmount && dlpAmount.gt(maxSellAmount)) {
         return [t`Insufficient DLP balance`];
       }
 
@@ -547,7 +547,7 @@ export default function GlpSwap(props) {
       setIsApproving,
       library,
       tokenAddress: swapToken.address,
-      spender: glpManagerAddress,
+      spender: dlpManagerAddress,
       chainId: chainId,
       onApproveSubmitted: () => {
         setIsWaitingForApproval(true);
@@ -557,21 +557,21 @@ export default function GlpSwap(props) {
     });
   };
 
-  const buyGlp = () => {
+  const buyDlp = () => {
     setIsSubmitting(true);
 
-    const minGlp = glpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
+    const minDlp = dlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
-    const contract = new ethers.Contract(glpRewardRouterAddress, RewardRouter.abi, library.getSigner());
-    const method = swapTokenAddress === AddressZero ? "mintAndStakeGlpETH" : "mintAndStakeGlp";
-    const params = swapTokenAddress === AddressZero ? [0, minGlp] : [swapTokenAddress, swapAmount, 0, minGlp];
+    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, library.getSigner());
+    const method = swapTokenAddress === AddressZero ? "mintAndStakeDlpETH" : "mintAndStakeDlp";
+    const params = swapTokenAddress === AddressZero ? [0, minDlp] : [swapTokenAddress, swapAmount, 0, minDlp];
     const value = swapTokenAddress === AddressZero ? swapAmount : 0;
 
     callContract(chainId, contract, method, params, {
       value,
       sentMsg: t`Buy submitted.`,
       failMsg: t`Buy failed.`,
-      successMsg: t`${formatAmount(glpAmount, 18, 4, true)} DLP bought with ${formatAmount(
+      successMsg: t`${formatAmount(dlpAmount, 18, 4, true)} DLP bought with ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
@@ -585,20 +585,20 @@ export default function GlpSwap(props) {
       });
   };
 
-  const sellGlp = () => {
+  const sellDlp = () => {
     setIsSubmitting(true);
 
     const minOut = swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
-    const contract = new ethers.Contract(glpRewardRouterAddress, RewardRouter.abi, library.getSigner());
-    const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemGlpETH" : "unstakeAndRedeemGlp";
+    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, library.getSigner());
+    const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemDlpETH" : "unstakeAndRedeemDlp";
     const params =
-      swapTokenAddress === AddressZero ? [glpAmount, minOut, account] : [swapTokenAddress, glpAmount, minOut, account];
+      swapTokenAddress === AddressZero ? [dlpAmount, minOut, account] : [swapTokenAddress, dlpAmount, minOut, account];
 
     callContract(chainId, contract, method, params, {
       sentMsg: t`Sell submitted!`,
       failMsg: t`Sell failed.`,
-      successMsg: t`${formatAmount(glpAmount, 18, 4, true)} DLP sold for ${formatAmount(
+      successMsg: t`${formatAmount(dlpAmount, 18, 4, true)} DLP sold for ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
@@ -631,9 +631,9 @@ export default function GlpSwap(props) {
     }
 
     if (isBuying) {
-      buyGlp();
+      buyDlp();
     } else {
-      sellGlp();
+      sellDlp();
     }
   };
 
@@ -645,12 +645,12 @@ export default function GlpSwap(props) {
     if (swapUsdMin) {
       payBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
     }
-    if (glpUsdMax) {
-      receiveBalance = `$${formatAmount(glpUsdMax, USD_DECIMALS, 2, true)}`;
+    if (dlpUsdMax) {
+      receiveBalance = `$${formatAmount(dlpUsdMax, USD_DECIMALS, 2, true)}`;
     }
   } else {
-    if (glpUsdMax) {
-      payBalance = `$${formatAmount(glpUsdMax, USD_DECIMALS, 2, true)}`;
+    if (dlpUsdMax) {
+      payBalance = `$${formatAmount(dlpUsdMax, USD_DECIMALS, 2, true)}`;
     }
     if (swapUsdMin) {
       receiveBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
@@ -680,25 +680,25 @@ export default function GlpSwap(props) {
   };
 
   return (
-    <div className="GlpSwap">
+    <div className="DlpSwap">
       <SwapErrorModal
         isVisible={Boolean(modalError)}
         setIsVisible={setModalError}
         swapToken={swapToken}
         chainId={chainId}
-        glpAmount={glpAmount}
+        dlpAmount={dlpAmount}
         usdgSupply={usdgSupply}
         totalTokenWeights={totalTokenWeights}
-        glpPrice={glpPrice}
+        dlpPrice={dlpPrice}
         infoTokens={infoTokens}
         swapUsdMin={swapUsdMin}
       />
-      <div className="GlpSwap-content">
-        <div className="App-card GlpSwap-stats-card">
+      <div className="DlpSwap-content">
+        <div className="App-card DlpSwap-stats-card">
           <div className="App-card-title">
             <div className="App-card-title-mark">
               <div className="App-card-title-mark-icon">
-                <img width="40" src={glpIcon} alt="DLP" />
+                <img width="40" src={dlpIcon} alt="DLP" />
               </div>
               <div className="App-card-title-mark-info">
                 <div className="App-card-title-mark-title">DLP</div>
@@ -715,15 +715,15 @@ export default function GlpSwap(props) {
               <div className="label">
                 <Trans>Price</Trans>
               </div>
-              <div className="value">${formatAmount(glpPrice, USD_DECIMALS, 3, true)}</div>
+              <div className="value">${formatAmount(dlpPrice, USD_DECIMALS, 3, true)}</div>
             </div>
             <div className="App-card-row">
               <div className="label">
                 <Trans>Wallet</Trans>
               </div>
               <div className="value">
-                {formatAmount(glpBalance, GLP_DECIMALS, 4, true)} DLP ($
-                {formatAmount(glpBalanceUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(dlpBalance, DLP_DECIMALS, 4, true)} DLP ($
+                {formatAmount(dlpBalanceUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
             <div className="App-card-row">
@@ -731,8 +731,8 @@ export default function GlpSwap(props) {
                 <Trans>Staked</Trans>
               </div>
               <div className="value">
-                {formatAmount(glpBalance, GLP_DECIMALS, 4, true)} DLP ($
-                {formatAmount(glpBalanceUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(dlpBalance, DLP_DECIMALS, 4, true)} DLP ($
+                {formatAmount(dlpBalanceUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
           </div>
@@ -772,12 +772,12 @@ export default function GlpSwap(props) {
                       <>
                         <StatsTooltipRow
                           label={t`${nativeTokenSymbol} (${wrappedTokenSymbol}) APR`}
-                          value={`${formatAmount(feeGlpTrackerApr, 2, 2, false)}%`}
+                          value={`${formatAmount(feeDlpTrackerApr, 2, 2, false)}%`}
                           showDollar={false}
                         />
                         <StatsTooltipRow
                           label={t`Escrowed DFX APR`}
-                          value={`${formatAmount(stakedGlpTrackerApr, 2, 2, false)}%`}
+                          value={`${formatAmount(stakedDlpTrackerApr, 2, 2, false)}%`}
                           showDollar={false}
                         />
                       </>
@@ -792,14 +792,14 @@ export default function GlpSwap(props) {
               </div>
               <div className="value">
                 <Trans>
-                  {formatAmount(glpSupply, GLP_DECIMALS, 4, true)} DLP ($
-                  {formatAmount(glpSupplyUsd, USD_DECIMALS, 2, true)})
+                  {formatAmount(dlpSupply, DLP_DECIMALS, 4, true)} DLP ($
+                  {formatAmount(dlpSupplyUsd, USD_DECIMALS, 2, true)})
                 </Trans>
               </div>
             </div>
           </div>
         </div>
-        <div className="GlpSwap-box App-box">
+        <div className="DlpSwap-box App-box">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -832,7 +832,7 @@ export default function GlpSwap(props) {
                   onSelectToken={onSelectSwapToken}
                   tokens={whitelistedTokens}
                   infoTokens={infoTokens}
-                  className="GlpSwap-from-token"
+                  className="DlpSwap-from-token"
                   showSymbolImage={true}
                   showTokenImgInDropdown={true}
                 />
@@ -843,10 +843,10 @@ export default function GlpSwap(props) {
               <BuyInputSection
                 topLeftLabel={payLabel}
                 topRightLabel={t`Available:`}
-                tokenBalance={`${formatAmount(maxSellAmount, GLP_DECIMALS, 4, true)}`}
-                inputValue={glpValue}
-                onInputValueChange={onGlpValueChange}
-                showMaxButton={glpValue !== formatAmountFree(maxSellAmount, GLP_DECIMALS, GLP_DECIMALS)}
+                tokenBalance={`${formatAmount(maxSellAmount, DLP_DECIMALS, 4, true)}`}
+                inputValue={dlpValue}
+                onInputValueChange={onDlpValueChange}
+                showMaxButton={dlpValue !== formatAmountFree(maxSellAmount, DLP_DECIMALS, DLP_DECIMALS)}
                 onClickTopRightLabel={fillMaxAmount}
                 onClickMax={fillMaxAmount}
                 balance={payBalance}
@@ -869,9 +869,9 @@ export default function GlpSwap(props) {
               <BuyInputSection
                 topLeftLabel={receiveLabel}
                 topRightLabel={t`Balance:`}
-                tokenBalance={`${formatAmount(glpBalance, GLP_DECIMALS, 4, true)}`}
-                inputValue={glpValue}
-                onInputValueChange={onGlpValueChange}
+                tokenBalance={`${formatAmount(dlpBalance, DLP_DECIMALS, 4, true)}`}
+                inputValue={dlpValue}
+                onInputValueChange={onDlpValueChange}
                 balance={receiveBalance}
                 defaultTokenName={"DLP"}
               >
@@ -896,7 +896,7 @@ export default function GlpSwap(props) {
                   onSelectToken={onSelectSwapToken}
                   tokens={whitelistedTokens}
                   infoTokens={infoTokens}
-                  className="GlpSwap-from-token"
+                  className="DlpSwap-from-token"
                   showSymbolImage={true}
                   showTokenImgInDropdown={true}
                 />
@@ -952,7 +952,7 @@ export default function GlpSwap(props) {
                 </div>
               </div>
             </div>
-            <div className="GlpSwap-cta Exchange-swap-button-container">
+            <div className="DlpSwap-cta Exchange-swap-button-container">
               <Button type="submit" variant="primary-action" className="w-100" disabled={!isPrimaryEnabled()}>
                 {getPrimaryText()}
               </Button>
@@ -981,8 +981,8 @@ export default function GlpSwap(props) {
           </div>
         )}
       </div>
-      <div className="GlpSwap-token-list">
-        {/* <div className="GlpSwap-token-list-content"> */}
+      <div className="DlpSwap-token-list">
+        {/* <div className="DlpSwap-token-list-content"> */}
         <table className="token-table">
           <thead>
             <tr>
@@ -1045,21 +1045,21 @@ export default function GlpSwap(props) {
             {visibleTokens.map((token) => {
               let tokenFeeBps;
               if (isBuying) {
-                const { feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-                  glpAmount,
+                const { feeBasisPoints: feeBps } = getBuyDlpFromAmount(
+                  dlpAmount,
                   token.address,
                   infoTokens,
-                  glpPrice,
+                  dlpPrice,
                   usdgSupply,
                   totalTokenWeights
                 );
                 tokenFeeBps = feeBps;
               } else {
-                const { feeBasisPoints: feeBps } = getSellGlpToAmount(
-                  glpAmount,
+                const { feeBasisPoints: feeBps } = getSellDlpToAmount(
+                  dlpAmount,
                   token.address,
                   infoTokens,
-                  glpPrice,
+                  dlpPrice,
                   usdgSupply,
                   totalTokenWeights
                 );
@@ -1200,21 +1200,21 @@ export default function GlpSwap(props) {
           {visibleTokens.map((token) => {
             let tokenFeeBps;
             if (isBuying) {
-              const { feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-                glpAmount,
+              const { feeBasisPoints: feeBps } = getBuyDlpFromAmount(
+                dlpAmount,
                 token.address,
                 infoTokens,
-                glpPrice,
+                dlpPrice,
                 usdgSupply,
                 totalTokenWeights
               );
               tokenFeeBps = feeBps;
             } else {
-              const { feeBasisPoints: feeBps } = getSellGlpToAmount(
-                glpAmount,
+              const { feeBasisPoints: feeBps } = getSellDlpToAmount(
+                dlpAmount,
                 token.address,
                 infoTokens,
-                glpPrice,
+                dlpPrice,
                 usdgSupply,
                 totalTokenWeights
               );

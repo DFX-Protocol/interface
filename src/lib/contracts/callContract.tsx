@@ -114,8 +114,7 @@ export async function callContract(
               <br />
               <br />
               Please try changing the RPC url in your wallet settings.{" "}
-              {/* TODO: Update gitbook URL */}
-              <ExternalLink href="https://gmxio.gitbook.io/gmx/trading#backup-rpc-urls">More info</ExternalLink>
+              <ExternalLink href="https://docs.dfx.so">More info</ExternalLink>
             </Trans>
             <br />
             {originalError && <ToastifyDebug>{originalError}</ToastifyDebug>}

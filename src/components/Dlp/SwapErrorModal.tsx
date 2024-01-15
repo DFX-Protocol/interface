@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 import { ethers } from "ethers";
 import Modal from "../Modal/Modal";
 import { get1InchSwapUrl } from "config/links";
-import { getLowestFeeTokenForBuyGlp, InfoTokens, Token } from "domain/tokens";
+import { getLowestFeeTokenForBuyDlp, InfoTokens, Token } from "domain/tokens";
 import { getNativeToken } from "config/tokens";
 import { t, Trans } from "@lingui/macro";
 import ExternalLink from "components/ExternalLink/ExternalLink";
@@ -15,10 +15,10 @@ type Props = {
   isVisible: boolean;
   setIsVisible: () => void;
   chainId: number;
-  glpAmount: BigNumber;
+  dlpAmount: BigNumber;
   usdgSupply: BigNumber;
   totalTokenWeights: BigNumber;
-  glpPrice: BigNumber;
+  dlpPrice: BigNumber;
   swapUsdMin: BigNumber;
   infoTokens: InfoTokens;
 };
@@ -28,10 +28,10 @@ export default function SwapErrorModal({
   isVisible,
   setIsVisible,
   chainId,
-  glpAmount,
+  dlpAmount,
   usdgSupply,
   totalTokenWeights,
-  glpPrice,
+  dlpPrice,
   infoTokens,
   swapUsdMin,
 }: Props) {
@@ -39,10 +39,10 @@ export default function SwapErrorModal({
     { token: Token; fees: number; amountLeftToDeposit: BigNumber } | undefined
   >();
   useEffect(() => {
-    const lowestFeeTokenInfo = getLowestFeeTokenForBuyGlp(
+    const lowestFeeTokenInfo = getLowestFeeTokenForBuyDlp(
       chainId,
-      glpAmount,
-      glpPrice,
+      dlpAmount,
+      dlpPrice,
       usdgSupply,
       totalTokenWeights,
       infoTokens,
@@ -50,7 +50,7 @@ export default function SwapErrorModal({
       swapUsdMin
     );
     setLowestFeeToken(lowestFeeTokenInfo);
-  }, [chainId, glpAmount, glpPrice, usdgSupply, totalTokenWeights, infoTokens, swapUsdMin, swapToken.address]);
+  }, [chainId, dlpAmount, dlpPrice, usdgSupply, totalTokenWeights, infoTokens, swapUsdMin, swapToken.address]);
 
   const label = t`${swapToken?.symbol} Capacity Reached`;
 

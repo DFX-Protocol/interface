@@ -38,7 +38,7 @@ function NoJob() {
         <p className="subheading">
           <Trans>
             DFX is not actively looking for new hires at the moment. However, if you think you can contribute to the
-            project, please email <ExternalLink href="mailto:jobs@gmx.io">jobs@gmx.io</ExternalLink>.
+            project, please email <ExternalLink href="mailto:jobs@dfx.so">jobs@dfx.so</ExternalLink>.
           </Trans>
         </p>
       </div>
@@ -69,8 +69,8 @@ function NoJob() {
 //       <p>The salary is 60,000 to 120,000 USD + 1,000 to 3,000 DFX a year.</p>
 //       <p className="jobs-contact">
 //         If the job suits you, please get in touch with{" "}
-//         <a target="_blank" href="mailto:jobs@gmx.io" rel="noopener noreferrer">
-//           jobs@gmx.io
+//         <a target="_blank" href="mailto:jobs@dfx.so" rel="noopener noreferrer">
+//           jobs@dfx.so
 //         </a>{" "}
 //         using the following email subject: Application for Senior front-end developer: [Your name]
 //       </p>

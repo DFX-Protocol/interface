@@ -41,8 +41,8 @@ export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
-export const GLP_DECIMALS = 18;
-export const GMX_DECIMALS = 18;
+export const DLP_DECIMALS = 18;
+export const DFX_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
 export const TAX_BASIS_POINTS = 60;
@@ -56,7 +56,7 @@ export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
 export const TRADES_PAGE_SIZE = 100;
 
-export const GLP_COOLDOWN_DURATION = 0;
+export const DLP_COOLDOWN_DURATION = 0;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
 export const FUNDING_RATE_PRECISION = 1000000;
 
@@ -227,9 +227,9 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyDlpToAmount(fromAmount, swapTokenAddress, infoTokens, dlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!fromAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!fromAmount || !swapTokenAddress || !infoTokens || !dlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -238,8 +238,8 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let glpAmount = fromAmount.mul(swapToken.minPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let dlpAmount = fromAmount.mul(swapToken.minPrice).div(dlpPrice);
+  dlpAmount = adjustForDecimals(dlpAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = fromAmount.mul(swapToken.minPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -254,14 +254,14 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
+  dlpAmount = dlpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: dlpAmount, feeBasisPoints };
 }
 
-export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellDlpFromAmount(toAmount, swapTokenAddress, infoTokens, dlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!toAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !swapTokenAddress || !infoTokens || !dlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -270,8 +270,8 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     return defaultValue;
   }
 
-  let glpAmount = toAmount.mul(swapToken.maxPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let dlpAmount = toAmount.mul(swapToken.maxPrice).div(dlpPrice);
+  dlpAmount = adjustForDecimals(dlpAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = toAmount.mul(swapToken.maxPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -293,14 +293,14 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
+  dlpAmount = dlpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: dlpAmount, feeBasisPoints };
 }
 
-export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyDlpFromAmount(toAmount, fromTokenAddress, infoTokens, dlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !dlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -309,10 +309,10 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.minPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(dlpPrice).div(fromToken.minPrice);
+  fromAmount = adjustForDecimals(fromAmount, DLP_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(dlpPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     fromToken.usdgAmount,
@@ -329,9 +329,9 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellDlpToAmount(toAmount, fromTokenAddress, infoTokens, dlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !dlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -340,10 +340,10 @@ export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPr
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.maxPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(dlpPrice).div(fromToken.maxPrice);
+  fromAmount = adjustForDecimals(fromAmount, DLP_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(dlpPrice).div(PRECISION);
 
   // in the Vault contract, the USDG supply is reduced before the fee basis points
   // is calculated
@@ -1174,7 +1174,7 @@ export function getBalanceAndSupplyData(balances) {
     return {};
   }
 
-  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"];
+  const keys = ["dfx", "esDfx", "dlp", "stakedDfxTracker"];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -1194,12 +1194,12 @@ export function getDepositBalanceData(depositBalances) {
   }
 
   const keys = [
-    "gmxInStakedGmx",
-    "esGmxInStakedGmx",
-    "stakedGmxInBonusGmx",
-    "bonusGmxInFeeGmx",
-    "bnGmxInFeeGmx",
-    "glpInStakedGlp",
+    "dfxInStakedDfx",
+    "esDfxInStakedDfx",
+    "stakedDfxInBonusDfx",
+    "bonusDfxInFeeDfx",
+    "bnDfxInFeeDfx",
+    "dlpInStakedDlp",
   ];
   const data = {};
 
@@ -1216,7 +1216,7 @@ export function getVestingData(vestingInfo) {
     return;
   }
 
-  const keys = ["gmxVester", "glpVester"];
+  const keys = ["dfxVester", "dlpVester"];
   const data = {};
   const propsLength = 7;
 
@@ -1249,7 +1249,7 @@ export function getStakingData(stakingInfo) {
     return;
   }
 
-  const keys = ["stakedGmxTracker", "bonusGmxTracker", "feeGmxTracker", "stakedGlpTracker", "feeGlpTracker"];
+  const keys = ["stakedDfxTracker", "bonusDfxTracker", "feeDfxTracker", "stakedDlpTracker", "feeDlpTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -1275,9 +1275,9 @@ export function getProcessedData(
   vestingData,
   aum,
   nativeTokenPrice,
-  stakedGmxSupply,
-  gmxPrice,
-  gmxSupply
+  stakedDfxSupply,
+  dfxPrice,
+  dfxSupply
 ) {
   if (
     !balanceData ||
@@ -1287,127 +1287,127 @@ export function getProcessedData(
     !vestingData ||
     !aum ||
     !nativeTokenPrice ||
-    !stakedGmxSupply ||
-    !gmxPrice ||
-    !gmxSupply
+    !stakedDfxSupply ||
+    !dfxPrice ||
+    !dfxSupply
   ) {
     return {};
   }
 
   const data: any = {};
 
-  data.gmxBalance = balanceData.gmx;
-  data.gmxBalanceUsd = balanceData.gmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.dfxBalance = balanceData.dfx;
+  data.dfxBalanceUsd = balanceData.dfx.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.gmxSupply = bigNumberify(gmxSupply);
+  data.dfxSupply = bigNumberify(dfxSupply);
 
-  data.gmxSupplyUsd = data.gmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedGmxSupply = stakedGmxSupply;
-  data.stakedGmxSupplyUsd = stakedGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.gmxInStakedGmx = depositBalanceData.gmxInStakedGmx;
-  data.gmxInStakedGmxUsd = depositBalanceData.gmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.dfxSupplyUsd = data.dfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
+  data.stakedDfxSupply = stakedDfxSupply;
+  data.stakedDfxSupplyUsd = stakedDfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
+  data.dfxInStakedDfx = depositBalanceData.dfxInStakedDfx;
+  data.dfxInStakedDfxUsd = depositBalanceData.dfxInStakedDfx.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.esGmxBalance = balanceData.esGmx;
-  data.esGmxBalanceUsd = balanceData.esGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esDfxBalance = balanceData.esDfx;
+  data.esDfxBalanceUsd = balanceData.esDfx.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerSupply = supplyData.stakedGmxTracker;
-  data.stakedGmxTrackerSupplyUsd = supplyData.stakedGmxTracker.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedEsGmxSupply = data.stakedGmxTrackerSupply.sub(data.stakedGmxSupply);
-  data.stakedEsGmxSupplyUsd = data.stakedEsGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedDfxTrackerSupply = supplyData.stakedDfxTracker;
+  data.stakedDfxTrackerSupplyUsd = supplyData.stakedDfxTracker.mul(dfxPrice).div(expandDecimals(1, 18));
+  data.stakedEsDfxSupply = data.stakedDfxTrackerSupply.sub(data.stakedDfxSupply);
+  data.stakedEsDfxSupplyUsd = data.stakedEsDfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.esGmxInStakedGmx = depositBalanceData.esGmxInStakedGmx;
-  data.esGmxInStakedGmxUsd = depositBalanceData.esGmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esDfxInStakedDfx = depositBalanceData.esDfxInStakedDfx;
+  data.esDfxInStakedDfxUsd = depositBalanceData.esDfxInStakedDfx.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.bnGmxInFeeGmx = depositBalanceData.bnGmxInFeeGmx;
-  data.bonusGmxInFeeGmx = depositBalanceData.bonusGmxInFeeGmx;
-  data.feeGmxSupply = stakingData.feeGmxTracker.totalSupply;
-  data.feeGmxSupplyUsd = data.feeGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.bnDfxInFeeDfx = depositBalanceData.bnDfxInFeeDfx;
+  data.bonusDfxInFeeDfx = depositBalanceData.bonusDfxInFeeDfx;
+  data.feeDfxSupply = stakingData.feeDfxTracker.totalSupply;
+  data.feeDfxSupplyUsd = data.feeDfxSupply.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerRewards = stakingData.stakedGmxTracker.claimable;
-  data.stakedGmxTrackerRewardsUsd = stakingData.stakedGmxTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedDfxTrackerRewards = stakingData.stakedDfxTracker.claimable;
+  data.stakedDfxTrackerRewardsUsd = stakingData.stakedDfxTracker.claimable.mul(dfxPrice).div(expandDecimals(1, 18));
 
-  data.bonusGmxTrackerRewards = stakingData.bonusGmxTracker.claimable;
+  data.bonusDfxTrackerRewards = stakingData.bonusDfxTracker.claimable;
 
-  data.feeGmxTrackerRewards = stakingData.feeGmxTracker.claimable;
-  data.feeGmxTrackerRewardsUsd = stakingData.feeGmxTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+  data.feeDfxTrackerRewards = stakingData.feeDfxTracker.claimable;
+  data.feeDfxTrackerRewardsUsd = stakingData.feeDfxTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
   data.boostBasisPoints = bigNumberify(0);
-  if (data && data.bnGmxInFeeGmx && data.bonusGmxInFeeGmx && data.bonusGmxInFeeGmx.gt(0)) {
-    data.boostBasisPoints = data.bnGmxInFeeGmx.mul(BASIS_POINTS_DIVISOR).div(data.bonusGmxInFeeGmx);
+  if (data && data.bnDfxInFeeDfx && data.bonusDfxInFeeDfx && data.bonusDfxInFeeDfx.gt(0)) {
+    data.boostBasisPoints = data.bnDfxInFeeDfx.mul(BASIS_POINTS_DIVISOR).div(data.bonusDfxInFeeDfx);
   }
 
-  data.stakedGmxTrackerAnnualRewardsUsd = stakingData.stakedGmxTracker.tokensPerInterval
+  data.stakedDfxTrackerAnnualRewardsUsd = stakingData.stakedDfxTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
+    .mul(dfxPrice)
     .div(expandDecimals(1, 18));
-  data.gmxAprForEsGmx =
-    data.stakedGmxTrackerSupplyUsd && data.stakedGmxTrackerSupplyUsd.gt(0)
-      ? data.stakedGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedGmxTrackerSupplyUsd)
+  data.dfxAprForEsDfx =
+    data.stakedDfxTrackerSupplyUsd && data.stakedDfxTrackerSupplyUsd.gt(0)
+      ? data.stakedDfxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedDfxTrackerSupplyUsd)
       : bigNumberify(0);
-  data.feeGmxTrackerAnnualRewardsUsd = stakingData.feeGmxTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(nativeTokenPrice)
-    .div(expandDecimals(1, 18));
-  data.gmxAprForNativeToken =
-    data.feeGmxSupplyUsd && data.feeGmxSupplyUsd.gt(0)
-      ? data.feeGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeGmxSupplyUsd)
-      : bigNumberify(0);
-  data.gmxBoostAprForNativeToken = data.gmxAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
-  data.gmxAprTotal = data.gmxAprForNativeToken.add(data.gmxAprForEsGmx);
-  data.gmxAprTotalWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken).add(data.gmxAprForEsGmx);
-  data.gmxAprForNativeTokenWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken);
-
-  data.totalGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.feeGmxTrackerRewardsUsd);
-
-  data.glpSupply = supplyData.glp;
-  data.glpPrice =
-    data.glpSupply && data.glpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(data.glpSupply)
-      : bigNumberify(0);
-
-  data.glpSupplyUsd = supplyData.glp.mul(data.glpPrice).div(expandDecimals(1, 18));
-
-  data.glpBalance = depositBalanceData.glpInStakedGlp;
-  data.glpBalanceUsd = depositBalanceData.glpInStakedGlp.mul(data.glpPrice).div(expandDecimals(1, GLP_DECIMALS));
-
-  data.stakedGlpTrackerRewards = stakingData.stakedGlpTracker.claimable;
-  data.stakedGlpTrackerRewardsUsd = stakingData.stakedGlpTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
-
-  data.feeGlpTrackerRewards = stakingData.feeGlpTracker.claimable;
-  data.feeGlpTrackerRewardsUsd = stakingData.feeGlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
-
-  data.stakedGlpTrackerAnnualRewardsUsd = stakingData.stakedGlpTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
-    .div(expandDecimals(1, 18));
-  data.glpAprForEsGmx =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.stakedGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
-      : bigNumberify(0);
-  data.feeGlpTrackerAnnualRewardsUsd = stakingData.feeGlpTracker.tokensPerInterval
+  data.feeDfxTrackerAnnualRewardsUsd = stakingData.feeDfxTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
     .mul(nativeTokenPrice)
     .div(expandDecimals(1, 18));
-  data.glpAprForNativeToken =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.feeGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
+  data.dfxAprForNativeToken =
+    data.feeDfxSupplyUsd && data.feeDfxSupplyUsd.gt(0)
+      ? data.feeDfxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeDfxSupplyUsd)
       : bigNumberify(0);
-  data.glpAprTotal = data.glpAprForNativeToken.add(data.glpAprForEsGmx);
+  data.dfxBoostAprForNativeToken = data.dfxAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
+  data.dfxAprTotal = data.dfxAprForNativeToken.add(data.dfxAprForEsDfx);
+  data.dfxAprTotalWithBoost = data.dfxAprForNativeToken.add(data.dfxBoostAprForNativeToken).add(data.dfxAprForEsDfx);
+  data.dfxAprForNativeTokenWithBoost = data.dfxAprForNativeToken.add(data.dfxBoostAprForNativeToken);
 
-  data.totalGlpRewardsUsd = data.stakedGlpTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.totalDfxRewardsUsd = data.stakedDfxTrackerRewardsUsd.add(data.feeDfxTrackerRewardsUsd);
 
-  data.totalEsGmxRewards = data.stakedGmxTrackerRewards.add(data.stakedGlpTrackerRewards);
-  data.totalEsGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.stakedGlpTrackerRewardsUsd);
+  data.dlpSupply = supplyData.dlp;
+  data.dlpPrice =
+    data.dlpSupply && data.dlpSupply.gt(0)
+      ? aum.mul(expandDecimals(1, DLP_DECIMALS)).div(data.dlpSupply)
+      : bigNumberify(0);
 
-  data.gmxVesterRewards = vestingData.gmxVester.claimable;
-  data.glpVesterRewards = vestingData.glpVester.claimable;
-  data.totalVesterRewards = data.gmxVesterRewards.add(data.glpVesterRewards);
-  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.dlpSupplyUsd = supplyData.dlp.mul(data.dlpPrice).div(expandDecimals(1, 18));
 
-  data.totalNativeTokenRewards = data.feeGmxTrackerRewards.add(data.feeGlpTrackerRewards);
-  data.totalNativeTokenRewardsUsd = data.feeGmxTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.dlpBalance = depositBalanceData.dlpInStakedDlp;
+  data.dlpBalanceUsd = depositBalanceData.dlpInStakedDlp.mul(data.dlpPrice).div(expandDecimals(1, DLP_DECIMALS));
 
-  data.totalRewardsUsd = data.totalEsGmxRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
+  data.stakedDlpTrackerRewards = stakingData.stakedDlpTracker.claimable;
+  data.stakedDlpTrackerRewardsUsd = stakingData.stakedDlpTracker.claimable.mul(dfxPrice).div(expandDecimals(1, 18));
+
+  data.feeDlpTrackerRewards = stakingData.feeDlpTracker.claimable;
+  data.feeDlpTrackerRewardsUsd = stakingData.feeDlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
+  data.stakedDlpTrackerAnnualRewardsUsd = stakingData.stakedDlpTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(dfxPrice)
+    .div(expandDecimals(1, 18));
+  data.dlpAprForEsDfx =
+    data.dlpSupplyUsd && data.dlpSupplyUsd.gt(0)
+      ? data.stakedDlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.dlpSupplyUsd)
+      : bigNumberify(0);
+  data.feeDlpTrackerAnnualRewardsUsd = stakingData.feeDlpTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(nativeTokenPrice)
+    .div(expandDecimals(1, 18));
+  data.dlpAprForNativeToken =
+    data.dlpSupplyUsd && data.dlpSupplyUsd.gt(0)
+      ? data.feeDlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.dlpSupplyUsd)
+      : bigNumberify(0);
+  data.dlpAprTotal = data.dlpAprForNativeToken.add(data.dlpAprForEsDfx);
+
+  data.totalDlpRewardsUsd = data.stakedDlpTrackerRewardsUsd.add(data.feeDlpTrackerRewardsUsd);
+
+  data.totalEsDfxRewards = data.stakedDfxTrackerRewards.add(data.stakedDlpTrackerRewards);
+  data.totalEsDfxRewardsUsd = data.stakedDfxTrackerRewardsUsd.add(data.stakedDlpTrackerRewardsUsd);
+
+  data.dfxVesterRewards = vestingData.dfxVester.claimable;
+  data.dlpVesterRewards = vestingData.dlpVester.claimable;
+  data.totalVesterRewards = data.dfxVesterRewards.add(data.dlpVesterRewards);
+  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(dfxPrice).div(expandDecimals(1, 18));
+
+  data.totalNativeTokenRewards = data.feeDfxTrackerRewards.add(data.feeDlpTrackerRewards);
+  data.totalNativeTokenRewardsUsd = data.feeDfxTrackerRewardsUsd.add(data.feeDlpTrackerRewardsUsd);
+
+  data.totalRewardsUsd = data.totalEsDfxRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
 
   return data;
 }
@@ -1444,8 +1444,8 @@ export function getRootShareApiUrl() {
   if (isLocal()) {
     return "https://gmxs.vercel.app";
   }
-
-  return "https://share.gmx.io";
+  // TODO: add below url
+  return "https://share.dfx.so";
 }
 
 export function getTradePageUrl() {

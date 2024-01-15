@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import Footer from "components/Footer/Footer";
-import "./BuyGMX.css";
+import "./BuyDFX.css";
 import { useWeb3React } from "@web3-react/core";
 import { Trans, t } from "@lingui/macro";
 import Button from "components/Button/Button";
@@ -20,11 +20,11 @@ import {
   DECENTRALISED_AGGRIGATORS,
   EXTERNAL_LINKS,
   FIAT_GATEWAYS,
-  GMX_FROM_ANY_NETWORKS,
+  DFX_FROM_ANY_NETWORKS,
   TRANSFER_EXCHANGES,
 } from "./constants";
 
-export default function BuyGMX() {
+export default function BuyDFX() {
   const { chainId } = useChainId();
   const isArbitrum = chainId === ARBITRUM;
   const { active } = useWeb3React();
@@ -43,7 +43,7 @@ export default function BuyGMX() {
 
   return (
     <div className="default-container page-layout">
-      <div className="BuyGMXGLP-container">
+      <div className="BuyDFXDLP-container">
         <div className="section-title-block">
           <div className="section-title-content">
             <div className="Page-title">
@@ -91,7 +91,7 @@ export default function BuyGMX() {
         <div className="cards-row">
           <Card title={t`Buy ${nativeTokenSymbol}`}>
             <div className="App-card-content">
-              <div className="BuyGMXGLP-description">
+              <div className="BuyDFXDLP-description">
                 {isArbitrum ? (
                   <Trans>
                     You can buy ETH directly on{" "}
@@ -126,11 +126,11 @@ export default function BuyGMX() {
           <Card title={t`Transfer ${nativeTokenSymbol}`}>
             <div className="App-card-content">
               {isArbitrum ? (
-                <div className="BuyGMXGLP-description">
+                <div className="BuyDFXDLP-description">
                   <Trans>You can transfer ETH from other networks to Arbitrum using any of the below options:</Trans>
                 </div>
               ) : (
-                <div className="BuyGMXGLP-description">
+                <div className="BuyDFXDLP-description">
                   <Trans>You can transfer AVAX from other networks to Avalanche using any of the below options:</Trans>
                 </div>
               )}
@@ -167,14 +167,14 @@ function DecentralisedExchanges({ chainId, externalLinks }) {
       <div className="App-card-content">
         {isArbitrum ? (
           <div className="exchange-info-group">
-            <div className="BuyGMXGLP-description">
+            <div className="BuyDFXDLP-description">
               <Trans>Buy DFX from Uniswap (make sure to select Arbitrum):</Trans>
             </div>
             <div className="buttons-group col-1">
               <Button
                 variant="clear"
                 imgInfo={{ src: uniswapArbitrumIcon, alt: "Uniswap" }}
-                to={externalLinks.buyGmx.uniswap}
+                to={externalLinks.buyDfx.uniswap}
                 newTab
               >
                 Uniswap
@@ -183,13 +183,13 @@ function DecentralisedExchanges({ chainId, externalLinks }) {
           </div>
         ) : (
           <div className="exchange-info-group">
-            <div className="BuyGMXGLP-description">
+            <div className="BuyDFXDLP-description">
               <Trans>Buy DFX from Traderjoe:</Trans>
             </div>
             <div className="buttons-group col-1">
               <Button
                 variant="clear"
-                to={externalLinks.buyGmx.traderjoe}
+                to={externalLinks.buyDfx.traderjoe}
                 imgInfo={{ src: traderjoeIcon, alt: "Traderjoe" }}
                 newTab
               >
@@ -199,7 +199,7 @@ function DecentralisedExchanges({ chainId, externalLinks }) {
           </div>
         )}
         <div className="exchange-info-group">
-          <div className="BuyGMXGLP-description">
+          <div className="BuyDFXDLP-description">
             <Trans>Buy DFX using Decentralized Exchange Aggregators:</Trans>
           </div>
           <div className="buttons-group">
@@ -221,11 +221,11 @@ function DecentralisedExchanges({ chainId, externalLinks }) {
           </div>
         </div>
         <div className="exchange-info-group">
-          <div className="BuyGMXGLP-description">
+          <div className="BuyDFXDLP-description">
             <Trans>Buy DFX using any token from any network:</Trans>
           </div>
           <div className="buttons-group">
-            {GMX_FROM_ANY_NETWORKS.filter((e) => chainId in e.links).map((exchange) => {
+            {DFX_FROM_ANY_NETWORKS.filter((e) => chainId in e.links).map((exchange) => {
               const icon = importImage(exchange.icon) || "";
               const link = exchange.links[chainId];
               return (
@@ -244,7 +244,7 @@ function DecentralisedExchanges({ chainId, externalLinks }) {
         </div>
         {isArbitrum && (
           <div className="exchange-info-group">
-            <div className="BuyGMXGLP-description">
+            <div className="BuyDFXDLP-description">
               <Trans>DFX bonds can be bought on Bond Protocol with a discount and a small vesting period:</Trans>
             </div>
             <div className="buttons-group col-1">
@@ -269,7 +269,7 @@ function CentralisedExchanges({ chainId }) {
     <Card title={t`Buy DFX from centralized services`}>
       <div className="App-card-content">
         <div className="exchange-info-group">
-          <div className="BuyGMXGLP-description">
+          <div className="BuyDFXDLP-description">
             <Trans>Buy DFX from centralized exchanges:</Trans>
           </div>
           <div className="buttons-group">
@@ -292,7 +292,7 @@ function CentralisedExchanges({ chainId }) {
         </div>
 
         <div className="exchange-info-group">
-          <div className="BuyGMXGLP-description">
+          <div className="BuyDFXDLP-description">
             <Trans>Buy DFX using FIAT gateways:</Trans>
           </div>
           <div className="buttons-group col-2">

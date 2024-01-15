@@ -50,45 +50,45 @@ export default function BeginAccountTransfer(props) {
     parsedReceiver = receiver;
   }
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const dfxAddress = getContract(chainId, "DFX");
+  const dfxVesterAddress = getContract(chainId, "DfxVester");
+  const dlpVesterAddress = getContract(chainId, "DlpVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
-  const { data: gmxVesterBalance } = useSWR(active && [active, chainId, gmxVesterAddress, "balanceOf", account], {
+  const { data: dfxVesterBalance } = useSWR(active && [active, chainId, dfxVesterAddress, "balanceOf", account], {
     fetcher: contractFetcher(library, Token),
   });
 
-  const { data: glpVesterBalance } = useSWR(active && [active, chainId, glpVesterAddress, "balanceOf", account], {
+  const { data: dlpVesterBalance } = useSWR(active && [active, chainId, dlpVesterAddress, "balanceOf", account], {
     fetcher: contractFetcher(library, Token),
   });
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const { data: cumulativeGmxRewards } = useSWR(
-    [active, chainId, stakedGmxTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedDfxTrackerAddress = getContract(chainId, "StakedDfxTracker");
+  const { data: cumulativeDfxRewards } = useSWR(
+    [active, chainId, stakedDfxTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const { data: cumulativeGlpRewards } = useSWR(
-    [active, chainId, stakedGlpTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedDlpTrackerAddress = getContract(chainId, "StakedDlpTracker");
+  const { data: cumulativeDlpRewards } = useSWR(
+    [active, chainId, stakedDlpTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
-  const { data: transferredCumulativeGmxRewards } = useSWR(
-    [active, chainId, gmxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeDfxRewards } = useSWR(
+    [active, chainId, dfxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: contractFetcher(library, Vester),
     }
   );
 
-  const { data: transferredCumulativeGlpRewards } = useSWR(
-    [active, chainId, glpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeDlpRewards } = useSWR(
+    [active, chainId, dlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: contractFetcher(library, Vester),
     }
@@ -101,41 +101,41 @@ export default function BeginAccountTransfer(props) {
     }
   );
 
-  const { data: gmxAllowance } = useSWR(
-    active && [active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress],
+  const { data: dfxAllowance } = useSWR(
+    active && [active, chainId, dfxAddress, "allowance", account, stakedDfxTrackerAddress],
     {
       fetcher: contractFetcher(library, Token),
     }
   );
 
-  const { data: gmxStaked } = useSWR(
-    active && [active, chainId, stakedGmxTrackerAddress, "depositBalances", account, gmxAddress],
+  const { data: dfxStaked } = useSWR(
+    active && [active, chainId, stakedDfxTrackerAddress, "depositBalances", account, dfxAddress],
     {
       fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
-  const needApproval = gmxAllowance && gmxStaked && gmxStaked.gt(gmxAllowance);
+  const needApproval = dfxAllowance && dfxStaked && dfxStaked.gt(dfxAllowance);
 
-  const hasVestedGmx = gmxVesterBalance && gmxVesterBalance.gt(0);
-  const hasVestedGlp = glpVesterBalance && glpVesterBalance.gt(0);
-  const hasStakedGmx =
-    (cumulativeGmxRewards && cumulativeGmxRewards.gt(0)) ||
-    (transferredCumulativeGmxRewards && transferredCumulativeGmxRewards.gt(0));
-  const hasStakedGlp =
-    (cumulativeGlpRewards && cumulativeGlpRewards.gt(0)) ||
-    (transferredCumulativeGlpRewards && transferredCumulativeGlpRewards.gt(0));
+  const hasVestedDfx = dfxVesterBalance && dfxVesterBalance.gt(0);
+  const hasVestedDlp = dlpVesterBalance && dlpVesterBalance.gt(0);
+  const hasStakedDfx =
+    (cumulativeDfxRewards && cumulativeDfxRewards.gt(0)) ||
+    (transferredCumulativeDfxRewards && transferredCumulativeDfxRewards.gt(0));
+  const hasStakedDlp =
+    (cumulativeDlpRewards && cumulativeDlpRewards.gt(0)) ||
+    (transferredCumulativeDlpRewards && transferredCumulativeDlpRewards.gt(0));
   const hasPendingReceiver = pendingReceiver && pendingReceiver !== ethers.constants.AddressZero;
 
   const getError = () => {
     if (!account) {
       return t`Wallet is not connected`;
     }
-    if (hasVestedGmx) {
-      return t`Vested GMX not withdrawn`;
+    if (hasVestedDfx) {
+      return t`Vested DFX not withdrawn`;
     }
-    if (hasVestedGlp) {
-      return t`Vested GLP not withdrawn`;
+    if (hasVestedDlp) {
+      return t`Vested DLP not withdrawn`;
     }
     if (!receiver || receiver.length === 0) {
       return t`Enter Receiver Address`;
@@ -143,7 +143,7 @@ export default function BeginAccountTransfer(props) {
     if (!ethers.utils.isAddress(receiver)) {
       return t`Invalid Receiver Address`;
     }
-    if (hasStakedGmx || hasStakedGlp) {
+    if (hasStakedDfx || hasStakedDlp) {
       return t`Invalid Receiver`;
     }
     if ((parsedReceiver || "").toString().toLowerCase() === (account || "").toString().toLowerCase()) {
@@ -178,7 +178,7 @@ export default function BeginAccountTransfer(props) {
       return error;
     }
     if (needApproval) {
-      return t`Approve GMX`;
+      return t`Approve DFX`;
     }
     if (isApproving) {
       return t`Approving...`;
@@ -195,8 +195,8 @@ export default function BeginAccountTransfer(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: dfxAddress,
+        spender: stakedDfxTrackerAddress,
         chainId,
       });
       return;
@@ -243,9 +243,9 @@ export default function BeginAccountTransfer(props) {
           <Trans>
             Please only use this for full account transfers.
             <br />
-            This will transfer all your GMX, esGMX, GLP and Multiplier Points to your new account.
+            This will transfer all your DFX, esDFX, DLP and Multiplier Points to your new account.
             <br />
-            Transfers are only supported if the receiving account has not staked GMX or GLP tokens before.
+            Transfers are only supported if the receiving account has not staked DFX or DLP tokens before.
             <br />
             Transfers are one-way, you will not be able to transfer staked tokens back to the sending account.
           </Trans>
@@ -274,17 +274,17 @@ export default function BeginAccountTransfer(props) {
             </div>
           </div>
           <div className="BeginAccountTransfer-validations">
-            <ValidationRow isValid={!hasVestedGmx}>
-              <Trans>Sender has withdrawn all tokens from GMX Vesting Vault</Trans>
+            <ValidationRow isValid={!hasVestedDfx}>
+              <Trans>Sender has withdrawn all tokens from DFX Vesting Vault</Trans>
             </ValidationRow>
-            <ValidationRow isValid={!hasVestedGlp}>
-              <Trans>Sender has withdrawn all tokens from GLP Vesting Vault</Trans>
+            <ValidationRow isValid={!hasVestedDlp}>
+              <Trans>Sender has withdrawn all tokens from DLP Vesting Vault</Trans>
             </ValidationRow>
-            <ValidationRow isValid={!hasStakedGmx}>
-              <Trans>Receiver has not staked GMX tokens before</Trans>
+            <ValidationRow isValid={!hasStakedDfx}>
+              <Trans>Receiver has not staked DFX tokens before</Trans>
             </ValidationRow>
-            <ValidationRow isValid={!hasStakedGlp}>
-              <Trans>Receiver has not staked GLP tokens before</Trans>
+            <ValidationRow isValid={!hasStakedDlp}>
+              <Trans>Receiver has not staked DLP tokens before</Trans>
             </ValidationRow>
           </div>
           <div className="input-row">
