@@ -10,7 +10,7 @@ const BACKEND_URLS = {
   [ARBITRUM_TESTNET]: "https://gambit-server-devnet.uc.r.appspot.com",
   [ARBITRUM]: "https://gmx-server-mainnet.uw.r.appspot.com",
   [AVALANCHE]: "https://gmx-avax-server.uc.r.appspot.com",
-  // [BASE_TESTNET]: "https://gmx-server-mainnet.uw.r.appspot.com",
+  [BASE_TESTNET]: "https://gmx-server-mainnet.uw.r.appspot.com",
 };
 
 export function getServerBaseUrl(chainId: number) {
