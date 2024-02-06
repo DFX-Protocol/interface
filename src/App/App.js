@@ -81,7 +81,7 @@ import { useChainId } from "lib/chains";
 import ExternalLink from "components/ExternalLink/ExternalLink";
 import { isDevelopment } from "config/env";
 import Button from "components/Button/Button";
-import { watchNetwork } from "@wagmi/core";
+import { watchAccount } from "@wagmi/core";
 import { useDisconnect } from "wagmi";
 import useWallet from "lib/wallets/useWallet";
 
@@ -532,7 +532,7 @@ function App() {
     dynamicActivate(defaultLanguage);
   }, []);
   useEffect(() => {
-    const unwatch = watchNetwork(({ chain, chains }) => {
+    const unwatch = watchAccount(({ chain, chains }) => {
       if (!chain || !chains) return;
       const isValidChain = !!chains.find((c) => c.id === chain.id);
       if (!isValidChain) {

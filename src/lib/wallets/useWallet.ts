@@ -1,9 +1,8 @@
-import { useAccount, useNetwork, useSigner } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 
 export default function useWallet() {
-  const { address, isConnected, connector } = useAccount();
-  const { chain } = useNetwork();
-  const { data: signer } = useSigner();
+  const { address, isConnected, connector, chain } = useAccount();
+  const { data: signer } = useWalletClient();
   return {
     account: address,
     active: isConnected,
