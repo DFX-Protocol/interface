@@ -77,7 +77,10 @@ const wagmiClient = createClient({
 export default function WalletProvider({ children }) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider theme={walletTheme} chains={chains} modalSize="compact">
+      <RainbowKitProvider theme={walletTheme} chains={chains} modalSize="compact" appInfo={{
+        appName: APP_NAME,
+        learnMoreUrl: 'https://docs.dfx.so',
+      }}>
         {children}
       </RainbowKitProvider>
     </WagmiConfig>
