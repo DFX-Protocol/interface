@@ -1,4 +1,4 @@
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import { getContract } from "config/contracts";
 import { getWhitelistedTokens } from "config/tokens";
 import { TokenInfo, useInfoTokens } from "domain/tokens";
@@ -45,7 +45,7 @@ function formatAmountHuman(amount: BigNumberish | undefined, tokenDecimals: numb
 }
 
 export default function Stats() {
-  const { active, library } = useWeb3React();
+  const { active, signer } = useWallet();
   const { chainId } = useChainId();
 
   const readerAddress = getContract(chainId, "Reader");
@@ -60,14 +60,14 @@ export default function Stats() {
   const { data: totalTokenWeights } = useSWR<BigNumber>(
     [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: contractFetcher(library, VaultV2),
+      fetcher: contractFetcher(signer, VaultV2),
     }
   );
 
   const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
-    fetcher: contractFetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+    fetcher: contractFetcher(signer, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
   });
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, fundingRateInfo as any);
+  const { infoTokens } = useInfoTokens(signer, chainId, active, undefined, fundingRateInfo as any);
 
   let adjustedUsdgSupply = bigNumberify(0);
 

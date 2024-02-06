@@ -1,9 +1,8 @@
-import { Web3Provider } from "@ethersproject/providers";
+import WalletProvider from "./wallets/WalletProvider";
 import { render } from "@testing-library/react";
-import { Web3ReactProvider } from "@web3-react/core";
 
 export function TestApp({ children }) {
-  return <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>{children}</Web3ReactProvider>;
+  return <WalletProvider>{children}</WalletProvider>;
 }
 
 export function testHook(hook: () => void) {

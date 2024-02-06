@@ -2,7 +2,7 @@ import "./Referrals.css";
 import React from "react";
 import { useLocalStorage } from "react-use";
 import { Trans, t } from "@lingui/macro";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import { useParams } from "react-router-dom";
 import SEO from "components/Common/SEO";
 import Tab from "components/Tab/Tab";
@@ -28,7 +28,7 @@ const AFFILIATES = "Affiliates";
 const TAB_OPTIONS = [TRADERS, AFFILIATES];
 
 function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
-  const { active, account: walletAccount, library } = useWeb3React();
+  const { active, account: walletAccount, signer } = useWallet();
   const { account: queryAccount } = useParams();
   let account;
   if (queryAccount && ethers.utils.isAddress(queryAccount)) {
@@ -42,13 +42,13 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
     deserializer: deserializeSampleStats,
   });
   const { data: referralsData, loading } = useReferralsData(account);
-  const { userReferralCode, userReferralCodeString } = useUserReferralCode(library, chainId, account);
-  const { codeOwner } = useCodeOwner(library, chainId, account, userReferralCode);
-  const { referrerTier: traderTier } = useReferrerTier(library, chainId, codeOwner);
+  const { userReferralCode, userReferralCodeString } = useUserReferralCode(signer, chainId, account);
+  const { codeOwner } = useCodeOwner(signer, chainId, account, userReferralCode);
+  const { referrerTier: traderTier } = useReferrerTier(signer, chainId, codeOwner);
   const networkIcon = getIcon(chainId, "network");
 
   function handleCreateReferralCode(referralCode) {
-    return registerReferralCode(chainId, referralCode, library, {
+    return registerReferralCode(chainId, referralCode, signer, {
       sentMsg: t`Referral code submitted!`,
       failMsg: t`Referral code creation failed.`,
       pendingTxns,
@@ -88,7 +88,6 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
     if (isHashZero(userReferralCode) || !account || !userReferralCode) {
       return (
         <JoinReferralCode
-          connectWallet={connectWallet}
           active={active}
           setPendingTxns={setPendingTxns}
           pendingTxns={pendingTxns}

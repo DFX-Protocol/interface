@@ -1,3 +1,4 @@
+
 export default async function downloadImage(dataURI: string, filename: string) {
   const blob = await (await fetch(dataURI)).blob();
   if (typeof window.navigator.msSaveBlob !== "undefined") {

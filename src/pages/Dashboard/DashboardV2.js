@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import { Trans, t } from "@lingui/macro";
 import useSWR from "swr";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
@@ -88,7 +88,7 @@ function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
 }
 
 export default function DashboardV2() {
-  const { active, library } = useWeb3React();
+  const { active, signer } = useWallet();
   const { chainId } = useChainId();
   const totalVolume = useTotalVolume();
 
@@ -128,24 +128,24 @@ export default function DashboardV2() {
   const tokensForSupplyQuery = [dfxAddress, dlpAddress, usdgAddress];
 
   const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, dlpManagerAddress, "getAums"], {
-    fetcher: contractFetcher(library, DlpManager),
+    fetcher: contractFetcher(signer, DlpManager),
   });
 
   const { data: totalSupplies } = useSWR(
     [`Dashboard:totalSupplies:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", AddressZero],
     {
-      fetcher: contractFetcher(library, ReaderV2, [tokensForSupplyQuery]),
+      fetcher: contractFetcher(signer, ReaderV2, [tokensForSupplyQuery]),
     }
   );
 
   const { data: totalTokenWeights } = useSWR(
     [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: contractFetcher(library, VaultV2),
+      fetcher: contractFetcher(signer, VaultV2),
     }
   );
 
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  const { infoTokens } = useInfoTokens(signer, chainId, active, undefined, undefined);
   const { infoTokens: infoTokensArbitrum } = useInfoTokens(null, ARBITRUM, active, undefined, undefined);
   const { infoTokens: infoTokensAvax } = useInfoTokens(null, AVALANCHE, active, undefined, undefined);
 
@@ -211,7 +211,7 @@ export default function DashboardV2() {
 
   const { dfxPrice, dfxPriceFromArbitrum, dfxPriceFromAvalanche } = useDfxPrice(
     chainId,
-    { arbitrum: chainId === ARBITRUM ? library : undefined },
+    { arbitrum: chainId === ARBITRUM ? signer : undefined },
     active
   );
 

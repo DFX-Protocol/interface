@@ -1,4 +1,4 @@
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import useSWR from "swr";
 import { CacheKey, MulticallRequestConfig, MulticallResult, SkipKey } from "./types";
 import { executeMulticall } from "./utils";
@@ -23,7 +23,7 @@ export function useMulticall<TConfig extends MulticallRequestConfig<any>, TResul
     parseResponse?: (result: MulticallResult<TConfig>, chainId: number, key: CacheKey) => TResult;
   }
 ) {
-  const { library } = useWeb3React();
+  const { signer } = useWallet();
 
   const swrFullKey = Array.isArray(params.key) && chainId && name ? [chainId, name, ...params.key] : null;
 
@@ -42,7 +42,7 @@ export function useMulticall<TConfig extends MulticallRequestConfig<any>, TResul
         ? params.request(chainId, params.key as CacheKey) 
         : params.request;
 
-      const response = await executeMulticall(chainId, library, request);
+      const response = await executeMulticall(chainId, signer, request);
 
       // prettier-ignore
       const result = typeof params.parseResponse === "function" 

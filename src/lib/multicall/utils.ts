@@ -1,8 +1,7 @@
-import { Web3Provider } from "@ethersproject/providers";
 import { CHAIN_NAMES_MAP, getRpcUrl } from "config/chains";
 import { ContractCallContext, Multicall } from "ethereum-multicall";
 import { CallContext, ContractCallResults } from "ethereum-multicall/dist/esm/models";
-import { ethers } from "ethers";
+import { ethers, Signer } from "ethers";
 import { bigNumberify } from "lib/numbers";
 import { getFallbackProvider } from "lib/rpc";
 import { sleep } from "lib/sleep";
@@ -12,17 +11,17 @@ export const MAX_TIMEOUT = 2000;
 
 export async function executeMulticall(
   chainId: number,
-  library: Web3Provider | undefined,
+  signer: Signer | undefined,
   request: MulticallRequestConfig<any>
 ) {
   // Try to use rpc provider of the connected wallet
-  let provider = library ? library.getSigner().provider : undefined;
+  let provider = signer ? signer.provider : undefined;
 
   // Wait for initialization to chech the network
-  await provider?.ready;
-
+  // await provider?.ready;
+  let pChainId = await signer?.getChainId()
   // If the wallet is not connected or the network does not match the chainId of the request, create a new rpc provider
-  if (!provider || provider.network?.chainId !== chainId) {
+  if (!provider || pChainId !== chainId) {
     const rpcUrl = getRpcUrl(chainId);
 
     provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, { chainId, name: CHAIN_NAMES_MAP[chainId] });

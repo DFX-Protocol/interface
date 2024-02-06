@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
-import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
 import useScrollToTop from "lib/useScrollToTop";
 
 import { Switch, Route, HashRouter as Router, Redirect, useLocation, useHistory } from "react-router-dom";
@@ -12,7 +10,6 @@ import {
   BASIS_POINTS_DIVISOR,
   getAppBaseUrl,
   isHomeSite,
-  isMobileDevice,
   REFERRAL_CODE_QUERY_PARAM,
 } from "lib/legacy";
 
@@ -43,9 +40,6 @@ import "styles/Font.css";
 import "./App.scss";
 import "styles/Input.css";
 
-import metamaskImg from "img/metamask.png";
-import coinbaseImg from "img/coinbaseWallet.png";
-import walletConnectImg from "img/walletconnect-circle-blue.svg";
 import useEventToast from "components/EventToast/useEventToast";
 import EventToastContainer from "components/EventToast/EventToastContainer";
 import SEO from "components/Common/SEO";
@@ -83,31 +77,18 @@ import {
   SHOW_PNL_AFTER_FEES_KEY,
   SLIPPAGE_BPS_KEY,
 } from "config/localStorage";
-import {
-  activateInjectedProvider,
-  clearWalletConnectData,
-  clearWalletLinkData,
-  getInjectedHandler,
-  getWalletConnectHandler,
-  hasCoinBaseWalletExtension,
-  hasMetaMaskWalletExtension,
-  useEagerConnect,
-  useHandleUnsupportedNetwork,
-  useInactiveListener,
-} from "lib/wallets";
 import { useChainId } from "lib/chains";
 import ExternalLink from "components/ExternalLink/ExternalLink";
 import { isDevelopment } from "config/env";
 import Button from "components/Button/Button";
+import { watchNetwork } from "@wagmi/core";
+import { useDisconnect } from "wagmi";
+import useWallet from "lib/wallets/useWallet";
 
 if (window?.ethereum?.autoRefreshOnNetworkChange) {
   window.ethereum.autoRefreshOnNetworkChange = false;
 }
 
-function getLibrary(provider) {
-  const library = new Web3Provider(provider);
-  return library;
-}
 
 const Zoom = cssTransition({
   enter: "zoomIn",
@@ -139,21 +120,12 @@ function getWsProvider(active, chainId) {
 function FullApp() {
   const isHome = isHomeSite();
   const exchangeRef = useRef();
-  const { connector, library, deactivate, activate, active } = useWeb3React();
+  const { active, signer } = useWallet();
+  const { disconnect } = useDisconnect();
   const { chainId } = useChainId();
   const location = useLocation();
   const history = useHistory();
   useEventToast();
-  const [activatingConnector, setActivatingConnector] = useState();
-  useEffect(() => {
-    if (activatingConnector && activatingConnector === connector) {
-      setActivatingConnector(undefined);
-    }
-  }, [activatingConnector, connector, chainId]);
-  const triedEager = useEagerConnect(setActivatingConnector);
-  useInactiveListener(!triedEager || !!activatingConnector);
-
-  useHandleUnsupportedNetwork();
 
   const query = useRouteQuery();
 
@@ -179,89 +151,17 @@ function FullApp() {
     }
   }, [query, history, location]);
 
-  const disconnectAccount = useCallback(() => {
-    // only works with WalletConnect
-    clearWalletConnectData();
-    // force clear localStorage connection for MM/CB Wallet (Brave legacy)
-    clearWalletLinkData();
-    deactivate();
-  }, [deactivate]);
-
   const disconnectAccountAndCloseSettings = () => {
-    disconnectAccount();
+    disconnect();
     localStorage.removeItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY);
     localStorage.removeItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
     setIsSettingsVisible(false);
   };
 
-  const connectInjectedWallet = getInjectedHandler(activate, deactivate);
-  const activateWalletConnect = () => {
-    getWalletConnectHandler(activate, deactivate, setActivatingConnector)();
-  };
-
-  const userOnMobileDevice = "navigator" in window && isMobileDevice(window.navigator);
-
-  const activateMetaMask = () => {
-    if (!hasMetaMaskWalletExtension()) {
-      helperToast.error(
-        <div>
-          <Trans>MetaMask not detected.</Trans>
-          <br />
-          <br />
-          {userOnMobileDevice ? (
-            <Trans>
-              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink>, and use Exuma with its built-in
-              browser.
-            </Trans>
-          ) : (
-            <Trans>
-              <ExternalLink href="https://metamask.io">Install MetaMask</ExternalLink> to start using Exuma.
-            </Trans>
-          )}
-        </div>
-      );
-      return false;
-    }
-    attemptActivateWallet("MetaMask");
-  };
-  const activateCoinBase = () => {
-    if (!hasCoinBaseWalletExtension()) {
-      helperToast.error(
-        <div>
-          <Trans>Coinbase Wallet not detected.</Trans>
-          <br />
-          <br />
-          {userOnMobileDevice ? (
-            <Trans>
-              <ExternalLink href="https://www.coinbase.com/wallet">Install Coinbase Wallet</ExternalLink>, and use DFX
-              with its built-in browser.
-            </Trans>
-          ) : (
-            <Trans>
-              <ExternalLink href="https://www.coinbase.com/wallet">Install Coinbase Wallet</ExternalLink> to start using
-              DFX.
-            </Trans>
-          )}
-        </div>
-      );
-      return false;
-    }
-    attemptActivateWallet("CoinBase");
-  };
-
-  const attemptActivateWallet = (providerName) => {
-    localStorage.setItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, true);
-    localStorage.setItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY, providerName);
-    activateInjectedProvider(providerName);
-    connectInjectedWallet();
-  };
-
-  const [walletModalVisible, setWalletModalVisible] = useState(false);
   const [redirectModalVisible, setRedirectModalVisible] = useState(false);
   const [shouldHideRedirectModal, setShouldHideRedirectModal] = useState(false);
   const [redirectPopupTimestamp, setRedirectPopupTimestamp] = useLocalStorage(REDIRECT_POPUP_TIMESTAMP_KEY);
   const [selectedToPage, setSelectedToPage] = useState("");
-  const connectWallet = () => setWalletModalVisible(true);
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [savedSlippageAmount, setSavedSlippageAmount] = useLocalStorageSerializeKey(
@@ -345,7 +245,7 @@ function FullApp() {
       const updatedPendingTxns = [];
       for (let i = 0; i < pendingTxns.length; i++) {
         const pendingTxn = pendingTxns[i];
-        const receipt = await library.getTransactionReceipt(pendingTxn.hash);
+        const receipt = await signer.provider.getTransactionReceipt(pendingTxn.hash);
         if (receipt) {
           if (receipt.status === 0) {
             const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
@@ -384,7 +284,7 @@ function FullApp() {
       checkPendingTxns();
     }, 2 * 1000);
     return () => clearInterval(interval);
-  }, [library, pendingTxns, chainId]);
+  }, [signer, pendingTxns, chainId]);
 
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
@@ -440,7 +340,6 @@ function FullApp() {
           <Header
             disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             openSettings={openSettings}
-            setWalletModalVisible={setWalletModalVisible}
             redirectPopupTimestamp={redirectPopupTimestamp}
             showRedirectModal={showRedirectModal}
           />
@@ -476,7 +375,6 @@ function FullApp() {
                   pendingTxns={pendingTxns}
                   savedShouldShowPositionLines={savedShouldShowPositionLines}
                   setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
-                  connectWallet={connectWallet}
                   savedShouldDisableValidationForTesting={savedShouldDisableValidationForTesting}
                 />
               </Route>
@@ -484,20 +382,18 @@ function FullApp() {
                 <Dashboard />
               </Route>
               <Route exact path="/earn">
-                <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+                <Stake setPendingTxns={setPendingTxns} />
               </Route>
               <Route exact path="/buy">
                 <Buy
                   savedSlippageAmount={savedSlippageAmount}
                   setPendingTxns={setPendingTxns}
-                  connectWallet={connectWallet}
                 />
               </Route>
               <Route exact path="/buy_Dlp">
                 <BuyDlp
                   savedSlippageAmount={savedSlippageAmount}
                   setPendingTxns={setPendingTxns}
-                  connectWallet={connectWallet}
                   savedShouldDisableValidationForTesting={savedShouldDisableValidationForTesting}
                 />
               </Route>
@@ -511,10 +407,10 @@ function FullApp() {
                 <Ecosystem />
               </Route> */}
               <Route exact path="/referrals">
-                <Referrals pendingTxns={pendingTxns} connectWallet={connectWallet} setPendingTxns={setPendingTxns} />
+                <Referrals pendingTxns={pendingTxns} setPendingTxns={setPendingTxns} />
               </Route>
               <Route exact path="/referrals/:account">
-                <Referrals pendingTxns={pendingTxns} connectWallet={connectWallet} setPendingTxns={setPendingTxns} />
+                <Referrals pendingTxns={pendingTxns} setPendingTxns={setPendingTxns} />
               </Route>
               <Route exact path="/nft_wallet">
                 <NftWallet />
@@ -574,31 +470,6 @@ function FullApp() {
         shouldHideRedirectModal={shouldHideRedirectModal}
       />
       <Modal
-        className="Connect-wallet-modal"
-        isVisible={walletModalVisible}
-        setIsVisible={setWalletModalVisible}
-        label={t`Connect Wallet`}
-      >
-        <button className="Wallet-btn MetaMask-btn" onClick={activateMetaMask}>
-          <img src={metamaskImg} alt="MetaMask" />
-          <div>
-            <Trans>MetaMask</Trans>
-          </div>
-        </button>
-        <button className="Wallet-btn CoinbaseWallet-btn" onClick={activateCoinBase}>
-          <img src={coinbaseImg} alt="Coinbase Wallet" />
-          <div>
-            <Trans>Coinbase Wallet</Trans>
-          </div>
-        </button>
-        <button className="Wallet-btn WalletConnect-btn" onClick={activateWalletConnect}>
-          <img src={walletConnectImg} alt="WalletConnect" />
-          <div>
-            <Trans>WalletConnect</Trans>
-          </div>
-        </button>
-      </Modal>
-      <Modal
         className="App-settings"
         isVisible={isSettingsVisible}
         setIsVisible={setIsSettingsVisible}
@@ -653,14 +524,25 @@ function FullApp() {
 }
 
 function App() {
+  const { disconnect } = useDisconnect();
+
   useScrollToTop();
   useEffect(() => {
     const defaultLanguage = localStorage.getItem(LANGUAGE_LOCALSTORAGE_KEY) || defaultLocale;
     dynamicActivate(defaultLanguage);
   }, []);
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain, chains }) => {
+      if (!chain || !chains) return;
+      const isValidChain = !!chains.find((c) => c.id === chain.id);
+      if (!isValidChain) {
+        disconnect();
+      }
+    });
+    return () => unwatch();
+  }, [disconnect]);
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
-      <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
           <Router>
             <I18nProvider i18n={i18n}>
@@ -668,7 +550,6 @@ function App() {
             </I18nProvider>
           </Router>
         </SEO>
-      </Web3ReactProvider>
     </SWRConfig>
   );
 }

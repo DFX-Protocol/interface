@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Trans, t } from "@lingui/macro";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import Tab from "../Tab/Tab";
@@ -100,14 +101,14 @@ export default function DlpSwap(props) {
     savedSlippageAmount,
     isBuying,
     setPendingTxns,
-    connectWallet,
     setIsBuying,
     savedShouldDisableValidationForTesting,
   } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyDlp" : "SellDlp";
   const tabLabel = isBuying ? t`Buy DLP` : t`Sell DLP`;
-  const { active, library, account } = useWeb3React();
+  const { active, signer, account } = useWallet();
+  const { openConnectModal } = useConnectModal();
   const { chainId } = useChainId();
   const tokens = getTokens(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
@@ -146,7 +147,7 @@ export default function DlpSwap(props) {
   const { data: tokenBalances } = useSWR(
     [`DlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, ReaderV2, [tokenAddresses]),
+      fetcher: contractFetcher(signer, ReaderV2, [tokenAddresses]),
     }
   );
 
@@ -159,18 +160,18 @@ export default function DlpSwap(props) {
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
-      fetcher: contractFetcher(library, ReaderV2, [tokensForBalanceAndSupplyQuery]),
+      fetcher: contractFetcher(signer, ReaderV2, [tokensForBalanceAndSupplyQuery]),
     }
   );
 
   const { data: aums } = useSWR([`DlpSwap:getAums:${active}`, chainId, dlpManagerAddress, "getAums"], {
-    fetcher: contractFetcher(library, DlpManager),
+    fetcher: contractFetcher(signer, DlpManager),
   });
 
   const { data: totalTokenWeights } = useSWR(
     [`DlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: contractFetcher(library, VaultV2),
+      fetcher: contractFetcher(signer, VaultV2),
     }
   );
 
@@ -178,21 +179,21 @@ export default function DlpSwap(props) {
   const { data: tokenAllowance } = useSWR(
     [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, dlpManagerAddress],
     {
-      fetcher: contractFetcher(library, Token),
+      fetcher: contractFetcher(signer, Token),
     }
   );
 
   const { data: lastPurchaseTime } = useSWR(
     [`DlpSwap:lastPurchaseTime:${active}`, chainId, dlpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, DlpManager),
+      fetcher: contractFetcher(signer, DlpManager),
     }
   );
 
   const { data: dlpBalance } = useSWR(
     [`DlpSwap:dlpBalance:${active}`, chainId, feeDlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, RewardTracker),
+      fetcher: contractFetcher(signer, RewardTracker),
     }
   );
 
@@ -200,17 +201,17 @@ export default function DlpSwap(props) {
   const { data: reservedAmount } = useSWR(
     [`DlpSwap:reservedAmount:${active}`, chainId, dlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, Vester),
+      fetcher: contractFetcher(signer, Vester),
     }
   );
 
-  const { dfxPrice } = useDfxPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { dfxPrice } = useDfxPrice(chainId, { arbitrum: chainId === ARBITRUM ? signer : undefined }, active);
 
   const rewardTrackersForStakingInfo = [stakedDlpTrackerAddress, feeDlpTrackerAddress];
   const { data: stakingInfo } = useSWR(
     [`DlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: contractFetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
+      fetcher: contractFetcher(signer, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
 
@@ -245,7 +246,7 @@ export default function DlpSwap(props) {
     maxSellAmount = dlpBalance.sub(reservedAmount);
   }
 
-  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
+  const { infoTokens } = useInfoTokens(signer, chainId, active, tokenBalances, undefined);
   const swapToken = getToken(chainId, swapTokenAddress);
   const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
 
@@ -545,7 +546,7 @@ export default function DlpSwap(props) {
   const approveFromToken = () => {
     approveTokens({
       setIsApproving,
-      library,
+      signer,
       tokenAddress: swapToken.address,
       spender: dlpManagerAddress,
       chainId: chainId,
@@ -562,7 +563,7 @@ export default function DlpSwap(props) {
 
     const minDlp = dlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
-    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, library.getSigner());
+    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, signer);
     const method = swapTokenAddress === AddressZero ? "mintAndStakeDlpETH" : "mintAndStakeDlp";
     const params = swapTokenAddress === AddressZero ? [0, minDlp] : [swapTokenAddress, swapAmount, 0, minDlp];
     const value = swapTokenAddress === AddressZero ? swapAmount : 0;
@@ -590,7 +591,7 @@ export default function DlpSwap(props) {
 
     const minOut = swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
-    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, library.getSigner());
+    const contract = new ethers.Contract(dlpRewardRouterAddress, RewardRouter.abi, signer);
     const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemDlpETH" : "unstakeAndRedeemDlp";
     const params =
       swapTokenAddress === AddressZero ? [dlpAmount, minOut, account] : [swapTokenAddress, dlpAmount, minOut, account];
@@ -614,7 +615,7 @@ export default function DlpSwap(props) {
 
   const onClickPrimary = () => {
     if (!active) {
-      connectWallet();
+      openConnectModal();
       return;
     }
 

@@ -4,12 +4,11 @@ import "./AssetDropdown.css";
 import coingeckoIcon from "img/ic_coingecko_16.svg";
 import metamaskIcon from "img/ic_metamask_16.svg";
 import nansenPortfolioIcon from "img/nansen_portfolio.svg";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 
 import { t, Trans } from "@lingui/macro";
 import ExternalLink from "components/ExternalLink/ExternalLink";
-import { ICONLINKS, PLATFORM_TOKENS } from "config/tokens";
-import { addTokenToMetamask } from "lib/wallets";
+import { ICONLINKS } from "config/tokens";
 import { useChainId } from "lib/chains";
 import { Token } from "domain/tokens";
 import { ARBITRUM, AVALANCHE } from "config/chains";
@@ -24,7 +23,7 @@ type Props = {
 };
 
 function AssetDropdown({ assetSymbol, assetInfo }: Props) {
-  const { active } = useWeb3React();
+  const { active, connector } = useWallet();
   const { chainId } = useChainId();
   let { coingecko, arbitrum, avalanche, reserves } = ICONLINKS[chainId][assetSymbol] || {};
   const unavailableTokenSymbols =
@@ -88,10 +87,15 @@ function AssetDropdown({ assetSymbol, assetInfo }: Props) {
             {active && unavailableTokenSymbols.indexOf(assetSymbol) < 0 && (
               <div
                 onClick={() => {
-                  let token = assetInfo
-                    ? { ...assetInfo, image: assetInfo.imageUrl }
-                    : PLATFORM_TOKENS[chainId][assetSymbol];
-                  addTokenToMetamask(token);
+                  if (connector?.watchAsset && assetInfo) {
+                    const { address, decimals, imageUrl, symbol } = assetInfo;
+                    connector.watchAsset?.({
+                      address: address,
+                      decimals: decimals,
+                      image: imageUrl,
+                      symbol: symbol,
+                    });
+                  }
                 }}
                 className="asset-item"
               >

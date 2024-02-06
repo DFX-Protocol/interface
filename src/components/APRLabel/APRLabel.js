@@ -17,7 +17,7 @@ import RewardReader from "abis/RewardReader.json";
 import Token from "abis/Token.json";
 import DlpManager from "abis/DlpManager.json";
 
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 
 import { useDfxPrice } from "domain/legacy";
 
@@ -27,7 +27,7 @@ import { contractFetcher } from "lib/contracts";
 import { formatKeyAmount } from "lib/numbers";
 
 export default function APRLabel({ chainId, label }) {
-  let { active } = useWeb3React();
+  let { active } = useWallet();
 
   const rewardReaderAddress = getContract(chainId, "RewardReader");
   const readerAddress = getContract(chainId, "Reader");

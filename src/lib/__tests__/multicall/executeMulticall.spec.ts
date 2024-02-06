@@ -8,8 +8,8 @@ import { generateTestingUtils } from "eth-testing";
 import { sleep } from "lib/sleep";
 import { BigNumber, ethers } from "ethers";
 
-import { useWeb3React } from "@web3-react/core";
-import { getInjectedHandler } from "lib/wallets";
+import useWallet from "lib/wallets/useWallet";
+
 import { useEffect } from "react";
 import { act } from "@testing-library/react";
 import { JsonRpcProvider } from "@ethersproject/providers";
@@ -128,7 +128,7 @@ describe("executeMulticall", () => {
     let result;
 
     testHook(() => {
-      const { library, activate, deactivate } = useWeb3React();
+      const { signer, activate, deactivate } = useWallet();
 
       useEffect(() => {
         const connectInjectedWallet = getInjectedHandler(activate, deactivate);
@@ -137,14 +137,14 @@ describe("executeMulticall", () => {
       }, [activate, deactivate]);
 
       useEffect(() => {
-        if (library) {
-          libraryProvider = library.getSigner().provider;
+        if (signer) {
+          libraryProvider = signer.provider;
 
-          executeMulticall(chainId, library, testRequest).then((res) => {
+          executeMulticall(chainId, signer, testRequest).then((res) => {
             result = res;
           });
         }
-      }, [library]);
+      }, [signer]);
     });
 
     // wait extra time to make sure the library is ready
@@ -176,7 +176,7 @@ describe("executeMulticall", () => {
     ethTesting.mockConnectedWallet([ethers.Wallet.createRandom().address], { chainId: walletChainId });
 
     testHook(() => {
-      const { library, activate, deactivate } = useWeb3React();
+      const { signer, activate, deactivate } = useWallet();
 
       useEffect(() => {
         const connectInjectedWallet = getInjectedHandler(activate, deactivate);
@@ -185,12 +185,12 @@ describe("executeMulticall", () => {
       }, [activate, deactivate]);
 
       useEffect(() => {
-        if (library) {
-          executeMulticall(requestChainId, library, testRequest).then((res) => {
+        if (signer) {
+          executeMulticall(requestChainId, signer, testRequest).then((res) => {
             result = res;
           });
         }
-      }, [library]);
+      }, [signer]);
     });
 
     // wait extra time to make sure the library is ready

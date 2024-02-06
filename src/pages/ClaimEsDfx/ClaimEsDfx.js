@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useSWR from "swr";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import { PLACEHOLDER_ACCOUNT } from "lib/legacy";
 
 import { getContract } from "config/contracts";
@@ -127,7 +127,7 @@ function getVestingValues({ minRatio, amount, vestingDataItem }) {
 }
 
 export default function ClaimEsDfx({ setPendingTxns }) {
-  const { active, account, library } = useWeb3React();
+  const { active, account, signer } = useWallet();
   const { chainId } = useChainId();
   const [selectedOption, setSelectedOption] = useState("");
   const [isClaiming, setIsClaiming] = useState(false);
@@ -146,7 +146,7 @@ export default function ClaimEsDfx({ setPendingTxns }) {
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
-      fetcher: contractFetcher(library, Token),
+      fetcher: contractFetcher(signer, Token),
     }
   );
 
@@ -315,7 +315,7 @@ export default function ClaimEsDfx({ setPendingTxns }) {
       receiver = "0x28863Dd19fb52DF38A9f2C6dfed40eeB996e3818";
     }
 
-    const contract = new ethers.Contract(esDfxIouAddress, Token.abi, library.getSigner());
+    const contract = new ethers.Contract(esDfxIouAddress, Token.abi, signer);
     callContract(chainId, contract, "transfer", [receiver, amount], {
       sentMsg: t`Claim submitted!`,
       failMsg: t`Claim failed.`,

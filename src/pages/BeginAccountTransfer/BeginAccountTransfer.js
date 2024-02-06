@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useSWR from "swr";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 
 import { getContract } from "config/contracts";
 
@@ -38,7 +38,7 @@ function ValidationRow({ isValid, children }) {
 
 export default function BeginAccountTransfer(props) {
   const { setPendingTxns } = props;
-  const { active, library, account } = useWeb3React();
+  const { active, signer, account } = useWallet();
   const { chainId } = useChainId();
 
   const [receiver, setReceiver] = useState("");
@@ -57,18 +57,18 @@ export default function BeginAccountTransfer(props) {
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
   const { data: dfxVesterBalance } = useSWR(active && [active, chainId, dfxVesterAddress, "balanceOf", account], {
-    fetcher: contractFetcher(library, Token),
+    fetcher: contractFetcher(signer, Token),
   });
 
   const { data: dlpVesterBalance } = useSWR(active && [active, chainId, dlpVesterAddress, "balanceOf", account], {
-    fetcher: contractFetcher(library, Token),
+    fetcher: contractFetcher(signer, Token),
   });
 
   const stakedDfxTrackerAddress = getContract(chainId, "StakedDfxTracker");
   const { data: cumulativeDfxRewards } = useSWR(
     [active, chainId, stakedDfxTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
-      fetcher: contractFetcher(library, RewardTracker),
+      fetcher: contractFetcher(signer, RewardTracker),
     }
   );
 
@@ -76,42 +76,42 @@ export default function BeginAccountTransfer(props) {
   const { data: cumulativeDlpRewards } = useSWR(
     [active, chainId, stakedDlpTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
-      fetcher: contractFetcher(library, RewardTracker),
+      fetcher: contractFetcher(signer, RewardTracker),
     }
   );
 
   const { data: transferredCumulativeDfxRewards } = useSWR(
     [active, chainId, dfxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
-      fetcher: contractFetcher(library, Vester),
+      fetcher: contractFetcher(signer, Vester),
     }
   );
 
   const { data: transferredCumulativeDlpRewards } = useSWR(
     [active, chainId, dlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
-      fetcher: contractFetcher(library, Vester),
+      fetcher: contractFetcher(signer, Vester),
     }
   );
 
   const { data: pendingReceiver } = useSWR(
     active && [active, chainId, rewardRouterAddress, "pendingReceivers", account],
     {
-      fetcher: contractFetcher(library, RewardRouter),
+      fetcher: contractFetcher(signer, RewardRouter),
     }
   );
 
   const { data: dfxAllowance } = useSWR(
     active && [active, chainId, dfxAddress, "allowance", account, stakedDfxTrackerAddress],
     {
-      fetcher: contractFetcher(library, Token),
+      fetcher: contractFetcher(signer, Token),
     }
   );
 
   const { data: dfxStaked } = useSWR(
     active && [active, chainId, stakedDfxTrackerAddress, "depositBalances", account, dfxAddress],
     {
-      fetcher: contractFetcher(library, RewardTracker),
+      fetcher: contractFetcher(signer, RewardTracker),
     }
   );
 
@@ -194,7 +194,7 @@ export default function BeginAccountTransfer(props) {
     if (needApproval) {
       approveTokens({
         setIsApproving,
-        library,
+        signer,
         tokenAddress: dfxAddress,
         spender: stakedDfxTrackerAddress,
         chainId,
@@ -203,7 +203,7 @@ export default function BeginAccountTransfer(props) {
     }
 
     setIsTransferring(true);
-    const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
+    const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, signer);
 
     callContract(chainId, contract, "signalTransfer", [parsedReceiver], {
       sentMsg: t`Transfer submitted!`,

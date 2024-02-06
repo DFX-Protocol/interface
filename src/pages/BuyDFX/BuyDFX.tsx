@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Footer from "components/Footer/Footer";
 import "./BuyDFX.css";
-import { useWeb3React } from "@web3-react/core";
+import useWallet from "lib/wallets/useWallet";
 import { Trans, t } from "@lingui/macro";
 import Button from "components/Button/Button";
 import { ARBITRUM, AVALANCHE, getChainName, getConstant } from "config/chains";
@@ -27,7 +27,7 @@ import {
 export default function BuyDFX() {
   const { chainId } = useChainId();
   const isArbitrum = chainId === ARBITRUM;
-  const { active } = useWeb3React();
+  const { active } = useWallet();
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
   const externalLinks = EXTERNAL_LINKS[chainId];
 

@@ -1,7 +1,5 @@
-import { useWeb3React } from "@web3-react/core";
 import AddressDropdown from "../AddressDropdown/AddressDropdown";
 import ConnectWalletButton from "../Common/ConnectWalletButton";
-import React, { useCallback, useEffect } from "react";
 import { HeaderLink } from "./HeaderLink";
 import connectWalletImg from "img/ic_wallet_24.svg";
 
@@ -12,15 +10,15 @@ import { Trans } from "@lingui/macro";
 import NetworkDropdown from "../NetworkDropdown/NetworkDropdown";
 import LanguagePopupHome from "../NetworkDropdown/LanguagePopupHome";
 import { getChainName, BASE_TESTNET } from "config/chains";
-import { switchNetwork } from "lib/wallets";
 import { useChainId } from "lib/chains";
 import { isDevelopment } from "config/env";
 import { getIcon } from "config/icons";
+import useWallet from "lib/wallets/useWallet";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 type Props = {
   openSettings: () => void;
   small?: boolean;
-  setWalletModalVisible: (visible: boolean) => void;
   disconnectAccountAndCloseSettings: () => void;
   redirectPopupTimestamp: number;
   showRedirectModal: (to: string) => void;
@@ -47,30 +45,14 @@ if (isDevelopment()) {
 export function AppHeaderUser({
   openSettings,
   small,
-  setWalletModalVisible,
   disconnectAccountAndCloseSettings,
   redirectPopupTimestamp,
   showRedirectModal,
 }: Props) {
   const { chainId } = useChainId();
-  const { active, account } = useWeb3React();
+  const { active, account } = useWallet();
+  const { openConnectModal } = useConnectModal();
   const showConnectionOptions = !isHomeSite();
-
-  useEffect(() => {
-    if (active) {
-      setWalletModalVisible(false);
-    }
-  }, [active, setWalletModalVisible]);
-
-  const onNetworkSelect = useCallback(
-    (option) => {
-      if (option.value === chainId) {
-        return;
-      }
-      return switchNetwork(option.value, active);
-    },
-    [chainId, active]
-  );
 
   const selectorLabel = getChainName(chainId);
 
@@ -88,16 +70,15 @@ export function AppHeaderUser({
           </HeaderLink>
         </div>
 
-        {showConnectionOptions ? (
+        {showConnectionOptions && openConnectModal? (
           <>
-            <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
+            <ConnectWalletButton onClick={openConnectModal} imgSrc={connectWalletImg}>
               {small ? <Trans>Connect</Trans> : <Trans>Connect Wallet</Trans>}
             </ConnectWalletButton>
             <NetworkDropdown
               small={small}
               networkOptions={NETWORK_OPTIONS}
               selectorLabel={selectorLabel}
-              onNetworkSelect={onNetworkSelect}
               openSettings={openSettings}
             />
           </>
@@ -136,7 +117,6 @@ export function AppHeaderUser({
             small={small}
             networkOptions={NETWORK_OPTIONS}
             selectorLabel={selectorLabel}
-            onNetworkSelect={onNetworkSelect}
             openSettings={openSettings}
           />
         </>
