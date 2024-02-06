@@ -15,7 +15,7 @@ import {
   okxWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { arbitrum } from "wagmi/chains";
+import { baseSepolia } from "./baseSepolia";
 import { publicProvider } from "wagmi/providers/public";
 import merge from "lodash/merge";
 
@@ -24,9 +24,9 @@ const APP_NAME = "DFX";
 
 const walletTheme = merge(darkTheme(), {
   colors: {
-    modalBackground: "#16182e",
-    accentColor: "#9da5f2",
-    menuItemBackground: "#808aff14",
+    modalBackground: "rgba(0, 0, 0, 0.82)",
+    accentColor: "linear-gradient(90deg, #54d8c6, #b791ba)",
+    menuItemBackground: "rgba(128, 128, 128, 0.2)",
   },
   radii: {
     modal: "4px",
@@ -35,7 +35,7 @@ const walletTheme = merge(darkTheme(), {
 } as Theme);
 
 const { chains, provider } = configureChains(
-  [arbitrum],
+  [baseSepolia],
   [publicProvider()]
 );
 
