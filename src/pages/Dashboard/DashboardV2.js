@@ -1011,7 +1011,7 @@ export default function DashboardV2() {
                   maxUsdgAmount = tokenInfo.maxUsdgAmount;
                 }
 
-                const tokenImage = importImage("ic_" + token.symbol.toLowerCase() + "_24.svg");
+                const tokenImage = importImage("ic_" + token.symbol.toLowerCase() + "_24.svg",false);
                 return (
                   <div className="App-card" key={token.symbol}>
                     <div className="App-card-title">

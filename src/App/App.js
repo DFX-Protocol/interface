@@ -24,6 +24,7 @@ import OrdersOverview from "pages/OrdersOverview/OrdersOverview";
 import PositionsOverview from "pages/PositionsOverview/PositionsOverview";
 import Referrals from "pages/Referrals/Referrals";
 import BuyDlp from "pages/BuyDlp/BuyDlp";
+import BuyDFX from "pages/BuyDFX/BuyDFX";
 import Buy from "pages/Buy/Buy";
 import NftWallet from "pages/NftWallet/NftWallet";
 import ClaimEsDfx from "pages/ClaimEsDfx/ClaimEsDfx";
@@ -401,7 +402,7 @@ function FullApp() {
                 <Jobs />
               </Route>
               <Route exact path="/buy_dfx">
-                <BuyDlp />
+                <BuyDFX />
               </Route>
               {/* <Route exact path="/ecosystem">
                 <Ecosystem />

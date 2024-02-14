@@ -64,7 +64,7 @@ export default function BuyDFX() {
           <CentralisedExchanges chainId={chainId} />
         </div>
 
-        {isArbitrum ? (
+        {/* {isArbitrum ? (
           <div className="section-title-block mt-top">
             <div className="section-title-content">
               <div className="Page-title">
@@ -86,9 +86,9 @@ export default function BuyDFX() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
-        <div className="cards-row">
+        {/* <div className="cards-row">
           <Card title={t`Buy ${nativeTokenSymbol}`}>
             <div className="App-card-content">
               <div className="BuyDFXDLP-description">
@@ -153,7 +153,7 @@ export default function BuyDFX() {
               </div>
             </div>
           </Card>
-        </div>
+        </div> */}
       </div>
       <Footer />
     </div>

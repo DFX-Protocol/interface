@@ -1,4 +1,4 @@
-import { ARBITRUM, AVALANCHE, SEPOLIA } from "config/chains";
+import { ARBITRUM, AVALANCHE, BASE_TESTNET, SEPOLIA } from "config/chains";
 import { getContract } from "config/contracts";
 
 const ARBITRUM_DFX = getContract(ARBITRUM, "DFX").toLowerCase();
@@ -29,6 +29,13 @@ export const EXTERNAL_LINKS = {
       uniswap: `https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${ARBITRUM_DFX}`,
     },
   },
+  // TODO: Update all external links
+  [BASE_TESTNET]: {
+    networkWebsite: "https://arbitrum.io/",
+    buyDfx: {
+      uniswap: `https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${ARBITRUM_DFX}`,
+    },
+  },
 };
 
 export const FIAT_GATEWAYS: Exchange[] = [
@@ -38,6 +45,7 @@ export const FIAT_GATEWAYS: Exchange[] = [
     links: {
       [ARBITRUM]: "https://www.binancecnt.com/en/buy-sell-crypto",
       [AVALANCHE]: "https://www.binancecnt.com/en/buy-sell-crypto",
+      [BASE_TESTNET]: "https://www.binancecnt.com/en/buy-sell-crypto",
     },
   },
   {
@@ -65,6 +73,7 @@ export const DFX_FROM_ANY_NETWORKS: Exchange[] = [
     links: {
       [ARBITRUM]: `https://multitx.bungee.exchange/?toChainId=42161&toTokenAddress=${ARBITRUM_DFX}`,
       [AVALANCHE]: `https://multitx.bungee.exchange/?toChainId=43114&toTokenAddress=${AVALANCHE_DFX}`,
+      [BASE_TESTNET]: `https://multitx.bungee.exchange/?toChainId=43114&toTokenAddress=${AVALANCHE_DFX}`,
     },
   },
   {
@@ -102,6 +111,7 @@ export const BUY_NATIVE_TOKENS: Exchange[] = [
     links: {
       [ARBITRUM]: "https://dfx.banxa.com/?coinType=ETH&fiatType=USD&fiatAmount=500&blockchain=arbitrum",
       [AVALANCHE]: "https://dfx.banxa.com/?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche",
+      [BASE_TESTNET]: "https://dfx.banxa.com/?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche",
     },
   },
   {
@@ -123,6 +133,7 @@ export const TRANSFER_EXCHANGES: Exchange[] = [
     links: {
       [ARBITRUM]: "https://www.binance.com/en/trade/",
       [AVALANCHE]: "https://www.binance.com/en/trade/",
+      [BASE_TESTNET]: "https://www.binance.com/en/trade/",
     },
   },
   {
@@ -202,6 +213,7 @@ export const CENTRALISED_EXCHANGES: Exchange[] = [
     links: {
       [ARBITRUM]: "https://www.bybit.com/en-US/trade/spot/DFX/USDT",
       [AVALANCHE]: "https://www.bybit.com/en-US/trade/spot/DFX/USDT",
+      [BASE_TESTNET]: "https://www.bybit.com/en-US/trade/spot/DFX/USDT",
     },
   },
   {
@@ -237,6 +249,7 @@ export const DECENTRALISED_AGGRIGATORS: Exchange[] = [
     links: {
       [ARBITRUM]: `https://www.matcha.xyz/markets/42161/${ARBITRUM_DFX}`,
       [AVALANCHE]: `https://www.matcha.xyz/markets/43114/${AVALANCHE_DFX}`,
+      [BASE_TESTNET]: `https://www.matcha.xyz/markets/43114/${AVALANCHE_DFX}`,
     },
   },
   {
